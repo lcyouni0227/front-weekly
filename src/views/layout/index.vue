@@ -1,15 +1,11 @@
 <template>
     <div>
-        <!-- 这是侧导航 -->
-        <side-menu/>
-        <div class="con-wrap" :class="{conCollapse: isCollapse}">
-            <!-- 这是顶部导航 -->
-            <top-bar/>
-            <!-- 这是组件要插入的地方 -->
-            <div class="page-component-wrap">
+        <top-bar/>
+        <div class="botton">
+            <side-menu/>
+            <div :class="[isCollapse?'out':'in']" class="main">
                 <router-view></router-view>
             </div>
-
         </div>
     </div>
 </template>
@@ -33,31 +29,28 @@
 </script>
 
 <style lang="less" scoped>
-    .con-wrap {
-        padding-left: 160px;
-        transition: all 0.5s;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        height: 100%;
+    .botton {
         width: 100%;
-        box-sizing: border-box;
+        position: fixed;
+        top: 60px;
+        left: 0;
+        bottom: 0;
 
-        h3 {
-            margin-top: 0;
-            color: #324157;
-        }
-
-        .page-component-wrap {
-            padding: 10px;
-            height: 100%;
-            overflow-y: scroll;
-            background-color: rgb(241, 243, 246);
-        }
     }
 
-    .con-wrap.conCollapse {
-        padding-left: 64px;
+    .main {
+        height: 100%;
+        box-sizing: border-box;
+        overflow-y: scroll;
         transition: all 0.5s;
+        padding: 10px;
+    }
+
+    .out {
+        margin-left: 64px;
+    }
+
+    .in {
+        margin-left: 160px;
     }
 </style>
