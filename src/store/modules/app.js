@@ -2,22 +2,21 @@ import Cookes from 'js-cookie';
 
 const app = {
     state: {
-        language: Cookes.get('language') || 'zh'
+        i18n: Cookes.get('i18n') || 'zh'
     },
     mutations: {
-        SET_LANGUAGE: (state, language) => {
-            state.language = language;
-            Cookes.set('language', language);
+        SET_LANGUAGE: (state, i18n) => {
+            state.i18n = i18n;
+            Cookes.set('i18n', i18n);
         }
     },
     actions: {
-        setLanguage({commit}, language) {
-            commit('SET_LANGUAGE', language);
-
+        setLanguage({commit}, i18n) {
+            commit('SET_LANGUAGE', i18n);
         }
     },
     getters: {
-        language:state=>state.language
+        i18n:state=>state.i18n
     }
 };
 

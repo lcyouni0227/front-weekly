@@ -224,7 +224,7 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    download(url, data = {}, isLoading, isSubmit = false) {
+    fileDown(url, data = {}, isLoading, isSubmit = false) {
         if (isLoading) {
             startLoading();
         }

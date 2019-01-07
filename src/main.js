@@ -24,12 +24,11 @@ import $http from './utils/http';
 Vue.config.productionTip = false;
 
 
-Vue.prototype.$http = $http.Axios;
+Vue.prototype.$ajax = $http.Axios;
 Vue.prototype.$post = $http.post;
 Vue.prototype.$get = $http.get;
-Vue.prototype.$postData = $http.postData;
 Vue.prototype.$fileUpload = $http.fileUpload;
-Vue.prototype.$download = $http.download;
+Vue.prototype.$fileDown = $http.fileDown;
 
 
 //使用mock模拟数据
