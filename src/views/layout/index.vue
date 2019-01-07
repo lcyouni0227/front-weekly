@@ -1,22 +1,30 @@
 <template>
-    <div>
-        <top-bar/>
-        <div class="botton">
-            <side-menu/>
-            <div :class="[isCollapse?'out':'in']" class="main">
-                <router-view></router-view>
-            </div>
-        </div>
-    </div>
+
+    <el-container>
+        <el-header>
+            <top-bar/>
+        </el-header>
+
+        <el-container>
+            <el-aside :width="isCollapse?'64px':'164px'">
+                <side-menu class="sidebar-container"/>
+            </el-aside>
+            <el-main>
+                <app-main/>
+            </el-main>
+        </el-container>
+    </el-container>
 </template>
 
 <script>
     import sideMenu from './components/SideMenu.vue';
     import TopBar from './components/TopBar'
+    import AppMain from "./components/AppMain";
 
     export default {
         name: "layout",
         components: {
+            AppMain,
             sideMenu,
             TopBar
         },
@@ -29,28 +37,30 @@
 </script>
 
 <style lang="less" scoped>
-    .botton {
+    .el-container {
         width: 100%;
-        position: fixed;
-        top: 60px;
-        left: 0;
-        bottom: 0;
-
-    }
-
-    .main {
         height: 100%;
+    }
+
+    .el-header {
+        padding: 0;
+        font-size: 0;
+        line-height: 60px;
+        background: white;
         box-sizing: border-box;
-        overflow-y: scroll;
-        transition: all 0.5s;
-        padding: 10px;
+        overflow: hidden;
     }
 
-    .out {
-        margin-left: 64px;
+    .el-aside {
+        transition: width .3s;
+        background:#556d84;
+        color: #fff;
+        overflow: hidden;
     }
 
-    .in {
-        margin-left: 160px;
+    .el-main {
+        padding: 0;
+        height: 100%;
+        overflow: auto
     }
 </style>

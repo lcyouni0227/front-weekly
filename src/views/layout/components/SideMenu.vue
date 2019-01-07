@@ -1,11 +1,10 @@
 <!-- 左侧导航组件 -->
 <!-- 使用说明：<side-bar></side-bar> -->
 <template>
-    <div id="sidebar-wrap" :class="{ collapsed: isCollapse}">
-
+    <el-scrollbar id="sidebar-wrap" class="scrollbar-wrapper">
         <el-menu
-                background-color="#394557"
-                text-color="#98A4AD"
+                background-color="#556d84"
+                text-color="#fff"
                 :default-active="defaultActive"
                 :unique-opened="true"
                 :router="true"
@@ -14,7 +13,7 @@
                 class="sideMenu"
         >
             <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']">
-                <span v-show="!isCollapse">菜&nbsp&nbsp单</span>
+                <span v-show="!isCollapse">菜    单</span>
                 <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
             </h3>
             <template v-for="item in menu">
@@ -32,9 +31,8 @@
                     <span slot="title">{{ item.name}}</span>
                 </el-menu-item>
             </template>
-
         </el-menu>
-    </div>
+    </el-scrollbar>
 </template>
 <script>
 
@@ -69,28 +67,12 @@
 </script>
 <style scoped lang="less">
     #sidebar-wrap {
-        width: 160px;
-        height: 100%;
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 5;
-        background: #394557;
-        transition: all 0.5s;
-
-        &.collapsed {
-            width: 64px;
-
-        }
-
         .isCollapse {
             height: 40px;
             line-height: 40px;
             font-size: 14px;
-            color: #98A4AD;
+            color: #fff;
             box-sizing: border-box;
-
 
             span {
                 display: inline-block;
@@ -104,10 +86,11 @@
                 display: inline-block;
                 width: 30px;
                 text-align: center;
+
             }
 
             .in {
-                width: 60px;
+                width: 64px;
             }
 
             .out {
@@ -135,5 +118,19 @@
         font-size: 14px;
         padding-left: 53px !important;
     }
+
+    .scrollbar-wrapper {
+        height: 100%;
+
+        .el-scrollbar__view {
+            height: 100%;
+        }
+
+        .el-scrollbar__wrap {
+            overflow-x: hidden;
+
+        }
+    }
+
 
 </style>

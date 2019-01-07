@@ -10,7 +10,10 @@
             <el-col :span="12">
                 <el-row type="flex" class="row-right" justify="end" style="margin-right:-15px">
                     <el-col :span="3">
-                        <a class="user">{{userName}}</a>
+                        <div class="user">
+                            <img src="@/assets/img/login/cont.png" alt="头像">
+                            <a class="user">{{userName}}</a></div>
+
                     </el-col>
                     <el-col :span="1">
                         <lang-select/>
@@ -19,7 +22,7 @@
                         <i :class="[isFullscreen? 'icon-zuixiaohua': 'icon-quanping','iconfont','']" title="切换全屏"
                            @click="toggleFullscreen"></i>
                     </el-col>
-                    <el-col :span="2">
+                    <el-col :span="1">
                         <i class="icon-tuichu iconfont logout" title="退出" @click.prevent="logout"></i>
                     </el-col>
                 </el-row>
@@ -61,7 +64,7 @@
                 this.isFullscreen = !screenfull.isFullscreen
             },
             logout() {
-                this.$router.push('signin')
+                this.$router.push('/login')
             },
 
         }
@@ -81,12 +84,25 @@
 
         .user {
             text-align: center;
+            user-select: none;
+            cursor: pointer;
+
+            img {
+                height: 40px;
+                vertical-align: top;
+                margin-top: 10px;
+                margin-right: 5px;
+
+
+            }
         }
 
         .logo {
+            user-select: none;
             line-height: 60px;
             height: 60px;
             display: inline-block;
+
             img {
                 height: 40px;
                 margin-top: 10px;

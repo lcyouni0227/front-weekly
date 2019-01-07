@@ -18,6 +18,6 @@ export const constantRouterMap = [{
 
 
 export default new Router({
-    scrollBehavior: {y: 0},
+    // scrollBehavior: {y: 0},
     routes: constantRouterMap
 })
