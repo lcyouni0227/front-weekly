@@ -15,8 +15,8 @@
 </template>
 
 <script>
-    import sideMenu from './../../components/SideMenu.vue';
-    import TopBar from './../../components/TopBar'
+    import sideMenu from './components/SideMenu.vue';
+    import TopBar from './components/TopBar'
 
     export default {
         name: "layout",

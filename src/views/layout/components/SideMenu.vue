@@ -3,7 +3,7 @@
 <template>
     <div id="sidebar-wrap" :class="{ collapsed: toggSiderBar }">
         <h3 class="logo">
-            <span>VUE</span>
+            <span>{{ $t('user.name')}}</span>
         </h3>
         <el-menu
                 background-color="#3f4d67"
@@ -56,8 +56,7 @@
             },
             defaultActive() {
                 return this.$route.path;
-            }
-
+            },
         },
         methods: {}
     };

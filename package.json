@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "element-ui": "^2.4.11",
+    "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
     "qs": "^6.6.0",
     "screenfull": "^4.0.0",

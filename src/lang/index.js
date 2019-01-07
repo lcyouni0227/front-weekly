@@ -4,7 +4,7 @@ import enLocale from 'element-ui/lib/locale/lang/en';
 import zh from './zh.js';
 import en from './en.js';
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
-
+import Cookier from 'js-cookie'
 Vue.use(VueI18n);
 const lang = {
     en: {
@@ -17,7 +17,8 @@ const lang = {
     }
 };
 const i18n = new VueI18n({
-    locale: 'zh',
-    lang
+    locale: Cookier.get('language')||'zh',
+    messages:lang
 });
+
 export default i18n

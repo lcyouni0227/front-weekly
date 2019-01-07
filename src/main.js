@@ -6,7 +6,7 @@ import router from './router/index'
 import store from './store'
 
 import 'element-ui/lib/theme-chalk/index.css';
-import '../public/font/iconfont.css'
+import './assets/font/iconfont.css'
 import i18n from './lang';
 // 使用axios兼容ie9+
 Promise.polyfill();
@@ -38,5 +38,6 @@ require('./mock');
 new Vue({
     router,
     store,
+    i18n,
     render: h => h(App)
 }).$mount('#app');

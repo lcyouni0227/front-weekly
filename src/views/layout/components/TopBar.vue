@@ -11,7 +11,10 @@
                     <el-col :span="5">
                         <a class="animated fadeIn">{{userName}}</a>
                     </el-col>
-                    <el-col :span="2">
+                    <el-col :span="1">
+                        <lang-select/>
+                    </el-col>
+                    <el-col :span="1">
                         <i :class="[isFullscreen? 'icon-zuixiaohua': 'icon-quanping','iconfont','']" title="切换全屏" @click="toggleFullscreen"></i>
                     </el-col>
                     <el-col :span="2">
@@ -24,8 +27,12 @@
 </template>
 <script>
 import screenfull from 'screenfull'
+import LangSelect from '@/components/LangSelect'
 export default {
   name: 'topbar',
+    components:{
+      LangSelect
+    },
   data() {
     return {
       userName: 'xuyanxu',
@@ -52,7 +59,8 @@ export default {
     },
     logout() {
       this.$router.push('signin')
-    }
+    },
+
   },
   watch: {
     $route(to, from) {
@@ -63,7 +71,7 @@ export default {
 }
 </script>
 <style scoped lang="less">
-    @import "./../assets/font/iconfont.css";
+    @import "../../../assets/font/iconfont.css";
 #topbar-wrap {
   overflow: hidden;
   border-bottom: 1px solid #ddd;

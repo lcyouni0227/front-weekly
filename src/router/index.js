@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router);
-const index = () => import('@/views/index.vue');
 const layout = () => import('@/views/layout');
 const notFound = () => import("@/components/common/404");
 
