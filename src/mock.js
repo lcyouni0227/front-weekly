@@ -7,6 +7,20 @@ Mock.mock('/api/data', 'get', (req, res) => {
         data: ['a', 'b']
     }
 });
+var loginData = function () {
+    var mockData = [];
+    mockData = {
+        "status": "1",
+        "message": "登录成功",
+        "data": [
+            {
+                user: "工作台",
+                password: "0"
+            },]
+    }
+    return mockData
+}
+Mock.mock('/user/loginData', 'get', loginData);
 Mock.mock('/api/menu', 'get', () => {
     return {
         code:'1',

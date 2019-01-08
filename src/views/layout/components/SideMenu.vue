@@ -1,19 +1,21 @@
 <!-- 左侧导航组件 -->
 <!-- 使用说明：<side-bar></side-bar> -->
 <template>
-    <div id="sidebar-wrap" :class="{ collapsed: toggSiderBar }">
-        <h3 class="logo">
-            <span>{{ $t('user.name')}}</span>
-        </h3>
+    <el-scrollbar id="sidebar-wrap" class="scrollbar-wrapper">
         <el-menu
-                background-color="#3f4d67"
+                background-color="#556d84"
                 text-color="#fff"
                 :default-active="defaultActive"
                 :unique-opened="true"
                 :router="true"
                 mode="vertical"
-                :collapse="toggSiderBar"
+                :collapse="isCollapse"
+                class="sideMenu"
         >
+            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']">
+                <span v-show="!isCollapse">菜    单</span>
+                <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
+            </h3>
             <template v-for="item in menu">
                 <el-submenu v-if="item.children.length !== 0" :index="item.router" :key="item.router">
                     <template slot="title">
@@ -29,9 +31,8 @@
                     <span slot="title">{{ item.name}}</span>
                 </el-menu-item>
             </template>
-
         </el-menu>
-    </div>
+    </el-scrollbar>
 </template>
 <script>
 
@@ -39,9 +40,8 @@
         name: "sidemenu",
         created() {
             const that = this;
-            this.$get('/menu',{}).then(res => {
-
-               that.menu = res.data;
+            this.$get('/menu', {}).then(res => {
+                that.menu = res.data;
             })
         },
         data() {
@@ -51,54 +51,86 @@
             };
         },
         computed: {
-            toggSiderBar() {
+            isCollapse() {
                 return this.$store.state.controlStyle.isCollapse;
             },
             defaultActive() {
                 return this.$route.path;
             },
         },
-        methods: {}
+        methods: {
+            toggleSiderBar() {
+                this.$store.commit('toggleSiderBar')
+            },
+        }
     };
 </script>
 <style scoped lang="less">
     #sidebar-wrap {
-        width: 160px;
-        height: 100%;
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 5;
-        transition: all .5s;
-        background: #3f4d67;
-
-        &.collapsed {
-            width: 64px;
-            transition: all 0.5s;
-        }
-
-
-        .logo {
+        .isCollapse {
+            height: 40px;
+            line-height: 40px;
+            font-size: 14px;
             color: #fff;
-            text-align: center;
-            padding: 18px 0;
-            margin: 0;
-            height: 60px;
             box-sizing: border-box;
+
+            span {
+                display: inline-block;
+                width: 100px;
+                text-align: center;
+                font-size: 14px;
+                padding-left: 30px;
+            }
+
+            i {
+                display: inline-block;
+                width: 30px;
+                text-align: center;
+
+            }
+
+            .in {
+                width: 64px;
+            }
+
+            .out {
+                width: 30px;
+            }
+
         }
+
     }
 
     .el-menu {
         height: 100%;
+        font-size: 14px;
         border: 0;
+
+        .isCollapse {
+            width: 100%;
+        }
     }
 
     // 美化左侧导航的留白
     .el-submenu .el-menu-item {
         padding: 0 20px;
         min-width: 160px;
+        font-size: 14px;
         padding-left: 53px !important;
     }
+
+    .scrollbar-wrapper {
+        height: 100%;
+
+        .el-scrollbar__view {
+            height: 100%;
+        }
+
+        .el-scrollbar__wrap {
+            overflow-x: hidden;
+
+        }
+    }
+
 
 </style>
