@@ -1,26 +1,30 @@
 <template>
-    <div>
-        <!-- 这是侧导航 -->
-        <side-menu/>
-        <div class="con-wrap" :class="{conCollapse: isCollapse}">
-            <!-- 这是顶部导航 -->
-            <top-bar/>
-            <!-- 这是组件要插入的地方 -->
-            <div class="page-component-wrap">
-                <router-view></router-view>
-            </div>
 
-        </div>
-    </div>
+    <el-container>
+        <el-header>
+            <top-bar/>
+        </el-header>
+
+        <el-container>
+            <el-aside :width="isCollapse?'64px':'164px'">
+                <side-menu class="sidebar-container"/>
+            </el-aside>
+            <el-main>
+                <app-main/>
+            </el-main>
+        </el-container>
+    </el-container>
 </template>
 
 <script>
     import sideMenu from './components/SideMenu.vue';
     import TopBar from './components/TopBar'
+    import AppMain from "./components/AppMain";
 
     export default {
         name: "layout",
         components: {
+            AppMain,
             sideMenu,
             TopBar
         },
@@ -33,31 +37,30 @@
 </script>
 
 <style lang="less" scoped>
-    .con-wrap {
-        padding-left: 160px;
-        transition: all 0.5s;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        height: 100%;
+    .el-container {
         width: 100%;
-        box-sizing: border-box;
-
-        h3 {
-            margin-top: 0;
-            color: #324157;
-        }
-
-        .page-component-wrap {
-            padding: 10px;
-            height: 100%;
-            overflow-y: scroll;
-            background-color: rgb(241, 243, 246);
-        }
+        height: 100%;
     }
 
-    .con-wrap.conCollapse {
-        padding-left: 64px;
-        transition: all 0.5s;
+    .el-header {
+        padding: 0;
+        font-size: 0;
+        line-height: 60px;
+        background: white;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .el-aside {
+        transition: width .3s;
+        background:#556d84;
+        color: #fff;
+        overflow: hidden;
+    }
+
+    .el-main {
+        padding: 0;
+        height: 100%;
+        overflow: auto
     }
 </style>
