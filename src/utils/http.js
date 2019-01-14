@@ -1,16 +1,23 @@
 import axios from 'axios';
 import {Message, Loading} from "element-ui";
 import qs from 'qs';
-import {baseUrl, timeout, httpCode} from './../config/config'
+import {baseUrl, timeout} from './../config/config'
 import router from "../router";
 
+// axios.defaults.baseURL = appConfig.xhr.baseURL; // 配置axios请求的地址
+// axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
+// axios.defaults.crossDomain = true;
+// axios.defaults.withCredentials = true;  //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 
 let loadingInstance = null;
 const http = axios.create({
     baseURL: baseUrl,
     timeout: timeout,
+    crossDomain: true,
+    withCredentials: true
 });
-
+// http.defaults.crossDomain = true;
+// http.defaults.withCredentials = true;  //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 function startLoading(text = '') { //使用Element loading-start 方法
     loadingInstance = Loading.service({
         lock: true,
@@ -33,7 +40,6 @@ function endLoading() { //使用Element loading-close 方法
  * @return {object} 响应正常就返回响应数据否则返回错误信息
  */
 function checkStatus(response, isSubmit) {
-
     // 如果状态码正常就直接返回数据,这里的状态码是htttp响应状态码有400，500等，不是后端自定义的状态码
     if (response && ((response.status === 200 || response.status === 304 || response.status === 400))) {
         return checkCode(response.data, isSubmit); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
@@ -95,21 +101,44 @@ function checkStatus(response, isSubmit) {
  * @return {object} 返回后台传过来的数据对象，包含code,message,data等属性，
  **/
 function checkCode(res, isSubmit) {
-    let code = res.code;
-    if (isSubmit) {
-        if (httpCode instanceof Array) {
-            for (let i = 0; i < httpCode.length; i++) {
-                if (httpCode[i] == code) {
-                    Message(httpCode[i].info);
-                    if (httpCode[i].path) {
-                        router.push({
-                            path: httpCode[i].path
-                        })
-                    }
-                    break;
-                }
-            }
-        }
+    let type = "error", message = "";
+    switch (res.status) {
+        case "1":
+            message = "恭喜你，保存成功！";
+            type = "success";
+            break;
+        case "0":
+            message = "执行失败";
+            break;
+        case "-1":
+            message = "系统异常";
+            break;
+        case "-2":
+            message = "未登陆";
+            router.push({
+                path: "/"
+            });
+            sessionStorage.removeItem('userInfo');
+            break;
+        case "-3":
+            message = "权限不足";
+            break;
+        case "-100":
+            message = "数据源异常";
+            break;
+        case "-101":
+            message = "请求参数异常";
+            break;
+        default:
+            message = "网络异常";
+            break;
+    }
+    if (type == 'error' || isSubmit == true) {
+        Message({
+            showClose: true,
+            message: message,
+            type: type
+        });
     }
     endLoading();
     return res;
@@ -121,11 +150,9 @@ function checkCode(res, isSubmit) {
  * @return {object} 请求成功或失败时返回的配置对象或者promise error对象
  **/
 http.interceptors.request.use(config => {
-
     return config;
 }, error => {
-
-    endLoading()
+    endLoading();
     return Promise.reject(error);
 });
 /**
@@ -134,11 +161,8 @@ http.interceptors.request.use(config => {
  * @return {object} 响应成功或失败时返回的响应对象或者promise error对象
  **/
 http.interceptors.response.use(config => {
-
     return config;
 }, error => {
-
-
     endLoading();
     return Promise.resolve(error)
 });
@@ -192,7 +216,6 @@ export default {
         ).then(res => {
             return checkStatus(res, isSubmit);
         })
-
     },
     /**
      *
@@ -229,7 +252,7 @@ export default {
             startLoading();
         }
         return axios({
-            method: 'get',
+            method: 'post',
             url: url,
             params: data,
             headers: {
@@ -241,7 +264,6 @@ export default {
         })
     },
     Axios: axios
-
 }
 
 

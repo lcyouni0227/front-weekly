@@ -7,7 +7,3 @@
 <style lang="less">
     @import "common/base/common.less";
 </style>
-<script>
-
-
-</script>

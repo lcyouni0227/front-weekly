@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router);
 const layout = () => import('@/views/layout');
 const notFound = () => import("@/components/common/404");
-const login = () => import('@/views/login/login');
+const login = () => import('@/page/login');
 const routes = [
     {
         path: '/',

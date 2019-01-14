@@ -36,7 +36,7 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <!--<el-tab-pane label="短信验证码" name="code">-->
+            <!--<el-tab-pane label="验证码" name="code">-->
             <!--<codeLogin></codeLogin>-->
             <!--</el-tab-pane>-->
           </el-tabs>
@@ -69,8 +69,8 @@
   </div>
 </template>
 <script>
-import {mapGetters} from 'vuex'
-import {isvalidUsername} from '@/utils/validate'
+import {mapGetters} from 'vuex';
+import {isvalidUsername} from '@/utils/validate';
 
 export default {
   name: 'login',
@@ -81,16 +81,16 @@ export default {
       } else {
         callback()
       }
-    }
+    };
     const validateCode = (rule, value, callback) => {
       if (this.code.value !== value) {
-        this.loginForm.code = ''
-        this.refreshCode()
+        this.loginForm.code = '';
+        this.refreshCode();
         callback(new Error('请输入正确的验证码'))
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       activeName: 'user',
       loginForm: {
@@ -121,14 +121,6 @@ export default {
       passwordType: 'password'
     }
   },
-  created () {
-  },
-  mounted () {
-  },
-  // computed: {
-  //   ...mapGetters(['website'])
-  // },
-  props: [],
   methods: {
     showPassword () {
       this.passwordType === ''
@@ -138,9 +130,10 @@ export default {
     handleLogin () {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.$store.dispatch('Login', this.loginForm).then(res => {
-            this.$router.push({path: '../index'})
-          })
+
+          // this.$store.dispatch('Login', this.loginForm).then(res => {
+          //   this.$router.push({path: '../index'})
+          // })
         }
       })
     }

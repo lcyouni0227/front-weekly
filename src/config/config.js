@@ -6,18 +6,17 @@
  * baseImgPath: 图片存放地址
  *
  */
-// let baseUrl = 'http://localhost:8078';
-let baseUrl = '/'
+let baseUrl = '/';
 let routerMode = 'hash';
-let baseImgPath = '/';
+let baseImgUrl = '/';
 let timeout = 5000;
 
 if (process.env.NODE_ENV == 'development') {
     baseUrl = '/api';
-    baseImgPath = 'http://localhost:8078';
+    baseImgUrl = 'http://127.0.0.1:8081';
 } else {
-    baseUrl = 'http://120.77.180.3:8762';
-    baseImgPath = 'http://120.77.180.3:8762';
+    baseUrl = '';
+    baseImgUrl = '';
 }
 /**
  * 网络请求返回的字段配置
@@ -35,11 +34,11 @@ let httpCode=[{
     },
     path:'/index'
 
-}]
+}];
 export {
     baseUrl,
     routerMode,
-    baseImgPath,
+    baseImgUrl,
     timeout,
     httpCode
 }
