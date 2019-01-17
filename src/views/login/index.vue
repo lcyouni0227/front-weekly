@@ -19,21 +19,21 @@
         <!--</div>-->
         <div class="logo">
             <div class="w">
-                <img src="../assets/img/login/logo.png" class="l"/>
+                <img src="@/assets/img/login/logo.png" class="l"/>
                 <span class="l">动产抵质押后管平台</span>
             </div>
         </div>
         <div class="conttent">
             <div class="w">
-                <img src="../assets/img/login/cont.png" class="l content_l"/>
+                <img src="@/assets/img/login/cont.png" class="l content_l"/>
                 <div class="content_r l">
                     <h4>用户登录</h4>
                     <div class="int_box">
-                        <span class="l"><img src="../assets/img/login/user_ico.png"/></span>
+                        <span class="l"><img src="@/assets/img/login/user_ico.png"/></span>
                         <input v-model="loginForm.username" type="text" placeholder="用户名" class="ipt_user l"/>
                     </div>
                     <div class="int_box">
-                        <span class="l"><img src="../assets/img/login//psd_ico.png" class="psd_img"/></span>
+                        <span class="l"><img src="@/assets/img/login//psd_ico.png" class="psd_img"/></span>
                         <input v-model="loginForm.password" type="password" placeholder="密码" class="ipt_psd l"/>
                     </div>
                     <div class="icode_box">
@@ -42,15 +42,6 @@
                              @click.stop="changeCode()"/>
                     </div>
                     <div class="login_go" @click.stop="loginSubmit()">登 录</div>
-                    <!--<div class="bottom_box">-->
-                    <!--<a href="javascript:;" class="l bottom_box_l">忘记密码？</a>-->
-
-                    <!--<span class="r bottom_box_r">还没有账号？-->
-                    <!--<router-link :to="{name:'registerOne'}">-->
-                    <!--免费注册-->
-                    <!--</router-link>-->
-                    <!--</span>-->
-                    <!--</div>-->
                 </div>
             </div>
         </div>
@@ -71,7 +62,7 @@
                         <p class="foot_p">备案/许可证编号：渝ICP备18001680号-1</p>
                     </div>
                     <div class="footer_r l">
-                        <img src="../assets/img/login/weix_code.jpg"/>
+                        <img src="@/assets/img/login/weix_code.jpg"/>
                         <p>官方微信</p>
                     </div>
                 </div>

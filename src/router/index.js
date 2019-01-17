@@ -4,10 +4,10 @@ import Router from 'vue-router'
 Vue.use(Router);
 const layout = () => import('@/views/layout');
 const notFound = () => import("@/components/common/404");
-const login = () => import('@/page/login');
+const login = () => import('@/views/login');
 const routes = [
     {
-        path: '/',
+        path: '/login',
         name: '登录',
         component: login,
         meta: {
@@ -16,7 +16,7 @@ const routes = [
         }
     },
     {
-        path: '/layout',
+        path: '/index',
         name: 'index',
         component: layout,
         children: [{
@@ -28,6 +28,5 @@ const routes = [
 ];
 
 export default new Router({
-    scrollBehavior: {y: 0},
     routes: routes
 })
