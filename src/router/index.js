@@ -5,22 +5,20 @@ Vue.use(Router);
 const layout = () => import('@/views/layout');
 const notFound = () => import("@/components/common/404");
 const login = () => import('@/views/login');
+const login1 = () => import('@/views/login/login');
 const routes = [
     {
         path: '/login',
         name: '登录',
-        component: login,
-        meta: {
-            title: '',
-            requireAuth: true // 添加该字段，表示进入这个路由是不需要登录的
-        }
+        component: login1,
+
     },
     {
         path: '/index',
         name: 'index',
         component: layout,
         children: [{
-            path: '*',
+            path: '',
             name: '错误',
             component: notFound,
         }],

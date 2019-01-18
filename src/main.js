@@ -4,8 +4,6 @@ import Promise from 'es6-promise';
 import ElementUI from 'element-ui';
 import router from './router/index'
 import store from './store';
-// import './mock';
-// import axios from 'axios';
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/font/iconfont.css'
 import i18n from './lang';
@@ -23,7 +21,7 @@ Vue.prototype.$lodash = require('lodash');
 
 Vue.config.productionTip = false;
 //使用mock模拟数据
-// require('./mock.js');
+require('./mock.js');
 
 Vue.prototype.$baseUrl = baseUrl;
 Vue.prototype.$baseImgUrl = baseImgUrl;
@@ -33,17 +31,6 @@ Vue.prototype.$post = $http.post;
 Vue.prototype.$get = $http.get;
 Vue.prototype.$fileUpload = $http.fileUpload;
 Vue.prototype.$fileDown = $http.fileDown;
-// Vue.prototype.$axios = axios;
-
-// axios.interceptors.response.use(res => {
-//     if (!res.data)
-//         return res;
-//     if (!res.data.errorCode || res.data.errorCode != 302)
-//         return res;
-//     sessionStorage.removeItem('user');
-//     location.reload();
-//     return res
-// });
 
 
 new Vue({

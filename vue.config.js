@@ -1,11 +1,15 @@
 
 module.exports = {
     devServer: {
+        // proxy: 'http://localhost:3000'
+        host: '0.0.0.0',
+        hot: true,
+        disableHostCheck: true,
         proxy:{
             '/api':{
-                target:'http://127.0.0.1:8081',
+                target:'http://127.0.0.1:8080',
                 hot: true,
-                ws:true,
+                ws:false,
                 changeOrigin: true,
                 // disableHostCheck: true,
                 pathRewrite: {

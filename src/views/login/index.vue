@@ -1,22 +1,6 @@
 <template>
     <div>
-        <!--<div class="title">-->
-        <!--<div class="w">-->
-        <!--<div class="l title_l">-->
-        <!--公共服务平台首页-->
-        <!--</div>-->
-        <!--<div class="r title_r">-->
-        <!--<div class="title_phone r">-->
-        <!--<img src="../assets/img/login/phone_icon.png"/>-->
-        <!--<span>023-63203039</span>-->
-        <!--</div>-->
-        <!--<div class="title_btn r">-->
-        <!--<span class="enter_btn"><a href="javascript:;">登录</a></span>-->
-        <!--<span class="login_btn"><a href="javascript:;">免费注册</a></span>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
+
         <div class="logo">
             <div class="w">
                 <img src="@/assets/img/login/logo.png" class="l"/>

@@ -10,6 +10,7 @@
                 <side-menu class="sidebar-container"/>
             </el-aside>
             <el-main>
+                <tags-view/>
                 <app-main/>
             </el-main>
         </el-container>
@@ -20,10 +21,12 @@
     import sideMenu from './components/SideMenu.vue';
     import TopBar from './components/TopBar'
     import AppMain from "./components/AppMain";
+    import TagsView from "./components/TagsView";
 
     export default {
         name: "layout",
         components: {
+            TagsView,
             AppMain,
             sideMenu,
             TopBar

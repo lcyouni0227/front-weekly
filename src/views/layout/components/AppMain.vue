@@ -21,7 +21,7 @@
 
 <style lang="less" scoped>
     .main {
-        height: calc (100% - 60px);
+        height: calc(100% - 40px);
         padding: 15px;
         overflow: auto;
         box-sizing: border-box;

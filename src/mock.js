@@ -1,12 +1,7 @@
 //引入mockjs
 import Mock from 'mockjs';
 //使用mockjs模拟数据
-Mock.mock('/api/data', 'get', (req, res) => {
-    return {
-        status: "1",
-        data: ['a', 'b']
-    }
-});
+
 var loginData = function () {
     var mockData = [];
     mockData = {
@@ -23,7 +18,7 @@ var loginData = function () {
 Mock.mock('/user/loginData', 'get', loginData);
 Mock.mock('/api/menu', 'get', () => {
     return {
-        code:'1',
+        status:'1',
         data: [{
             "name": "项目管理",
             "name_en": "Projects",

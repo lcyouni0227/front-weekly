@@ -75,7 +75,6 @@
 
     #topbar-wrap {
         height: 60px;
-        border-bottom: 1px solid #ddd;
         background: #fff;
         color: #353d47;
         padding: 0 15px;

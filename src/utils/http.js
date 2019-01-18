@@ -42,6 +42,7 @@ function endLoading() { //使用Element loading-close 方法
 function checkStatus(response, isSubmit) {
     // 如果状态码正常就直接返回数据,这里的状态码是htttp响应状态码有400，500等，不是后端自定义的状态码
     if (response && ((response.status === 200 || response.status === 304 || response.status === 400))) {
+
         return checkCode(response.data, isSubmit); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
     } else {
         let error = response;
@@ -104,7 +105,7 @@ function checkCode(res, isSubmit) {
     let type = "error", message = "";
     switch (res.status) {
         case "1":
-            message = "恭喜你，保存成功！";
+            message = "恭喜你，加载成功！";
             type = "success";
             break;
         case "0":
@@ -202,6 +203,7 @@ export default {
      * @returns {Promise<AxiosResponse<any>>}
      */
     get(url, params = {}, isLoading = true, isSubmit = true) {
+
         if (isLoading) {
             startLoading();
         }
