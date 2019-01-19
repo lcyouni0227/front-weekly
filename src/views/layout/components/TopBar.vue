@@ -85,6 +85,7 @@
             text-align: center;
             user-select: none;
             cursor: pointer;
+            font-size: 12px;
 
             img {
                 height: 40px;

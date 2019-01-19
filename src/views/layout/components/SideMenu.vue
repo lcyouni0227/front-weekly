@@ -40,7 +40,7 @@
         name: "sidemenu",
         created() {
             const that = this;
-            this.$get('/menu', {}).then(res => {
+            this.$get('/menu', {},true,false).then(res => {
                 that.menu = res.data;
             })
         },

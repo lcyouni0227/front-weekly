@@ -22,8 +22,12 @@ const routes = [
 
     },
     {
+        path: '/',
+        redirect: '/index'
+    },
+    {
         path: '/index',
-        name: 'index',
+        name: '仪表盘',
         component: layout,
         children: [{
             path: 'authority',

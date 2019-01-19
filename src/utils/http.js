@@ -33,10 +33,10 @@ function endLoading() { //使用Element loading-close 方法
  * @param isSubmit 是否是提交接口
  * @return {object} 响应正常就返回响应数据否则返回错误信息
  */
-function checkStatus(res) {
+function checkStatus(res, isMessage) {
     // 如果状态码正常就直接返回数据,这里的状态码是htttp响应状态码有400，500等，不是后端自定义的状态码
     if (res && ((res.status === 200 || res.status === 304 || res.status === 400))) {
-        return checkCode(res.data); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
+        return checkCode(res.data, isMessage); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
     } else {
         if (res && res.status) {
             switch (res.status) {
@@ -92,10 +92,16 @@ function checkStatus(res) {
  * @param {object} res 是后台返回的对象或者自定义的网络异常对象，不是http 响应对象
  * @return {object} 返回后台传过来的数据对象，包含code,message,data等属性，
  **/
-function checkCode(res) {
+function checkCode(res, isMessage) {
+    if (!isMessage) {
+        return res
+    }
     let message = "";
+    let infotype = 'error';
     switch (res.code) {
         case 1:
+            message = "恭喜你，操作成功";
+            infotype = "success";
             break;
         case 0:
             message = "执行失败";
@@ -106,9 +112,8 @@ function checkCode(res) {
         case -2:
             message = "未登陆";
             router.push({
-                path: "/"
+                path: "/login"
             });
-            // sessionStorage.removeItem('userInfo');
             break;
         case -3:
             message = "权限不足";
@@ -121,7 +126,7 @@ function checkCode(res) {
         Message({
             showClose: true,
             message: message,
-            type: 'error'
+            type: infotype
         });
     }
     return res;
@@ -135,7 +140,7 @@ export default {
      * @param isLoading 是否需要动画,false不需要
      * @returns {Promise<AxiosResponse<any>>}
      */
-    post(url, params = {}, isLoading = true) {
+    post(url, params = {}, isLoading = true, isMessage = true) {
         if (isLoading) {
             startLoading();
         }
@@ -146,7 +151,7 @@ export default {
             }
         ).then(res => {
             endLoading();
-            return checkStatus(res);
+            return checkStatus(res, isMessage);
         }).catch(() => {
             endLoading();
             Message({
@@ -164,7 +169,8 @@ export default {
      * @param isSubmit 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
-    get(url, params = {}, isLoading = true) {
+    get(url, params = {}, isLoading = true, isMessage = true) {
+        debugger;
         if (isLoading) {
             startLoading();
         }
@@ -175,7 +181,8 @@ export default {
             }
         ).then(res => {
             endLoading();
-            return checkStatus(res);
+            debugger;
+            return checkStatus(res, isMessage);
         }).catch(() => {
             endLoading();
             Message({
@@ -192,7 +199,7 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileUpload(url, params = {}, isLoading) {
+    fileUpload(url, params = {}, isLoading = true, isMessage = true) {
         if (isLoading) {
             startLoading();
         }
@@ -205,7 +212,7 @@ export default {
             },
         }).then((res) => {
             endLoading();
-            return checkStatus(res)
+            return checkStatus(res, isMessage)
         }).catch(() => {
             endLoading();
             Message({
@@ -223,7 +230,7 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileDown(url, params = {}, isLoading) {
+    fileDown(url, params = {}, isLoading = true, isMessage = true) {
         if (isLoading) {
             startLoading();
         }

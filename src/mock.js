@@ -5,7 +5,7 @@ import Mock from 'mockjs';
 var loginData = function () {
     var mockData = [];
     mockData = {
-        "status": "1",
+        "code": "1",
         "message": "登录成功",
         "data": [
             {
@@ -18,7 +18,7 @@ var loginData = function () {
 Mock.mock('/user/loginData', 'get', loginData);
 Mock.mock('/api/menu', 'get', () => {
     return {
-        status:'1',
+        code:1,
         data: [{
             "name": "项目管理",
             "name_en": "Projects",

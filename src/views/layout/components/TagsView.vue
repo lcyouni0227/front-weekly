@@ -8,7 +8,7 @@
         >
             <div class="tags-handle">
                 <el-dropdown trigger="click" @command="handleCommand">
-                    <el-button type="primary" class="el-dropdown-link">下拉菜单<i
+                    <el-button type="primary" class="el-dropdown-link">标签操作<i
                             class="el-icon-arrow-down el-icon--right"></i></el-button>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item command="closeOther">关闭其他</el-dropdown-item>
