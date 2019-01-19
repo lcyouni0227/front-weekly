@@ -7,13 +7,13 @@
  *
  */
 let baseUrl = '/';
-let routerMode = 'hash';
+// let routerMode = 'hash';
 let baseImgUrl = '/';
 let timeout = 5000;
 
 if (process.env.NODE_ENV == 'development') {
     baseUrl = '/api';
-    baseImgUrl = 'http://127.0.0.1:8081';
+    baseImgUrl = '/api';
 } else {
     baseUrl = '';
     baseImgUrl = '';
@@ -25,20 +25,19 @@ if (process.env.NODE_ENV == 'development') {
  * code:标识码
  * path：如果设置将会进行跳转对应的路由
  * */
-let httpCode=[{
-    code:1,
-    info:{
-        //  饿了么的消息弹窗组件同样的设置格式
-        type:'success',
-        message: '请求成功',
-    },
-    path:'/index'
-
-}];
+// let httpCode=[{
+//     code:1,
+//     info:{
+//         //  饿了么的消息弹窗组件同样的设置格式
+//         type:'success',
+//         message: '请求成功',
+//     },
+//     path:'/index'
+//
+// }];
 export {
     baseUrl,
-    routerMode,
+    // routerMode,
     baseImgUrl,
-    timeout,
-    httpCode
+    timeout
 }
