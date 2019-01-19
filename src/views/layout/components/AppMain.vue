@@ -1,9 +1,9 @@
 <template>
     <section class="main">
         <transition name="fade" mode="out-in">
-            <!--<keep-alive :include="cachedViews">-->
+            <keep-alive>
                 <router-view></router-view>
-            <!--</keep-alive>-->
+            </keep-alive>
         </transition>
     </section>
 </template>

@@ -1,6 +1,11 @@
 <template>
     <div class="tags-view">
-        <div class="tags-outer">
+        <div ref="tagsView"
+             class="tags-outer"
+
+             @mousewheel="handlescroll"
+             @DOMMouseScroll="handlescroll"
+        >
             <div class="tags-handle">
                 <el-dropdown trigger="click" @command="handleCommand">
                     <el-button type="primary" class="el-dropdown-link">下拉菜单<i
@@ -11,9 +16,12 @@
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
-            <div class="tags-labels">
+            <div class="tags-labels"
+                 ref="tagsScroll"
+                 :style="{ left: tagsScrollLeft + 'px' }">
                 <el-tag
-                        v-for="(item,i) in visitedViews"
+                        ref="tag"
+                        v-for="(item) in visitedViews"
                         size="large"
                         closable
                         :key="item.path"
@@ -34,6 +42,7 @@
         data() {
             return {
                 viewName: '',
+                tagsScrollLeft: 0
             }
         },
         mounted() {
@@ -45,8 +54,8 @@
                 return this.$store.getters.visitedViews
             }
         },
-        watch:{
-            $route(){
+        watch: {
+            $route() {
                 this.addViewTag();
             }
         },
@@ -82,8 +91,37 @@
                     return false;
                 }
                 this.viewName = route.name;
-                this.$store.dispatch('addVisitedTag',route)
+                this.$store.dispatch('addVisitedTag', route)
 
+            },
+            handlescroll(event) {
+                console.log( this.$refs.tagsView.offsetWidth)
+                let type = event.type;
+                let delta = 0;
+                if (type === 'DOMMouseScroll' || type === 'mousewheel') {
+                    delta = event.wheelDelta ? event.wheelDelta : -(event.detail || 0) * 40
+                }
+                let left = 0;
+                if (delta > 0) {
+                    left = Math.min(0, this.tagsScrollLeft + delta)
+                } else {
+                    console.log('sdfsdf', this.$refs.tagsView.offsetWidth)
+                    if (this.$refs.tagsView.offsetWidth - 100 < this.$refs.tagsScroll.offsetWidth) {
+                        if (this.tagsScrollLeft <-(this.$refs.tagsScroll.offsetWidth - this.$refs.tagsView.offsetWidth + 100)) {
+                            left = this.tagsScrollLeft
+                        } else {
+                            left = Math.max(
+                                this.tagsScrollLeft + delta,
+                                this.$refs.tagsView.offsetWidth -
+                                this.$refs.tagsScroll.offsetWidth -
+                                100
+                            )
+                        }
+                    } else {
+                        this.tagsScrollLeft = 0
+                    }
+                }
+                this.tagsScrollLeft = left
             }
         }
     }
@@ -129,10 +167,10 @@
             }
 
             .tags-labels {
-                width: 100%;
                 height: 100%;
                 box-sizing: border-box;
                 padding: 2px 10px;
+                position: absolute;
 
                 .el-tag {
                     transition: all .3s;
