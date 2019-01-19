@@ -27,19 +27,25 @@ Mock.mock('/api/menu', 'get', () => {
             "children": [{
                 "name": "关于我",
                 "name_en": "About",
-                "router": "/about",
+                "router": "/index/about",
                 "icon": "el-icon-document"
             }]
         }, {
             "name": "部门管理",
-            "name_en": "Bm",
-            "router": "/Bm",
+            "name_en": "BM",
+            "router": "/index/BM",
             "icon": "el-icon-picture-outline",
             "children": []
         },{
             "name": "权限",
             "name_en": "Authority",
-            "router": "/authority",
+            "router": "/index/Authority",
+            "icon": "el-icon-setting",
+            "children": []
+        },{
+            "name": "视图设计",
+            "name_en": "ViewDesign",
+            "router": "/index/ViewDesign",
             "icon": "el-icon-setting",
             "children": []
         }]

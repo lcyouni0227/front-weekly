@@ -3,7 +3,7 @@ import Cookes from 'js-cookie';
 const app = {
     state: {
         i18n: Cookes.get('i18n') || 'zh',
-        visitedViews: [{name: "工作台", path: '/'}, {name: "工作台ddd", path: '/ddd'}]
+        visitedViews: []
     },
     mutations: {
         SET_LANGUAGE: (state, i18n) => {
@@ -12,11 +12,12 @@ const app = {
         },
         ADD_VISITED_TAG: (state, view) => {
             if (state.visitedViews.some(item => view.name === item.name)) {
-                state.visitedViews.push({
-                    name: view.name,
-                    path: view.path
-                })
+                return;
             }
+            state.visitedViews.push({
+                name: view.name,
+                path: view.path
+            })
         },
         REMOVE_VISITED_TAG: (state, view) => {
             for (let [index, item] of state.visitedViews.entries()) {

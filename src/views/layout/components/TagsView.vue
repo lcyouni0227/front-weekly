@@ -17,7 +17,8 @@
                         size="large"
                         closable
                         :key="item.path"
-
+                        :class="item.name==viewName? 'el-tag-active' : ''"
+                        @click.native="goto(item)"
                         @close="closeTag(item)"
                 >
                     {{item.name}}
@@ -35,9 +36,18 @@
                 viewName: '',
             }
         },
+        mounted() {
+            this.addViewTag()
+
+        },
         computed: {
             visitedViews() {
                 return this.$store.getters.visitedViews
+            }
+        },
+        watch:{
+            $route(){
+                this.addViewTag();
             }
         },
         methods: {
@@ -49,18 +59,31 @@
                         this.$router.push('/');
                         this.viewName = 'index';
                         break;
-                    case 'close':
+                    case 'closeOther':
                         if (this.visitedViews.length === 1) break;
                         this.$store.dispatch('removeOtherTag', router);
                         break;
                 }
             },
             closeTag(tag) {
-                debugger
                 if (this.visitedViews.length === 1) {
                     this.$router.push('index');
                 }
                 this.$store.dispatch('removeVisitedTag', tag);
+            },
+            goto(tag) {
+                this.$router.push(tag.path);
+                this.viewName = tag.name;
+
+            },
+            addViewTag() {
+                const route = this.$route;
+                if (!route.name) {
+                    return false;
+                }
+                this.viewName = route.name;
+                this.$store.dispatch('addVisitedTag',route)
+
             }
         }
     }
@@ -115,8 +138,12 @@
                     transition: all .3s;
                     border-radius: 2px;
                     cursor: pointer;
-                    color: #000;
-                    margin: 1px 4px 0px 0px
+                    margin: 1px 4px 0px 0px;
+                    user-select: none;
+                }
+
+                .el-tag-active {
+                    background-color: rgba(64, 158, 255, 0.3) !important;
                 }
 
             }
