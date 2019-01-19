@@ -15,9 +15,9 @@
                     </div>
                     <div class="login-form">
                         <el-form :model="login" :rules="rules" ref="ruleForm">
-                            <el-form-item prop="username">
+                            <el-form-item prop="passport">
                                 <el-input :placeholder="$t('login.userplaceholder')"
-                                          v-model="login.username"></el-input>
+                                          v-model="login.passport"></el-input>
                             </el-form-item>
                             <el-form-item prop="password">
                                 <el-input :placeholder="$t('login.pwdplaceholder')" type="password"
@@ -126,15 +126,15 @@
         data() {
             return {
                 //连接地址
-                imageUrl: "/public/checkCode",
+                imageUrl: this.changeCode(),
                 lang: this.$store.state.app.language,
                 login: {
-                    username: '',
+                    passport: '',
                     password: '',
                     checkcode: ''
                 },
                 rules: {
-                    username: [
+                    passport: [
                         {
                             required: true,
                             message: this.$t('login.valid.userexist'),
@@ -185,11 +185,8 @@
              * 变换验证码
              */
             changeCode: function () {
-                let that = this;
-                let url = that.imageUrl;
                 let rand = Math.floor(Math.random() * (1000 + 1));
-                url += '?' + rand;
-                that.imageUrl = url;
+                this.imageUrl = "/public/checkCode?" + rand;
             },
             //转换以后清除文字，并开始运动
             wrapSwitch(state) {
@@ -205,26 +202,18 @@
                 let that = this;
                 this.$refs[formName].validate(async valid => {
                     if (valid) {
-                        try {
-                            let {username, password, checkcode} = this.login;
-                            that.$post('/public/login', {passport: username, pwd: password, checkcode, os: '0'}
-                            ).then(res => {
-                                if (res.status == "1") {
-                                    that.$message({message: "登陆成功", type: 'success'});
-                                    that.$router.push('/index');
-                                } else {
-                                    that.changeCode();
-                                    that.$message({message: res.message, type: 'error'});
-                                }
-                            }).catch(res=>{
+                        that.$post('/public/login',this.login).then(res => {
+                            if (res.code == 1) {
+                                that.$message({message: "登陆成功", type: 'success'});
+                                that.$router.push('/index');
+                            } else {
                                 that.changeCode();
-                                that.$message({message: res.message, type: 'warning'});
-                            })
-
-
-                        } catch (error) {
-                            throw new Error(error)
-                        }
+                                that.$message({message: res.message, type: 'error'});
+                            }
+                        }).catch(res=>{
+                            that.changeCode();
+                            that.$message({message: res.message, type: 'warning'});
+                        })
                     } else {
                         this.$message.error(this.$t('login.validfaild'))
                     }

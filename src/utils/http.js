@@ -1,23 +1,17 @@
 import axios from 'axios';
 import {Message, Loading} from "element-ui";
-import qs from 'qs';
 import {baseUrl, timeout} from './../config/config'
 import router from "../router";
 
-// axios.defaults.baseURL = appConfig.xhr.baseURL; // 配置axios请求的地址
-// axios.defaults.headers.post['Content-Type'] = 'application/json; charset=utf-8';
-// axios.defaults.crossDomain = true;
-// axios.defaults.withCredentials = true;  //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
-
 let loadingInstance = null;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8;';
 const http = axios.create({
     baseURL: baseUrl,
     timeout: timeout,
-    crossDomain: true,
-    withCredentials: true
+    crossDomain: true,  //设置cross跨域
+    withCredentials: true   //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
 });
-// http.defaults.crossDomain = true;
-// http.defaults.withCredentials = true;  //设置cross跨域 并设置访问权限 允许跨域携带cookie信息
+
 function startLoading(text = '') { //使用Element loading-start 方法
     loadingInstance = Loading.service({
         lock: true,
@@ -39,60 +33,57 @@ function endLoading() { //使用Element loading-close 方法
  * @param isSubmit 是否是提交接口
  * @return {object} 响应正常就返回响应数据否则返回错误信息
  */
-function checkStatus(response, isSubmit) {
+function checkStatus(res) {
     // 如果状态码正常就直接返回数据,这里的状态码是htttp响应状态码有400，500等，不是后端自定义的状态码
-    if (response && ((response.status === 200 || response.status === 304 || response.status === 400))) {
-
-        return checkCode(response.data, isSubmit); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
+    if (res && ((res.status === 200 || res.status === 304 || res.status === 400))) {
+        return checkCode(res.data); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
     } else {
-        let error = response;
-        if (error && error.response) {
-            switch (error.response.status) {
+        if (res && res.status) {
+            switch (res.status) {
                 case 400:
-                    error.message = '请求错误(400)';
+                    res.message = '请求错误(400)';
                     break;
                 case 401:
-                    error.message = '未授权，请重新登录(401)';
+                    res.message = '未授权，请重新登录(401)';
                     break;
                 case 403:
-                    error.message = '拒绝访问(403)';
+                    res.message = '拒绝访问(403)';
                     break;
                 case 404:
-                    error.message = '请求出错(404)';
+                    res.message = '请求出错(404)';
                     break;
                 case 408:
-                    error.message = '请求超时(408)';
+                    res.message = '请求超时(408)';
                     break;
                 case 500:
-                    error.message = '服务器错误(500)';
+                    res.message = '服务器错误(500)';
                     break;
                 case 501:
-                    error.message = '服务未实现(501)';
+                    res.message = '服务未实现(501)';
                     break;
                 case 502:
-                    error.message = '网络错误(502)';
+                    res.message = '网络错误(502)';
                     break;
                 case 503:
-                    error.message = '服务不可用(503)';
+                    res.message = '服务不可用(503)';
                     break;
                 case 504:
-                    error.message = '网络超时(504)';
+                    res.message = '网络超时(504)';
                     break;
                 case 505:
-                    error.message = 'HTTP版本不受支持(505)';
+                    res.message = 'HTTP版本不受支持(505)';
                     break;
                 default:
-                    error.message = `连接出错(${error.response.status})!`;
+                    res.message = `连接出错(${res.status})!`;
             }
         } else {
-            error.message = '连接服务器失败!'
+            res.message = '连接服务器失败!'
         }
         Message({
             showClose: true,
             type: 'error',
-            message: error.message
+            message: res.message
         });
-        endLoading();
     }
 }
 
@@ -101,98 +92,69 @@ function checkStatus(response, isSubmit) {
  * @param {object} res 是后台返回的对象或者自定义的网络异常对象，不是http 响应对象
  * @return {object} 返回后台传过来的数据对象，包含code,message,data等属性，
  **/
-function checkCode(res, isSubmit) {
-    let type = "error", message = "";
-    switch (res.status) {
-        case "1":
-            message = "恭喜你，加载成功！";
-            type = "success";
+function checkCode(res) {
+    let message = "";
+    switch (res.code) {
+        case 1:
             break;
-        case "0":
+        case 0:
             message = "执行失败";
             break;
-        case "-1":
+        case -1:
             message = "系统异常";
             break;
-        case "-2":
+        case -2:
             message = "未登陆";
             router.push({
                 path: "/"
             });
-            sessionStorage.removeItem('userInfo');
+            // sessionStorage.removeItem('userInfo');
             break;
-        case "-3":
+        case -3:
             message = "权限不足";
-            break;
-        case "-100":
-            message = "数据源异常";
-            break;
-        case "-101":
-            message = "请求参数异常";
             break;
         default:
             message = "网络异常";
             break;
     }
-    if (type == 'error' || isSubmit == true) {
+    if (message != '') {
         Message({
             showClose: true,
             message: message,
-            type: type
+            type: 'error'
         });
     }
-    endLoading();
     return res;
 }
 
-/**
- * axios请求拦截器
- * @param {object} config axios请求配置对象
- * @return {object} 请求成功或失败时返回的配置对象或者promise error对象
- **/
-http.interceptors.request.use(config => {
-    return config;
-}, error => {
-    endLoading();
-    return Promise.reject(error);
-});
-/**
- * axios 响应拦截器
- * @param {object} response 从服务端响应的数据对象或者error对象
- * @return {object} 响应成功或失败时返回的响应对象或者promise error对象
- **/
-http.interceptors.response.use(config => {
-    return config;
-}, error => {
-    endLoading();
-    return Promise.resolve(error)
-});
 export default {
     /**
      *
      * @param url 地址
      * @param data 数据
      * @param isLoading 是否需要动画,false不需要
-     * @param isSubmit 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
-    post(url, data = {}, isLoading = true, isSubmit = false) {
+    post(url, params = {}, isLoading = true) {
         if (isLoading) {
             startLoading();
         }
         return http({
                 method: 'post',
                 url,
-                data: qs.stringify(data),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;"
-                }
+                params
             }
         ).then(res => {
-            return checkStatus(res, isSubmit);
+            endLoading();
+            return checkStatus(res);
+        }).catch(() => {
+            endLoading();
+            Message({
+                showClose: true,
+                message: '网络异常',
+                type: 'error'
+            });
         })
-
     },
     /**
      *
@@ -202,21 +164,25 @@ export default {
      * @param isSubmit 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
-    get(url, params = {}, isLoading = true, isSubmit = true) {
-
+    get(url, params = {}, isLoading = true) {
         if (isLoading) {
             startLoading();
         }
         return http({
                 method: 'get',
                 params,
-                url,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                url
             }
         ).then(res => {
-            return checkStatus(res, isSubmit);
+            endLoading();
+            return checkStatus(res);
+        }).catch(() => {
+            endLoading();
+            Message({
+                showClose: true,
+                message: '网络异常',
+                type: 'error'
+            });
         })
     },
     /**
@@ -226,19 +192,27 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileUpload(url, data = {}, isLoading, isSubmit = false) {
+    fileUpload(url, params = {}, isLoading) {
         if (isLoading) {
             startLoading();
         }
         return axios({
             method: 'post',
             url: url,
-            data,
+            params,
             headers: {
                 'Content-Type': 'multipart/form-data;'
             },
         }).then((res) => {
-            return checkStatus(res, isSubmit)
+            endLoading();
+            return checkStatus(res)
+        }).catch(() => {
+            endLoading();
+            Message({
+                showClose: true,
+                message: '网络异常',
+                type: 'error'
+            });
         })
     },
 
@@ -249,23 +223,29 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileDown(url, data = {}, isLoading, isSubmit = false) {
+    fileDown(url, params = {}, isLoading) {
         if (isLoading) {
             startLoading();
         }
         return axios({
             method: 'post',
             url: url,
-            params: data,
+            params,
             headers: {
                 'Content-Type': 'application/x-download;charset=UTF-8'
             },
             responseType: 'blob',
         }).then((res) => {
+            endLoading();
             return res
+        }).catch(() => {
+            endLoading();
+            Message({
+                showClose: true,
+                message: '网络异常',
+                type: 'error'
+            });
         })
     },
     Axios: axios
 }
-
-
