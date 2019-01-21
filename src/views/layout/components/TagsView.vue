@@ -65,7 +65,7 @@
                 switch (command) {
                     case "closeAll":
                         this.$store.dispatch('removeAllTag');
-                        this.$router.push('/');
+                        this.$router.push('/index');
                         this.viewName = 'index';
                         break;
                     case 'closeOther':
@@ -111,10 +111,7 @@
                             left = this.tagsScrollLeft
                         } else {
                             left = Math.max(
-                                this.tagsScrollLeft + delta,
-                                this.$refs.tagsView.offsetWidth -
-                                this.$refs.tagsScroll.offsetWidth -
-                                100
+                                this.tagsScrollLeft + delta, this.$refs.tagsView.offsetWidth - this.$refs.tagsScroll.offsetWidth - 100
                             )
                         }
                     } else {

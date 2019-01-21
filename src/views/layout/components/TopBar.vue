@@ -56,15 +56,15 @@
             },
             toggleFullscreen() {
                 if (!screenfull.enabled) {
-                    this.$message.warning('您的浏览器不支持全屏')
+                    this.$message.warning('您的浏览器不支持全屏');
                     return false
                 }
-                screenfull.toggle()
+                screenfull.toggle();
                 // isFullscreen 居然是反的
                 this.isFullscreen = !screenfull.isFullscreen
             },
             logout() {
-                this.$router.push('/login')
+                this.$router.push('/')
             },
 
         }
