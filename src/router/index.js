@@ -4,8 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router);
 const layout = () => import('@/views/layout');
 const notFound = () => import("@/components/common/404");
-const login = () => import('@/views/login');
-const login1 = () => import('@/views/login/login');
+const login = () => import('@/views/login/login');
 //权限管理
 const authority = () => import('@/views/Authority');
 //视图设计
@@ -14,22 +13,23 @@ const ViewDesign = () => import('@/views/ViewDesign');
 const BM = () => import('@/views/BM');
 //关于我们
 const About = () => import('@/views/About');
+const subSystem = () => import('@/views/subSystem');
 const routes = [
     {
-        path: '/login',
-        name: '登录',
-        component: login1,
-
-    },
-    {
         path: '/',
-        redirect: '/index'
+        name: '登录',
+        component: login,
+
     },
     {
         path: '/index',
         name: '仪表盘',
         component: layout,
         children: [{
+            path: 'subSystem',
+            name: '子系统管理',
+            component:subSystem
+        },{
             path: 'authority',
             name: '权限管理',
             component:authority

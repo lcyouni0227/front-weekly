@@ -166,11 +166,10 @@ export default {
      * @param url 地址
      * @param params 数据
      * @param isLoading 是否需要动画,false不需要
-     * @param isSubmit 是否是提交接口
+     * @param isMessage 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
     get(url, params = {}, isLoading = true, isMessage = true) {
-        debugger;
         if (isLoading) {
             startLoading();
         }
@@ -181,7 +180,6 @@ export default {
             }
         ).then(res => {
             endLoading();
-            debugger;
             return checkStatus(res, isMessage);
         }).catch(() => {
             endLoading();

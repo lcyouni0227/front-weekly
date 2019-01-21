@@ -14,9 +14,9 @@ var loginData = function () {
             },]
     }
     return mockData
-}
+};
 Mock.mock('/user/loginData', 'get', loginData);
-Mock.mock('/api/menu', 'get', () => {
+Mock.mock('/api/getMenu', 'get', () => {
     return {
         code:1,
         data: [{
@@ -28,6 +28,17 @@ Mock.mock('/api/menu', 'get', () => {
                 "name": "关于我",
                 "name_en": "About",
                 "router": "/index/about",
+                "icon": "el-icon-document"
+            }]
+        }, {
+            "name": "基础设置",
+            "name_en": "baseSetting",
+            "router": "/index",
+            "icon": "el-icon-time",
+            "children": [{
+                "name": "子系统",
+                "name_en": "subSystem",
+                "router": "/index/subSystem",
                 "icon": "el-icon-document"
             }]
         }, {
@@ -51,4 +62,4 @@ Mock.mock('/api/menu', 'get', () => {
         }]
 
     }
-})
+});
