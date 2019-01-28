@@ -40,6 +40,11 @@ Mock.mock('/api/getMenu', 'get', () => {
                 "name_en": "subSystem",
                 "router": "/index/subSystem",
                 "icon": "el-icon-document"
+            },{
+                "name": "xtableEdit",
+                "name_en": "xtableEdit",
+                "router": "/index/xtableEdit",
+                "icon": "el-icon-document"
             }]
         }, {
             "name": "部门管理",

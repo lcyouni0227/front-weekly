@@ -9,7 +9,10 @@ import './assets/font/iconfont.css'
 import i18n from './lang';
 import $http from './utils/http';
 import {baseUrl, baseImgUrl} from './config/config'
-import jsonUtil from './utils/jsonUtil'
+import xcomponents from './xcomponents'
+
+Vue.use(xcomponents);
+
 // 使用axios兼容ie9+
 Promise.polyfill();
 //使用element,并设置国际化
@@ -33,7 +36,11 @@ Vue.prototype.$get = $http.get;
 Vue.prototype.$fileUpload = $http.fileUpload;
 Vue.prototype.$fileDown = $http.fileDown;
 
-Vue.prototype.$jsonUtil = jsonUtil;
+/** 表格编辑状态 */
+Vue.prototype.$tableRowNoEdit = function(scope) {
+    let vue = scope._self;
+    return !(vue.selected && vue.selected.rowNumber == scope.$index);
+};
 
 new Vue({
     router,

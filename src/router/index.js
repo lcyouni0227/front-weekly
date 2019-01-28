@@ -14,6 +14,8 @@ const BM = () => import('@/views/BM');
 //关于我们
 const About = () => import('@/views/About');
 const subSystem = () => import('@/views/subSystem');
+const xtableEdit = () => import('@/xcomponents/xtableEdit');
+
 const routes = [
     {
         path: '/',
@@ -29,6 +31,10 @@ const routes = [
             path: 'subSystem',
             name: '子系统管理',
             component:subSystem
+        },{
+            path: 'xtableEdit',
+            name: 'xtableEdit',
+            component:xtableEdit
         },{
             path: 'authority',
             name: '权限管理',

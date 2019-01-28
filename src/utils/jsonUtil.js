@@ -14,5 +14,4 @@ function jsonIsEmpty(json){
   return true;
 }
 
-let jsonUtil={jsonDiff:jsonDiff,jsonIsEmpty:jsonIsEmpty};
-export default jsonUtil
+export default {jsonDiff,jsonIsEmpty}
