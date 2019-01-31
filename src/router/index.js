@@ -14,7 +14,7 @@ const BM = () => import('@/views/BM');
 //关于我们
 const About = () => import('@/views/About');
 const subSystem = () => import('@/views/subSystem');
-const xtableEdit = () => import('@/xcomponents/xtableEdit');
+const xtableEdit = () => import('@/xcomponents/component/xtableEdit');
 
 const routes = [
     {
