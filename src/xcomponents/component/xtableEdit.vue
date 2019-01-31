@@ -205,13 +205,12 @@
             },
             handelTableRowCancel(index) {
                 if(this.selected) {
-                    // if (this.selected.rowData == "{}" || jsonUtil.jsonIsEmpty(this.rows[index])) {
-                    //     //空行删除
-                    //     this.rows.splice(index, 1);
-                    // } else {
-                    //     this.rows[index] = JSON.parse(this.selected.rowData);
-                    // }
-                    this.rows[index] = JSON.parse(this.selected.rowData);
+                    if (this.selected.rowData == "{}" || jsonUtil.jsonIsEmpty(this.rows[index])) {
+                        //空行删除
+                        this.rows.splice(index, 1);
+                    } else {
+                        this.rows[index] = JSON.parse(this.selected.rowData);
+                    }
                     this.selected = null;
                 }
             },

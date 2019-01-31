@@ -12,7 +12,7 @@
                 :collapse="isCollapse"
                 class="sideMenu"
         >
-            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']">
+            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color: #03291c;">
                 <span v-show="!isCollapse">菜    单</span>
                 <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
             </h3>

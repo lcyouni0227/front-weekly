@@ -39,7 +39,9 @@
     export default {
         created: function () {
             if(!this.query){
-                this.query={'querySymbol':{}};
+                this.query = {};
+                this.query[_const.querySymbol] = {};
+                // this.query={'querySymbol':{}};
             }
         }
     };

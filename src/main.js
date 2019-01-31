@@ -13,6 +13,7 @@ import {baseUrl, baseImgUrl} from './config/config'
 // import VeeValidate from 'vee-validate';
 import xcomponents from './xcomponents';
 import style from './xcomponents/support/style';
+import './xcomponents/support/global';
 
 // var Validator = require('vue-validator');
 // Vue.use(Validator);
