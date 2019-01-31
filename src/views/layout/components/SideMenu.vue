@@ -1,9 +1,8 @@
 <!-- 左侧导航组件 -->
-<!-- 使用说明：<side-bar></side-bar> -->
 <template>
     <el-scrollbar id="sidebar-wrap" class="scrollbar-wrapper">
         <el-menu
-                background-color="#556d84"
+                background-color="#545c64"
                 text-color="#fff"
                 :default-active="defaultActive"
                 :unique-opened="true"
@@ -12,7 +11,7 @@
                 :collapse="isCollapse"
                 class="sideMenu"
         >
-            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color: #03291c;">
+            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color:rgb(52,68,74)">
                 <span v-show="!isCollapse">菜    单</span>
                 <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
             </h3>

@@ -56,7 +56,7 @@
 
     .el-aside {
         transition: width .3s;
-        background:#556d84;
+        background:#545c64;
         color: #fff;
         overflow: hidden;
     }
