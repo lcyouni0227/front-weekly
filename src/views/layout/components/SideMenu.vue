@@ -40,13 +40,20 @@
         name: "sidemenu",
         created() {
             const that = this;
-            this.$get('/getMenu', {},true,false).then(res => {
+            this.$axios.get('/getMenu', {},true,false).then(res => {
                 that.menu = res.data;
-            })
+            });
+            // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
+            clearInterval(this.timer);
+            this.timer = setInterval(() => {
+                this.$axios.get("/user/online");
+            }, 600000);
+            this.setTimer();
         },
         data() {
             return {
-                menu: []
+                menu: [],
+                timer: null
             };
         },
         computed: {
@@ -61,6 +68,18 @@
             toggleSiderBar() {
                 this.$store.commit('toggleSiderBar')
             },
+            setTimer() {
+                if(this.timer == null) {
+                    this.timer = setInterval(() => {
+                        this.$axios.get("/user/online");
+                    }, 600000)
+                }
+            }
+        },
+        destroyed: function () {
+            // 每次离开当前界面时，清除定时器
+            clearInterval(this.timer);
+            this.timer = null
         }
     };
 </script>

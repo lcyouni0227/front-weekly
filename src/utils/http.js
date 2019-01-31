@@ -1,10 +1,11 @@
 import axios from 'axios';
-import {Message, Loading} from "element-ui";
+import qs from 'qs';
+import {Message,Loading} from "element-ui";
 import {baseUrl, timeout} from './../config/config'
 import router from "../router";
 
 let loadingInstance = null;
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8;';
+axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 const http = axios.create({
     baseURL: baseUrl,
     timeout: timeout,
@@ -20,12 +21,15 @@ function startLoading(text = '') { //使用Element loading-start 方法
     })
 }
 
-function endLoading() { //使用Element loading-close 方法
+function endLoading() {
     if (loadingInstance) {
         loadingInstance.close()
     }
 }
 
+function isString(str){
+    return (typeof str=='string')&&str.constructor==String;
+}
 /**
  *
  * 请求发出后检查返回的状态码,统一捕获正确和错误的状态码，正确就直接返回response,错误就自定义一个返回对象
@@ -34,9 +38,8 @@ function endLoading() { //使用Element loading-close 方法
  * @return {object} 响应正常就返回响应数据否则返回错误信息
  */
 function checkStatus(res, isMessage) {
-    // 如果状态码正常就直接返回数据,这里的状态码是htttp响应状态码有400，500等，不是后端自定义的状态码
     if (res && ((res.status === 200 || res.status === 304 || res.status === 400))) {
-        return checkCode(res.data, isMessage); // 直接返回http response响应的data,此data会后端返回的数据数据对象，包含后端自定义的code,message,data属性
+        return checkCode(isString(res.data)?JSON.parse(res.data):res.data, isMessage);
     } else {
         if (res && res.status) {
             switch (res.status) {
@@ -79,7 +82,7 @@ function checkStatus(res, isMessage) {
         } else {
             res.message = '连接服务器失败!'
         }
-        Message({
+        this.$message({
             showClose: true,
             type: 'error',
             message: res.message
@@ -93,43 +96,71 @@ function checkStatus(res, isMessage) {
  * @return {object} 返回后台传过来的数据对象，包含code,message,data等属性，
  **/
 function checkCode(res, isMessage) {
-    if (!isMessage) {
-        return res
-    }
-    let message = "";
-    let infotype = 'error';
+    let message = res.message;
+    let type = 'error';
     switch (res.code) {
         case 1:
-            message = "恭喜你，操作成功";
-            infotype = "success";
+            message = "操作成功";
+            type = "success";
             break;
         case 0:
-            message = "执行失败";
+            if(!message){
+                message = "执行失败";
+            }
             break;
         case -1:
-            message = "系统异常";
+            if(!message){
+                message = "操作部分成功";
+            }
             break;
         case -2:
-            message = "未登陆";
+            if(!message){
+                message = "未登陆";
+            }
             router.push({
-                path: "/login"
+                path: "/"
             });
             break;
         case -3:
-            message = "权限不足";
+            if(!message){
+                message = "权限不足";
+            }
             break;
         default:
-            message = "网络异常";
+            if(!message){
+                message = "网络异常";
+            }
             break;
     }
-    if (message != '') {
+    if (type=='error' || isMessage) {
         Message({
             showClose: true,
             message: message,
-            type: infotype
+            type: type
         });
     }
     return res;
+}
+function ajax(method='post',url,params,isLoading = true, isMessage = false) {
+    if (isLoading) {
+        startLoading();
+    }
+    return http({
+            method: method,
+            url: url,
+            data: params
+        }
+    ).then(res => {
+        endLoading();
+        return checkStatus(res, isMessage);
+    }).catch(() => {
+        endLoading();
+        Message({
+            showClose: true,
+            message: '网络异常',
+            type: 'error'
+        });
+    })
 }
 
 export default {
@@ -140,27 +171,14 @@ export default {
      * @param isLoading 是否需要动画,false不需要
      * @returns {Promise<AxiosResponse<any>>}
      */
-    post(url, params = {}, isLoading = true, isMessage = true) {
-        if (isLoading) {
-            startLoading();
-        }
-        return http({
-                method: 'post',
-                url,
-                params
-            }
-        ).then(res => {
-            endLoading();
-            return checkStatus(res, isMessage);
-        }).catch(() => {
-            endLoading();
-            Message({
-                showClose: true,
-                message: '网络异常',
-                type: 'error'
-            });
-        })
+    postJson(url, params = {}, isLoading = true, isMessage = false) {
+       return ajax('post',url,JSON.stringify(params),isLoading,isMessage);
     },
+
+    post(url, params = {}, isLoading = true, isMessage = false) {
+       return ajax('post',url,qs.stringify(params),isLoading,isMessage);
+    },
+
     /**
      *
      * @param url 地址
@@ -169,26 +187,11 @@ export default {
      * @param isMessage 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
+    getJson(url, params = {}, isLoading = true, isMessage = true) {
+        return ajax('get',url,JSON.stringify(params),isLoading,isMessage);
+    },
     get(url, params = {}, isLoading = true, isMessage = true) {
-        if (isLoading) {
-            startLoading();
-        }
-        return http({
-                method: 'get',
-                params,
-                url
-            }
-        ).then(res => {
-            endLoading();
-            return checkStatus(res, isMessage);
-        }).catch(() => {
-            endLoading();
-            Message({
-                showClose: true,
-                message: '网络异常',
-                type: 'error'
-            });
-        })
+        return ajax('get',url,qs.stringify(params),isLoading,isMessage);
     },
     /**
      *
@@ -228,7 +231,7 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileDown(url, params = {}, isLoading = true, isMessage = true) {
+    fileDown(url, params = {}, isLoading = true) {
         if (isLoading) {
             startLoading();
         }

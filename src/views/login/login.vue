@@ -7,40 +7,30 @@
                     <div class="logo">
                         <img src="@/assets/img/login/logo.png" alt="">
                         <div class="title">
-                            <a>
-                                <span>数字媒体</span><span
-                                    class="subtitle">研究所</span>
-                            </a>
+                            <a><span>数字媒体</span><span class="subtitle">研究所</span></a>
                         </div>
                     </div>
                     <div class="login-form">
                         <el-form :model="login" :rules="rules" ref="ruleForm">
                             <el-form-item prop="passport">
-                                <el-input :placeholder="$t('login.userplaceholder')"
-                                          v-model="login.passport"></el-input>
+                                <el-input :placeholder="$t('login.userplaceholder')" v-model="login.passport"></el-input>
                             </el-form-item>
                             <el-form-item prop="password">
-                                <el-input :placeholder="$t('login.pwdplaceholder')" type="password"
-                                          v-model="login.password"></el-input>
+                                <el-input :placeholder="$t('login.pwdplaceholder')" type="password" v-model="login.password"></el-input>
                             </el-form-item>
                             <el-row>
                                 <el-col :span="16">
                                     <el-form-item prop="checkcode">
-                                        <el-input :placeholder="$t('login.checkCodePlaceholder')"
-                                                  v-model="login.checkcode"/>
+                                        <el-input :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
-                                    <img id="code" :src="$baseImgUrl + imageUrl"
-                                         style="width:80px;border:0;cursor: pointer;margin-left: 10px;display: inline-block;margin-top: 6px"
-                                         @click.stop="changeCode()"/>
+                                    <img id="code" :src="$baseImgUrl + imageUrl" style="width:80px;border:0;cursor: pointer;margin-left: 10px;display: inline-block;margin-top: 6px" @click.stop="changeCode()"/>
                                 </el-col>
                             </el-row>
 
                             <el-form-item class="btn">
-                                <el-button type="primary" @click="handleLogin('ruleForm')">
-                                    {{$t('login.btn')}}
-                                </el-button>
+                                <el-button type="primary" @click="handleLogin('ruleForm')">{{$t('login.btn')}}</el-button>
                             </el-form-item>
 
                         </el-form>
@@ -58,9 +48,7 @@
 
                 <div v-show="!notforget">
                     <div class="title forgetwrap-title">
-                        <a>
-                            <span>数字媒体</span><span class="subtitle">研究所</span>
-                        </a>
+                        <a><span>数字媒体</span><span class="subtitle">研究所</span></a>
                     </div>
                     <div class="forget-form">
                         <el-form :model="forgetForm" ref="forgetRuleForm">
@@ -71,23 +59,18 @@
                                 <el-input :placeholder="$t('login.forget_code')" v-model="forgetForm.code"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-input :placeholder="$t('login.forget_passwrd')" type="password"
-                                          v-model="forgetForm.newPassword"></el-input>
+                                <el-input :placeholder="$t('login.forget_passwrd')" type="password" v-model="forgetForm.newPassword"></el-input>
                             </el-form-item>
                             <el-form-item>
-                                <el-input :placeholder="$t('login.confirm_passwrd')" type="password"
-                                          v-model="forgetForm.confirmPassword"></el-input>
+                                <el-input :placeholder="$t('login.confirm_passwrd')" type="password" v-model="forgetForm.confirmPassword"></el-input>
                             </el-form-item>
                             <el-form-item class="btn">
                                 <el-row :gutter="20">
                                     <el-col :span="12">
-                                        <el-button @click="wrapSwitch(true)" type="primary">
-                                            {{$t('login.forget_back')}}
-                                        </el-button>
+                                        <el-button @click="wrapSwitch(true)" type="primary">{{$t('login.forget_back')}}</el-button>
                                     </el-col>
                                     <el-col :span="12">
-                                        <el-button @click="forgetHandle" type="primary">{{$t('login.forget_btn')}}
-                                        </el-button>
+                                        <el-button @click="forgetHandle" type="primary">{{$t('login.forget_btn')}}</el-button>
                                     </el-col>
                                 </el-row>
                             </el-form-item>
@@ -202,7 +185,7 @@
                 let that = this;
                 this.$refs[formName].validate(async valid => {
                     if (valid) {
-                        that.$post('/public/login',this.login).then(res => {
+                        that.$axios.postJson('/public/login',this.login).then(res => {
                             if (res.code == 1) {
                                 that.$message({message: "登陆成功", type: 'success'});
                                 that.$router.push('/index');
