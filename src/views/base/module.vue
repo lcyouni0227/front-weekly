@@ -19,7 +19,7 @@
             <template slot-scope="scope">
                 <span v-if="$tableRowNoEdit(scope)">{{scope.row.sysid | dic('system')}}</span>
                 <x-select v-else :size="$style.size()" v-model="scope.row.sysid" placeholder="请选择"
-                          :data-source="{searchField:'name',valueField:'sysid',labelField:'name',module:'system'}"
+                          :data-source="{searchField:'name',valueField:'sysid',labelField:'name',dic:'system'}"
                 >
                 </x-select>
             </template>
