@@ -1,4 +1,4 @@
-const getters={
-    size: state => state.controlStyle.size,
+const getters = {
+    size: state => state.controlStyle.size
 };
 export default getters

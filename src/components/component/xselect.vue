@@ -31,7 +31,7 @@
             };
         },
         mounted() {
-            //初始话下拉框的值
+            //初始化下拉框的值
             this.svalue=this.value;
             if(this.dataSource.dic){
                 this.rows = this.list = this.$global.dic[this.dataSource.dic].data;
