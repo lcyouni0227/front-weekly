@@ -13,15 +13,15 @@
                     <div class="login-form">
                         <el-form :model="login" :rules="rules" ref="ruleForm">
                             <el-form-item prop="passport">
-                                <el-input :placeholder="$t('login.userplaceholder')" v-model="login.passport"></el-input>
+                                <el-input @keyup.enter.native="handleLogin('ruleForm')" :placeholder="$t('login.userplaceholder')" v-model="login.passport"></el-input>
                             </el-form-item>
                             <el-form-item prop="password">
-                                <el-input :placeholder="$t('login.pwdplaceholder')" type="password" v-model="login.password"></el-input>
+                                <el-input @keyup.enter.native="handleLogin('ruleForm')" :placeholder="$t('login.pwdplaceholder')" type="password" v-model="login.password"></el-input>
                             </el-form-item>
                             <el-row>
                                 <el-col :span="16">
                                     <el-form-item prop="checkcode">
-                                        <el-input :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
+                                        <el-input @keyup.enter.native="handleLogin('ruleForm')" :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
                                     </el-form-item>
                                 </el-col>
                                 <el-col :span="8">
@@ -90,26 +90,15 @@
 <script>
     import LangSelect from '@/components/LangSelect';
 
-
     export default {
         name: 'login',
         components: {
             LangSelect
         },
-        created() {
-            let that = this;
-            that.changeCode();
-            document.onkeydown = function () {
-                let key = window.event.keyCode;
-                if (key == 13 && (that.$route.path == '/' || that.$route.path == '/login')) {
-                    that.loginSubmit();
-                }
-            }
-        },
         data() {
             return {
                 //连接地址
-                imageUrl: this.changeCode(),
+                imageUrl: "/public/checkCode",
                 lang: this.$store.state.app.language,
                 login: {
                     passport: '',
@@ -180,7 +169,7 @@
                     this.$refs['ruleForm'].resetFields()
                 }, 300)
             },
-            //
+
             handleLogin(formName) {
                 let that = this;
                 this.$refs[formName].validate(async valid => {

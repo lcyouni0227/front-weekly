@@ -16,16 +16,16 @@
                 <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
             </h3>
             <template v-for="item in menu">
-                <el-submenu v-if="item.children.length !== 0" :index="item.router" :key="item.router">
+                <el-submenu v-if="item.children.length !== 0" :index="item.path" :key="item.path">
                     <template slot="title">
                         <i :class="item.icon"></i>
                         <span slot="title">{{ item.name}}</span>
                     </template>
-                    <el-menu-item v-for="child in item.children" :index="child.router" :key="child.router">
+                    <el-menu-item v-for="child in item.children" :index="child.path" :key="child.path">
                         <span slot="title">{{child.name}}</span>
                     </el-menu-item>
                 </el-submenu>
-                <el-menu-item v-else :index="item.router" :key="item.router">
+                <el-menu-item v-else :index="item.path" :key="item.path">
                     <i :class="item.icon"></i>
                     <span slot="title">{{ item.name}}</span>
                 </el-menu-item>
@@ -34,14 +34,15 @@
     </el-scrollbar>
 </template>
 <script>
-
     export default {
         name: "sidemenu",
         created() {
-            const that = this;
-            this.$axios.get('/getMenu', {},true,false).then(res => {
-                that.menu = res.data;
-            });
+            this.menu = this.$store.state.controlStyle.menu;
+            // this.menu = JSON.parse(window.localStorage.getItem("menu"));
+            // localStorage.removeItem("menu");
+            // this.$axios.get('/getMenu', {},true,false).then(res => {
+            //     this.menu = res.data;
+            // });
             // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
             clearInterval(this.timer);
             this.timer = setInterval(() => {
@@ -61,7 +62,7 @@
             },
             defaultActive() {
                 return this.$route.path;
-            },
+            }
         },
         methods: {
             toggleSiderBar() {

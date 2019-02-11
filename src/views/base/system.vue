@@ -1,14 +1,11 @@
+<!-- 子系统管理 -->
 <template>
-    <xtable-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
+    <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
                  :data-source="{module:'system'}"
-                 :show-pagination=true
-                 :page-sizes=[10,25,50,100]
-                 :page-size=10
-                 :show-query=true
         >
-        <template slot="query">
+        <template slot="queryArea">
             <el-form-item label="系统编号">
-                <el-input :size="$style.size()" v-model="query.sysid" placeholder="系统编号"></el-input>
+                <el-input v-tooltip="'系统编号'" :size="$style.size()" v-model="query.sysid" placeholder="系统编号"></el-input>
             </el-form-item>
             <el-form-item label="系统名称">
                 <el-input :size="$style.size()" v-query="'like'" v-model="query.name" placeholder="系统名称"></el-input>
@@ -26,23 +23,23 @@
                 <el-input v-else :size="$style.size()" v-model="scope.row.name" minlength="1" maxlength="30" placeholder="请输入系统名称"></el-input>
             </template>
         </el-table-column>
-        <el-table-column prop="memo" label="备注" width="300">
+        <el-table-column prop="memo" label="备注">
             <template slot-scope="scope">
                 <span v-if="$tableRowNoEdit(scope)">{{scope.row.memo}}</span>
                 <el-input v-else :size="$style.size()" v-model="scope.row.memo" maxlength="100" placeholder="请输入备注"></el-input>
             </template>
         </el-table-column>
-    </xtable-edit>
+    </x-table-edit>
 </template>
 
 <script>
     export default {
-        created: function () {
-            if(!this.query){
-                this.query = {};
-                this.query[_const.querySymbol] = {};
-                // this.query={'querySymbol':{}};
-            }
+        name:'system',
+        data(){
+           return {
+               module:'system',
+               query: {querySymbol: {}}
+           }
         }
     };
 </script>

@@ -1,5 +1,4 @@
 const getters={
-    size: state => state.controlStyle.size
-    // browserHeaderTitle: state => state.user.browserHeaderTitle
+    size: state => state.controlStyle.size,
 };
 export default getters

@@ -1,4 +1,4 @@
-function jsonDiff(oldJson,newJson){
+function diff(oldJson, newJson){
   let diff={};
   for(let key in newJson){
     if(oldJson[key]!=newJson[key]){
@@ -7,11 +7,11 @@ function jsonDiff(oldJson,newJson){
   }
   return diff;
 }
-function jsonIsEmpty(json){
+function isEmpty(json){
   for(let key in json){
     return false;
   }
   return true;
 }
 
-export default {jsonDiff,jsonIsEmpty}
+export default {diff,isEmpty}

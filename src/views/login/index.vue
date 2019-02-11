@@ -61,7 +61,7 @@
         created() {
             let that = this;
             that.changeCode();
-            document.onkeydown = function (e) {
+            document.onkeydown = function () {
                 let key = window.event.keyCode;
                 if (key == 13&&(that.$route.path=='/'||that.$route.path=='/login')) {
                     that.loginSubmit();

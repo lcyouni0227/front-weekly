@@ -3,6 +3,7 @@ import qs from 'qs';
 import {Message,Loading} from "element-ui";
 import {baseUrl, timeout} from './../config/config'
 import router from "../router";
+import $ from 'jquery';
 
 let loadingInstance = null;
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
@@ -174,6 +175,54 @@ export default {
     postJson(url, params = {}, isLoading = true, isMessage = false) {
        return ajax('post',url,JSON.stringify(params),isLoading,isMessage);
     },
+    syncPostJson(url, params = {}, callback, isLoading = true, isMessage = false){
+        if (isLoading) {
+            startLoading();
+        }
+        $.ajax({
+            url: baseUrl + url,//url路径
+            type: 'POST',
+            async: false, //同步
+            data: JSON.stringify(params),
+            timeout: 5000, //超时时间
+            dataType: 'json', //返回的数据格式
+            contentType:'application/json;charset=UTF-8',
+            success: function(res) {
+                endLoading();
+                res = checkCode(isString(res)?JSON.parse(res):res, isMessage);
+                callback && callback(res);
+                endLoading();
+            },
+            error: function() {
+                endLoading();
+                Message({
+                    showClose: true,
+                    message: '网络异常',
+                    type: 'error'
+                });
+            }
+        })
+    },
+
+    // async syncPostJson (url, params) {
+    //     try {
+    //         let res = await ajax('post',url,JSON.stringify(params));
+    //         // res = res.data;
+    //         console.log(res);
+    //         return res;
+    //         // return new Promise((resolve, reject) => {
+    //         //     if (res.code === 0) {
+    //         //         resolve(res)
+    //         //     } else {
+    //         //         reject(res)
+    //         //     }
+    //         // })
+    //     } catch (err) {
+    //         // return (e.message)
+    //         alert('服务器出错');
+    //         console.log(err)
+    //     }
+    // },
 
     post(url, params = {}, isLoading = true, isMessage = false) {
        return ajax('post',url,qs.stringify(params),isLoading,isMessage);
