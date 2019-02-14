@@ -37,7 +37,8 @@
                 this.rows = this.list = this.$global.dic[this.dataSource.dic].data;
             }else {
                 let query = this.$global.getDataSource(this.dataSource);
-                query.fileds = this.dataSource.valueField + ',' + this.dataSource.labelField;
+                query.fields = this.dataSource.valueField + ',' + this.dataSource.labelField;
+                // console.log(query);
                 this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
                     if (res.code == 1) {
                         this.rows = this.list = res.data.rows;

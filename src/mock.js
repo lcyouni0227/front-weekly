@@ -52,6 +52,11 @@ Mock.mock('/api/getMenu', 'get', () => {
                     path: '/index/system',
                     component:'base/system'
                 },{
+                    name: '菜单模板',
+                    icon: 'el-icon-time',
+                    path: '/index/menu_base',
+                    component:'base/menu_base'
+                },{
                     name: '模块管理',
                     icon: 'el-icon-time',
                     path: '/index/module',
@@ -61,18 +66,17 @@ Mock.mock('/api/getMenu', 'get', () => {
                     icon: 'el-icon-time',
                     path: '/index/sql',
                     component:'base/datasql'
+                },{
+                    name: '角色管理',
+                    icon: 'el-icon-time',
+                    path: '/index/role',
+                    component:'base/role'
+                },{
+                    name: '机构管理',
+                    icon: 'el-icon-time',
+                    path: '/index/org',
+                    component:'base/org'
                 }
-                // ,{
-                //     name: '角色管理',
-                //     icon: 'el-icon-time',
-                //     path: '/index/role',
-                //     // component:'base/role'
-                // },{
-                //     name: '机构管理',
-                //     icon: 'el-icon-time',
-                //     path: '/index/org',
-                //     // component:'base/org'
-                // }
                 ]
             },
             {

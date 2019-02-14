@@ -149,11 +149,6 @@ Vue.directive('query', {
     }
 });
 
-/** 表格编辑状态 */
-Vue.prototype.$tableRowNoEdit = function(scope) {
-    let vue = scope._self;
-    return !(vue.editRow && vue.editRow.rowNumber == scope.$index);
-};
 Vue.prototype.$style = style;
 
 // let query = {

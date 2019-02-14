@@ -1,6 +1,7 @@
 // 定义全局变量
 // const querySymbol='querySymbol';
 let dic={};
+
 function getDataSource(dataSource) {
     if(dataSource.source){
         return {source:dataSource.source};
@@ -10,6 +11,7 @@ function getDataSource(dataSource) {
         }
     }
 }
+
 export default {
     getDataSource,
     dic

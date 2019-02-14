@@ -11,24 +11,9 @@
                 <el-input :size="$style.size()" v-query="'like'" v-model="query.name" placeholder="系统名称"></el-input>
              </el-form-item>
         </template>
-        <el-table-column prop="sysid" label="系统编号" width="150">
-            <template slot-scope="scope">
-                <span v-if="$tableRowNoEdit(scope)">{{scope.row.sysid}}</span>
-                <el-input v-else :size="$style.size()" v-model="scope.row.sysid" required minlength="1" maxlength="6" data-vv-name="sysid" placeholder="请输入系统编号"></el-input>
-            </template>
-        </el-table-column>
-        <el-table-column prop="name" label="系统名称" width="200">
-            <template slot-scope="scope">
-                <span v-if="$tableRowNoEdit(scope)">{{scope.row.name}}</span>
-                <el-input v-else :size="$style.size()" v-model="scope.row.name" minlength="1" maxlength="30" placeholder="请输入系统名称"></el-input>
-            </template>
-        </el-table-column>
-        <el-table-column prop="memo" label="备注">
-            <template slot-scope="scope">
-                <span v-if="$tableRowNoEdit(scope)">{{scope.row.memo}}</span>
-                <el-input v-else :size="$style.size()" v-model="scope.row.memo" maxlength="100" placeholder="请输入备注"></el-input>
-            </template>
-        </el-table-column>
+        <x-table-column prop="sysid" label="系统编号" width="150"/>
+        <x-table-column prop="name" label="系统名称" width="200"/>
+        <x-table-column prop="memo" label="备注"/>
     </x-table-edit>
 </template>
 
@@ -37,7 +22,6 @@
         name:'system',
         data(){
            return {
-               module:'system',
                query: {querySymbol: {}}
            }
         }

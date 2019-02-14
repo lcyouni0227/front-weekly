@@ -53,7 +53,7 @@
             showTopButtonArea:{type: Boolean, default: false},  /* 是否显示表格顶部按钮区域 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
-            dic:{type: Object, default(){return null}},  /* 字典配置 */
+            dic:{type: Array, default(){return null}},  /* 字典配置 */
 
             size: String,
             width: [String, Number],
@@ -100,6 +100,10 @@
         },
         data(){
             return {
+                isTree: null,
+                treeNode: null,
+                fields:null,
+
                 query: {querySymbol: {}},
                 buttons:null, /* 操作按钮 */
                 selectRowIndex:null, /* 选中的行 */
@@ -114,16 +118,21 @@
             }
         },
         created() {
-            if(this.dic && !this.$global.dic[this.dic.name]){
-                let query=this.$global.getDataSource(this.dic.datasource);
-                query.fields = [this.dic.datasource.valueField,this.dic.datasource.labelField];
-                this.$axios.syncPostJson(this.dic.datasource.url || '/data/query',query,(res)=>{
-                    if(res.code==1) {
-                        this.$global.dic[this.dic.name] = {valueField:this.dic.datasource.valueField,labelField:this.dic.datasource.labelField,data:res.data.rows};
-                    }else{
-                        this.$global.dic[this.dic.name] = [];
+            if(this.dic){
+                for (let v of this.dic) {
+                    if(!this.$global.dic[v.name]){
+                        let query=this.$global.getDataSource(v.datasource);
+                        query.fields = v.datasource.valueField+','+v.datasource.labelField;
+                        // console.log(query);
+                        this.$axios.syncPostJson(v.datasource.url || '/data/query',query,(res)=>{
+                            if(res.code==1) {
+                                this.$global.dic[v.name] = {valueField:v.datasource.valueField,labelField:v.datasource.labelField,data:res.data.rows};
+                            }else{
+                                this.$global.dic[v.name] = [];
+                            }
+                        });
                     }
-                });
+                }
             }
 
             if(this.showRowButton || this.showTopButton) {
@@ -176,10 +185,10 @@
                 }
             },
             handelTableQuery(){
+                // console.log(this.$refs.table.columns.property);
                 if(this.isRun()){
                     return;
                 }
-
                 let query = this.$global.getDataSource(this.dataSource);
                 query.page = this.currentPageX;
                 query.size = this.pageSizeX;
@@ -201,14 +210,41 @@
                     if(rule.length>0){
                         query.filter = {'out':'and','in':'and','rule':rule};
                     }
+                    if(this.dataSource.module){
+                        if(this.fields == null){
+                            for(let v of this.$refs.table.columns) {
+                                if (v.property) {
+                                    this.fields == null ? this.fields = v.property : this.fields += ',' + v.property
+                                }
+                            }
+                        }
+                        query.fields = this.fields;
+                    }
                 }
                 // console.log(query);
                 this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
                     if(res.code==1) {
                         this.total = res.data.total;
                         this.keyField = res.data.keyField;
-                        this.rows = res.data.rows;
                         this.clearSelect();
+                        if(this.isTree == null){
+                            for (let v of this.$options._renderChildren){
+                                if (v.tag.indexOf("XTableTreeColumn")>0){
+                                    this.isTree = true;
+                                    this.treeNode = v;
+                                    this.rows = this.treeNode.componentInstance.toTree(res.data.rows);
+                                    this.endRun();
+                                    return;
+                                }
+                            }
+                            this.isTree = false;
+                        }else if(this.isTree){
+                            this.rows = this.treeNode.componentInstance.toTree(res.data.rows);
+                            this.endRun();
+                            return;
+                        }
+
+                        this.rows = res.data.rows;
                         // if (this.showRowButton && this.rows.length == 0  && this.hasButton('add')) {
                         //     this.rows.push(this.initNewRowData);
                         // }
@@ -217,7 +253,6 @@
                 }).catch(() => {
                     this.endRun();
                 });
-
             },
             // checkTableRowStatus(){
             //     if(this.editRow){
