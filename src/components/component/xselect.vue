@@ -7,10 +7,10 @@
                :remote-method="remoteMethod"
                :loading="loading">
         <el-option
-            v-for="item in rows"
-            :key="item[dataSource.searchField]"
-            :label="item[dataSource.labelField]"
-            :value="item[dataSource.valueField]">
+            v-for="(item,index) in rows"
+            :key="index"
+            :label="item[dataField.labelField]"
+            :value="item[dataField.valueField]">
         </el-option>
     </el-select>
 </template>
@@ -24,20 +24,30 @@
         },
         data(){
             return {
+                dataField:{labelField:'id',valueField:'name'},
                 rows: [],
                 list: [],
                 loading: false,
                 svalue:''
             };
         },
-        mounted() {
+        created(){
             //初始化下拉框的值
             this.svalue=this.value;
             if(this.dataSource.dic){
-                this.rows = this.list = this.$global.dic[this.dataSource.dic].data;
-            }else {
+                let v = this.$global.dic[this.dataSource.dic];
+                this.dataField.valueField = v.valueField;
+                this.dataField.labelField = v.labelField;
+                this.rows = this.list = v.data;
+            }else{
+                if(this.dataSource.valueField){
+                    this.dataField.valueField = this.dataSource.valueField;
+                }
+                if(this.dataSource.labelField){
+                    this.dataField.labelField = this.dataSource.labelField;
+                }
                 let query = this.$global.getDataSource(this.dataSource);
-                query.fields = this.dataSource.valueField + ',' + this.dataSource.labelField;
+                query.fields = this.dataField.valueField + ',' + this.dataField.labelField;
                 // console.log(query);
                 this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
                     if (res.code == 1) {
@@ -47,7 +57,6 @@
                 });
             }
         },
-
         methods: {
             remoteMethod(query) {
                 if (query !== '') {
@@ -55,7 +64,7 @@
                     setTimeout(() => {
                         this.loading = false;
                         this.rows = this.list.filter(item => {
-                            return item[this.dataSource.searchField].indexOf(query) > -1;
+                            return item[this.dataField.labelField].indexOf(query) > -1;
                         });
                     }, 300);
                 } else {

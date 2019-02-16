@@ -5,10 +5,10 @@
         >
         <template slot="queryArea">
             <el-form-item label="角色编号:">
-                <el-input :size="$style.size()" v-model="query.rid" placeholder="角色编号"></el-input>
+                <el-input v-model="query.rid" :size="$style.size()" clearable placeholder="角色编号"></el-input>
             </el-form-item>
             <el-form-item label="角色名称:">
-                <el-input :size="$style.size()" v-query="'like'" v-model="query.name" placeholder="角色名称"></el-input>
+                <el-input v-query="'like'" v-model="query.name" :size="$style.size()" clearable placeholder="角色名称"></el-input>
              </el-form-item>
         </template>
         <x-table-column prop="sysid" label="所属系统" width="200">
@@ -16,10 +16,7 @@
                 {{scope.row.sysid | dic('system')}}
             </template>
             <template slot-scope="scope" slot="edit">
-                <x-select :size="$style.size()" v-model="scope.row.sysid" placeholder="请选择所属系统"
-                          :data-source="{searchField:'name',valueField:'sysid',labelField:'name',dic:'system'}"
-                >
-                </x-select>
+                <x-select v-model="scope.row.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
             </template>
         </x-table-column>
         <x-table-column prop="rid" label="角色编号" width="200"/>

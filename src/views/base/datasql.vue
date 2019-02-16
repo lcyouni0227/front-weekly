@@ -6,10 +6,10 @@
         >
         <template slot="queryArea">
             <el-form-item label="数据源编号:">
-                <el-input :size="$style.size()" v-model="query.uuid" placeholder="数据源编号"></el-input>
+                <el-input v-model="query.uuid" :size="$style.size()" clearable placeholder="数据源编号"></el-input>
             </el-form-item>
             <el-form-item label="数据源名称:">
-                <el-input :size="$style.size()" v-query="'like'" v-model="query.name" placeholder="数据源名称"></el-input>
+                <el-input v-query="'like'" v-model="query.name" :size="$style.size()" clearable placeholder="数据源名称"></el-input>
              </el-form-item>
         </template>
         <x-table-column prop="mid" label="所属模块" width="200">
@@ -17,10 +17,7 @@
                 {{scope.row.mid | dic('module')}}
             </template>
             <template slot-scope="scope" slot="edit">
-                <x-select :size="$style.size()" v-model="scope.row.mid" placeholder="请选择所属模块"
-                          :data-source="{searchField:'name',valueField:'mid',labelField:'name',dic:'module'}"
-                >
-                </x-select>
+                <x-select v-model="scope.row.mid" :data-source="{dic:'module'}" :size="$style.size()" placeholder="请选择所属模块"></x-select>
             </template>
         </x-table-column>
         <x-table-column prop="uuid" label="数据源编号" width="200px"/>

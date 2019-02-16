@@ -52,6 +52,11 @@ Mock.mock('/api/getMenu', 'get', () => {
                     path: '/index/system',
                     component:'base/system'
                 },{
+                    name: 'tree',
+                    icon: 'el-icon-time',
+                    path: '/index/tree',
+                    component:'base/tree'
+                },{
                     name: '菜单模板',
                     icon: 'el-icon-time',
                     path: '/index/menu_base',

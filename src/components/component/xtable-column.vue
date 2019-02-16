@@ -21,7 +21,9 @@
         },
         methods: {
             isEdit(scope){
-                return this.$parent.$parent.editRow && this.$parent.$parent.editRow.rowNumber == scope.$index;
+                let v = this.$parent.$parent.editRow;
+                return (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
+                // return this.$parent.$parent.editRow && this.$parent.$parent.editRow.key == scope.row[this.$parent.$parent.keyField];
             }
         }
     }

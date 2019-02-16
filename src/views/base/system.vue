@@ -5,10 +5,10 @@
         >
         <template slot="queryArea">
             <el-form-item label="系统编号">
-                <el-input v-tooltip="'系统编号'" :size="$style.size()" v-model="query.sysid" placeholder="系统编号"></el-input>
+                <el-input v-model="query.sysid" :size="$style.size()" clearable placeholder="系统编号"></el-input>
             </el-form-item>
             <el-form-item label="系统名称">
-                <el-input :size="$style.size()" v-query="'like'" v-model="query.name" placeholder="系统名称"></el-input>
+                <el-input v-model="query.name" v-query="'like'" :size="$style.size()" clearable placeholder="系统名称"></el-input>
              </el-form-item>
         </template>
         <x-table-column prop="sysid" label="系统编号" width="150"/>

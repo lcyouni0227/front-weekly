@@ -19,41 +19,43 @@
         name: 'XTableTreeColumn',
         props: {
             prop: String,
-            treeKey: {type: String, default: 'id'},
-            parentKey: {type: String, default: '_pid'},
-            levelKey: {type: String, default: '_level'},
-            childKey: {type: String, default: 'children'}
-        },
-        created(){
-          // console.log(this.treeKey) ;
-          //   console.log(this.$parent);
+            parentField: {type: String, default: '_pid'},
+            valueField: {type: String, default: 'id'},
+            childField: {type: String, default: 'children'}
         },
         methods: {
             toTree(data){
-                data.forEach((item)=>{//删除所有children,以防止多次调用
-                    delete item.children;
-                });
                 let map = {};// 将数据存储为以id为 KEY的 map索引数据列
-                data.forEach((item)=> {
-                    map[item[this.treeKey]] = item;
-                });
+                for(let v of data){
+                    map[v[this.valueField]] = v;
+                }
                 let val = [];
-                data.forEach((item)=> {
-                    let parent = map[item[this.parentKey]]; //以当前遍历项，的parentId,去map对象中找到索引的id
-                    if(parent){//如果找到索引，说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
-                        (parent.children || ( parent.children = [] )).push(item);
+                for(let v of data){
+                    let parent = map[v[this.parentField]];
+                    if(parent && parent[this.parentField]!=parent[this.valueField]){//如果找到索引，说明此项不在顶级当中,那么需要把此项添加到他对应的父级中
+                        let lv = 2;
+                        let p = parent;
+                        while(map[p[this.parentField]]){
+                            p=map[p[this.parentField]];
+                            lv++;
+                        }
+                        v._level = lv;
+                        (parent.children || ( parent.children = [] )).push(v);
                     }else{
-                        val.push(item);//如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+                        v._level = 1;
+                        val.push(v);//如果没有在map中找到对应的索引ID,那么直接把当前的item添加到val结果集中，作为顶级
                     }
-                });
+                }
+                // console.log(val)
                 return val;
             },
             isEdit(scope){
-                return this.$parent.$parent.editRow && this.$parent.$parent.editRow.rowNumber == scope.$index;
+                let v = this.$parent.$parent.editRow;
+                return (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
             },
             childStyles(row) {
                 return {
-                    'padding-left': (row[this.levelKey] > 1 ? row[this.levelKey] * 7 : 0) + 'px'
+                    'padding-left': (row._level > 1 ? row._level * 7 : 0) + 'px'
                 }
             },
             iconClasses(row) {
@@ -65,7 +67,7 @@
                 }
             },
             hasChild(row) {
-                return (Array.isArray(row[this.childKey]) && row[this.childKey].length >= 1) || false;
+                return (Array.isArray(row[this.childField]) && row[this.childField].length >= 1) || false;
             },
             // 切换处理
             toggleHandle(index, row) {
@@ -73,9 +75,9 @@
                     let data = this.$parent.store.states.data.slice(0);
                     data[index]._expanded = !data[index]._expanded;
                     if(data[index]._expanded) {
-                        data = data.splice(0, index + 1).concat(row[this.childKey]).concat(data);
+                        data = data.splice(0, index + 1).concat(row[this.childField]).concat(data);
                     } else {
-                        data = this.removeChildNode(data, row[this.treeKey]);
+                        data = this.removeChildNode(data, row[this.valueField]);
                     }
                     this.$parent.store.commit('setData', data);
                     this.$nextTick(() => {
@@ -91,8 +93,8 @@
                 }
                 let ids = [];
                 for(let i = 0; i < data.length; i++) {
-                    if(parentIds.indexOf(data[i][this.parentKey]) !== -1 && parentIds.indexOf(data[i][this.treeKey]) === -1) {
-                        ids.push(data.splice(i, 1)[0][this.treeKey]);
+                    if(parentIds.indexOf(data[i][this.parentField]) !== -1 && parentIds.indexOf(data[i][this.valueField]) === -1) {
+                        ids.push(data.splice(i, 1)[0][this.valueField]);
                         i--;
                     }
                 }

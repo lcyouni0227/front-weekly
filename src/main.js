@@ -49,58 +49,25 @@ Vue.prototype.$baseImgUrl = baseImgUrl;
 Vue.prototype.$axios = $http;
 Vue.prototype.$global = global;
 
+/**
+ * 字典翻译
+ * value:值
+ * name:字典名称
+ */
 Vue.filter('dic', function(value, name) {
     for (let v of global.dic[name].data) {
         if(v[global.dic[name].valueField] == value){
             return v[global.dic[name].labelField];
         }
     }
-    // if(global.dic[name] && global.dic[name].status == 'ok'){
-    //     console.log(111111)
-    //     // for (let v of global.dic[name].data) {
-    //     //     if(v[datasource.valueField] == value){
-    //     //         return v[datasource.labelField];
-    //     //     }
-    //     // }
-    // }else{
-    //     // while (global.dic[name].status == 'run') {
-    //     //     console.log('122222222222');
-    //     // }
-    //     //
-    //     global.dic[name]={status:'run'};
-    //     let query=global.getDataSource(datasource);
-    //     query.fields = [datasource.valueField,datasource.labelField];
-    //
-    //     $http.postJson(datasource.url || '/data/query',query).then((res)=>{
-    //         // console.log(res);
-    //         if(res.code==1) {
-    //             global.dic[name] = {status:'ok',data:res.data.rows};
-    //             // store.commit('setDic',{name:name,data:res.data.rows});
-    //             // console.log(global.dic[name]);
-    //             // componentData[name] = res.data.rows;
-    //             for (let v of res.data.rows) {
-    //                 if(v[datasource.valueField] == value){
-    //                     return v[datasource.labelField];
-    //                 }
-    //             }
-    //
-    //         }else{
-    //             global.dic[name] = {status:'ok',data:[]};
-    //             // componentData[name] = [];
-    //             // store.commit('setDic',{name:name,data:[]});
-    //         }
-    //         console.log(global.dic[name])
-    //     }).catch(() => {
-    //         global.dic[name] = {status:'ok',data:[]};
-    //         // componentData[name] = [];
-    //         // store.commit('setDic',{name:name,data:[]});
-    //     });
-    //     // componentData[name] = [{sysid:'1',name:'kkk'},{sysid:'cloud',name:"dddddd"}];
-    // }
-
 });
 
-function filterAsyncRouter(asyncRouterMap) { //遍历后台传来的路由字符串，转换为组件对象
+/**
+ * 遍历后台传来的路由字符串,转换为组件对象
+ * @param asyncRouterMap
+ * @returns {*}
+ */
+function filterAsyncRouter(asyncRouterMap) {
     return asyncRouterMap.filter(route => {
         if (route.component) {
             if (route.component === 'Layout') {//Layout组件特殊处理
@@ -118,6 +85,9 @@ function filterAsyncRouter(asyncRouterMap) { //遍历后台传来的路由字符
     });
 }
 
+/**
+ * 路由检查
+ */
 router.beforeEach((to, from, next) => {
     if(!store.state.controlStyle.menu) {
         $http.get('/getMenu', {}, true, false).then(res => {
@@ -135,6 +105,9 @@ router.beforeEach((to, from, next) => {
     }
 });
 
+/**
+ * 查询指令,用于查询字段的条件字符串
+ */
 Vue.directive('query', {
     bind: function (el, binding, vnode) {
         if(vnode.data.model && vnode.data.model.expression) {
