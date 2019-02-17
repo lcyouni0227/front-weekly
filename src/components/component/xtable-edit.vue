@@ -19,7 +19,7 @@
                 <slot name = "buttonArea"></slot>
             </el-form-item>
         </el-form>
-        <el-table ref="table" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="rows" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
+        <el-table ref="table" :row-key="rowKey" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="rows" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
             <el-table-column v-if="multiSelect" type="selection" width="30"></el-table-column>
             <el-table-column v-else width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
             <!--<el-table-column type="index" label="序" align="center" width="30"></el-table-column>-->
@@ -64,7 +64,6 @@
             fit: {type: Boolean, default: true},
             stripe: Boolean,
             border: Boolean,
-            rowKey: [String, Function],
             context: {},
             showHeader: {type: Boolean, default: true},
             showSummary: Boolean,
@@ -180,6 +179,9 @@
                     }
                 }
                 return false;
+            },
+            rowKey(row){
+                return row[this.keyField];
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;

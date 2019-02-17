@@ -9,6 +9,9 @@
     >
         <template slot="queryArea">
             <el-form-item label="菜单名称">
+                <x-select v-model="query.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
+            </el-form-item>
+            <el-form-item label="菜单名称">
                 <el-input v-model="query.name" v-query="'like'" :size="$style.size()" clearable placeholder="菜单名称"></el-input>
             </el-form-item>
         </template>
@@ -40,7 +43,10 @@
         </x-table-column>
         <x-table-column prop="icon" label="菜单图标" width="200">
             <template slot-scope="scope" slot="show">
-                <i :class="scope.row.icon"></i>
+                <i :class="scope.row.icon">{{scope.row.icon}}</i>
+            </template>
+            <template slot-scope="scope" slot="edit">
+                <x-select-icon v-model="scope.row.icon" dialog-width="500"/>
             </template>
         </x-table-column>
         <x-table-column prop="path" label="菜单路由" width="200"/>

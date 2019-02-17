@@ -1,6 +1,6 @@
 <!-- 左右分栏可拖动改变大小 -->
 <template>
-    <div class="splitterContent" :style="styles">
+    <div class="splitterContent" v-bind="$attrs">
         <!-- 左边内容部分 -->
         <transition name='left'>
             <div class='layout-splitter-left' :style="leftstyle" >
@@ -23,11 +23,11 @@
 <script>
     export default {
         name: 'XSplitter',
-        props: {
-            styles: String,
-            leftstyle:String,
-            rightstyle:String
-        },
+        // props: {
+        //     styles: String,
+        //     leftstyle:String,
+        //     rightstyle:String
+        // },
         methods:{
             /*左侧伸缩隐藏*/
             // slide(){
@@ -75,7 +75,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .splitterContent {
         font-family: 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
