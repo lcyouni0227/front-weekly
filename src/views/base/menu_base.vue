@@ -8,7 +8,7 @@
                   ,{name:'menu_base', datasource:{parentField:'_pid',valueField:'muid',labelField:'name',module:'menu_base'}}]"
     >
         <template slot="queryArea">
-            <el-form-item label="菜单名称">
+            <el-form-item label="所属系统">
                 <x-select v-model="query.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
             </el-form-item>
             <el-form-item label="菜单名称">
@@ -38,7 +38,7 @@
                 {{scope.row._pid | dic('menu_base')}}
             </template>
             <template slot-scope="scope" slot="edit">
-                <x-select-tree v-model="scope.row._pid" :data-source="{dic:'menu_base'}"/>
+                <x-select-tree v-model="scope.row._pid" :data-source="{dic:'menu_base'}" dialog-width="300px"/>
             </template>
         </x-table-column>
         <x-table-column prop="icon" label="菜单图标" width="200">
@@ -60,6 +60,10 @@
         data(){
             return {
                 query: {querySymbol: {}},
+                // data:[{
+                //     id:111,
+                //     _pid:0
+                // }]
             }
         }
     };

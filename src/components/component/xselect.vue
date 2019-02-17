@@ -1,11 +1,5 @@
 <template>
-    <el-select :size="$style.size()" placeholder="请输入关键词选择"
-               v-model="svalue"
-               filterable
-               remote
-               reserve-keyword
-               :remote-method="remoteMethod"
-               :loading="loading">
+    <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autocomplete="autocomplete" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
         <el-option
             v-for="(item,index) in rows"
             :key="index"
@@ -19,15 +13,40 @@
     export default {
         name: 'XSelect',
         props: {
-            value: {type: String},  /* 接受外部v-model传入的值 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
+
+            value: {type: String},  /* 接受外部v-model传入的值 */
+            name: String,
+            id: String,
+            autocomplete: {type: String, default: 'off'},
+            autoComplete: String,
+            automaticDropdown: Boolean,
+            size: {type: String, default(){this.$style.size}},
+            disabled: Boolean,
+            clearable: {type:Boolean,default:true},
+            filterable: {type:Boolean,default:true},
+            allowCreate: Boolean,
+            loading: {type:Boolean,default:false},
+            popperClass: String,
+            remote: Boolean,
+            loadingText: String,
+            noMatchText: String,
+            noDataText: String,
+            remoteMethod: Function,
+            filterMethod: Function,
+            multiple: Boolean,
+            multipleLimit: {type: Number, default: 0},
+            placeholder: {type: String,default:'请输入搜索关键词'},
+            defaultFirstOption: Boolean,
+            reserveKeyword: Boolean,
+            valueKey: {type: String, default: 'value'},
+            collapseTags: Boolean,
+            popperAppendToBody: {type: Boolean, default: true}
         },
         data(){
             return {
                 dataField:{labelField:'id',valueField:'name'},
                 rows: [],
-                list: [],
-                loading: false,
                 svalue:''
             };
         },
@@ -38,7 +57,7 @@
                 let v = this.$global.dic[this.dataSource.dic];
                 this.dataField.valueField = v.valueField;
                 this.dataField.labelField = v.labelField;
-                this.rows = this.list = v.data;
+                this.rows = v.data;
             }else{
                 if(this.dataSource.valueField){
                     this.dataField.valueField = this.dataSource.valueField;
@@ -51,25 +70,10 @@
                 // console.log(query);
                 this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
                     if (res.code == 1) {
-                        this.rows = this.list = res.data.rows;
+                        this.rows = res.data.rows;
                     }
                 }).catch(() => {
                 });
-            }
-        },
-        methods: {
-            remoteMethod(query) {
-                if (query !== '') {
-                    this.loading = true;
-                    setTimeout(() => {
-                        this.loading = false;
-                        this.rows = this.list.filter(item => {
-                            return item[this.dataField.labelField].indexOf(query) > -1;
-                        });
-                    }, 300);
-                } else {
-                    this.rows = [];
-                }
             }
         },
         watch:{

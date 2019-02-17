@@ -1,10 +1,17 @@
 <template>
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"
-             highlight-current
-             node-key="id"
-             default-expand-all
-             :expand-on-click-node="false"
-    ></el-tree>
+    <x-splitter style="width:300px">
+        <template slot="left">
+            <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"
+                     highlight-current
+                     node-key="id"
+                     default-expand-all
+                     :expand-on-click-node="false"
+            ></el-tree>
+        </template>
+        <template slot="right">
+
+        </template>
+    </x-splitter>
 </template>
 
 <script>

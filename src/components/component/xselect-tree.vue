@@ -6,17 +6,8 @@
         trigger="click"
         @show="onShowPopover"
         @hide="onHidePopover">
-        <el-tree
-            ref="tree"
-            class="select-tree"
-            highlight-current
-            :style="`min-width:${treeWidth};min-height:${dialogHeight}`"
-            :data="options"
-            :props="dataField"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            :default-expand-all="false"
-            @node-click="onClickNode">
+        <el-tree ref="tree" :style="`min-width:${treeWidth};min-height:${dialogHeight}`" :data="options" :props="dataField" :filter-node-method="filterNode" @node-click="onClickNode"
+            :emptyText="emptyText" :renderAfterExpand="renderAfterExpand" :nodeKey="nodeKey" :checkStrictly="checkStrictly" :defaultExpandAll="defaultExpandAll" :expandOnClickNode="expandOnClickNode" :checkOnClickNode="checkOnClickNode" :checkDescendants="checkDescendants" :autoExpandParent="autoExpandParent" :defaultCheckedKeys="defaultCheckedKeys" :defaultExpandedKeys="defaultExpandedKeys" :currentNodeKey="currentNodeKey" :renderContent="renderContent" :showCheckbox="showCheckbox" :draggable="draggable" :allowDrag="allowDrag" :allowDrop="allowDrop" :lazy="lazy" :highlightCurrent="highlightCurrent" :load="load" :accordion="accordion" :indent="indent" :iconClass="iconClass">
         </el-tree>
         <el-input
             slot="reference"
@@ -44,6 +35,32 @@
             placeholder: {type: String, required: false, default: '请选择'},   /* 输入框占位符 */
             dialogWidth:String, /*  弹出框宽度 */
             dialogHeight:{String,default:'auto'}, /* 弹出框高度 */
+
+            emptyText:String,
+            renderAfterExpand: {type: Boolean, default: true},
+            nodeKey: String,
+            checkStrictly: Boolean,
+            defaultExpandAll: {type: Boolean, default: false},
+            expandOnClickNode: {type: Boolean, default: false},
+            checkOnClickNode: Boolean,
+            checkDescendants: {type: Boolean, default: false},
+            autoExpandParent: {type: Boolean, default: true},
+            defaultCheckedKeys: Array,
+            defaultExpandedKeys: Array,
+            currentNodeKey: [String, Number],
+            renderContent: Function,
+            showCheckbox: {type: Boolean, default: false},
+            draggable: {type: Boolean, default: false},
+            allowDrag: Function,
+            allowDrop: Function,
+            props: {default() {return null;}},
+            lazy: {type: Boolean, default: false},
+            highlightCurrent: {type: Boolean, default: true},
+            load: Function,
+            // filterNodeMethod:Function,
+            accordion: Boolean,
+            indent: {type: Number, default: 18},
+            iconClass: String
         },
         // 设置绑定参数
         model: {
@@ -64,7 +81,7 @@
         },
         data() {
             return {
-                dataField:{parentField: '_pid',valueField: 'id',label: 'name',children: 'children'},
+                dataField:{parentField: '_pid',valueField: 'id',label: 'name',children: 'children',disabled: 'disabled'},
                 options:this.data,  /* 选项数据 */
                 showStatus: false,  /* 树状菜单显示状态 */
                 treeWidth: 'auto',  /* 菜单宽度 */
@@ -73,48 +90,50 @@
             };
         },
         created() {
-            if(!this.dataSource.children){
-                this.dataField.children = 'children';
-            }
-            if(this.dataSource.dic){
-                let v = this.$global.dic[this.dataSource.dic];
-                if(v.parentField){
-                    this.dataField.parentField = v.parentField;
-                }
-                if(v.valueField){
-                    this.dataField.valueField = v.valueField;
-                }
-                if(v.labelField){
-                    this.dataField.label = v.labelField;
-                }
-                let data = [];
-                for(let item of v.data){
-                    let temp = {};
-                    for(let key in item){
-                        temp[key] = item[key];
+            if(this.data){
+                if(this.props){
+                    for(let key in this.props){
+                        this.dataField[key] = this.props[key];
                     }
-                    data.push(temp);
                 }
+                let data = comUtil.cloneSimpleJsonArray(this.data);
                 this.options = this.cleanChildren(treeUtil.buildTree(data, this.dataField.parentField, this.dataField.valueField));
-            }else{
-                if(this.dataSource.parentField){
-                    this.dataField.parentField = this.dataSource.parentField;
+            }else {
+                if (!this.dataSource.children) {
+                    this.dataField.children = 'children';
                 }
-                if(this.dataSource.valueField){
-                    this.dataField.valueField = this.dataSource.valueField;
-                }
-                if(this.dataSource.labelField){
-                    this.dataField.label = this.dataSource.labelField;
-                }
-                let query = comUtil.getDataSource(this.dataSource);
-                query.fields = this.dataField.parentField + ',' + this.dataField.valueField + ',' + this.dataField.label;
-                // console.log(query);
-                this.$axios.syncPostJson(this.dataSource.queryUrl || '/data/query',query,(res) => {
-                    if (res.code == 1) {
-                        this.options = this.cleanChildren(treeUtil.buildTree(res.data.rows, this.dataField.parentField,this.dataField.valueField));
-                        // console.log(this.options)
+                if (this.dataSource.dic) {
+                    let v = this.$global.dic[this.dataSource.dic];
+                    if (v.parentField) {
+                        this.dataField.parentField = v.parentField;
                     }
-                });
+                    if (v.valueField) {
+                        this.dataField.valueField = v.valueField;
+                    }
+                    if (v.labelField) {
+                        this.dataField.label = v.labelField;
+                    }
+                    let data = comUtil.cloneSimpleJsonArray(v.data);
+                    this.options = this.cleanChildren(treeUtil.buildTree(data, this.dataField.parentField, this.dataField.valueField));
+                } else {
+                    if (this.dataSource.parentField) {
+                        this.dataField.parentField = this.dataSource.parentField;
+                    }
+                    if (this.dataSource.valueField) {
+                        this.dataField.valueField = this.dataSource.valueField;
+                    }
+                    if (this.dataSource.labelField) {
+                        this.dataField.label = this.dataSource.labelField;
+                    }
+                    let query = comUtil.getDataSource(this.dataSource);
+                    query.fields = this.dataField.parentField + ',' + this.dataField.valueField + ',' + this.dataField.label;
+                    // console.log(query);
+                    this.$axios.syncPostJson(this.dataSource.queryUrl || '/data/query', query, (res) => {
+                        if (res.code == 1) {
+                            this.options = this.cleanChildren(treeUtil.buildTree(res.data.rows, this.dataField.parentField, this.dataField.valueField));
+                        }
+                    });
+                }
             }
 
             // 检测输入框原有值并显示对应 label
@@ -175,7 +194,7 @@
                     return list;
                 };
                 return fa(data);
-            },
+            }
         },
     };
 </script>

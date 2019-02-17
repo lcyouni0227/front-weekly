@@ -5,6 +5,9 @@
                   :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}]"
     >
         <template slot="queryArea">
+            <el-form-item label="所属系统">
+                <x-select v-model="query.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
+            </el-form-item>
             <el-form-item label="模块编号:">
                 <el-input v-model="query.mid" :size="$style.size()" clearable placeholder="模块编号"></el-input>
             </el-form-item>
