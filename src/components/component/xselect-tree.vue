@@ -10,7 +10,7 @@
             ref="tree"
             class="select-tree"
             highlight-current
-            :style="`min-width: ${treeWidth}`"
+            :style="`min-width:${treeWidth};min-height:${dialogHeight}`"
             :data="options"
             :props="dataField"
             :expand-on-click-node="false"
@@ -41,7 +41,9 @@
             value: String,      /* 接收绑定参数 */
             width: String,      /* 输入框宽度 */
             data: {type: Array,default(){return null}},     /* 选项数据 */
-            placeholder: {type: String, required: false, default: '请选择'}   /* 输入框占位符 */
+            placeholder: {type: String, required: false, default: '请选择'},   /* 输入框占位符 */
+            dialogWidth:String, /*  弹出框宽度 */
+            dialogHeight:{String,default:'auto'}, /* 弹出框高度 */
         },
         // 设置绑定参数
         model: {
@@ -67,7 +69,7 @@
                 showStatus: false,  /* 树状菜单显示状态 */
                 treeWidth: 'auto',  /* 菜单宽度 */
                 labelModel: '', /* 输入框显示值 */
-                valueModel: '0'    /*实际请求传值*/
+                valueModel: '0',    /*实际请求传值*/
             };
         },
         created() {
@@ -121,7 +123,11 @@
             }
             // 获取输入框宽度同步至树状菜单宽度
             this.$nextTick(() => {
-                this.treeWidth = `${(this.width || this.$refs.input.$refs.input.clientWidth) - 24}px`;
+                if(this.dialogWidth){
+                    this.treeWidth = this.dialogWidth;
+                }else{
+                    this.treeWidth = `${(this.width || this.$refs.input.$refs.input.clientWidth) - 24}px`;
+                }
             });
         },
         methods: {

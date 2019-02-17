@@ -22,8 +22,8 @@
         props: {
             value: String, /* 接收绑定参数 */
             width: String, /* 输入框宽度 */
-            dialogWidth:String,
-            dialogHeight:{String,default:'300px'}, /*最大高度 */
+            dialogWidth:String, /*  弹出框宽度 */
+            dialogHeight:{String,default:'300px'}, /* 弹出框高度 */
             placeholder: {type: String,default: '请选择图标'}
         },
         mounted() {
