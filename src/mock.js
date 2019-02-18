@@ -20,20 +20,11 @@ Mock.mock('/api/privilege/getButtons', 'post', ()=>{
     return {
         code:1,
         data: {
-            buttons: [
-                {
-                    name: 'add',
-                    template: ''
-                },
-                {
-                    name: 'edit',
-                    template: ''
-                },
-                {
-                    name: 'del',
-                    template: ''
-                }
-            ]
+            buttons: {
+                add:{template: ''},
+                edit:{template: ''},
+                del:{template: ''}
+            }
         }
     }
 });

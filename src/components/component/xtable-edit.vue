@@ -6,14 +6,14 @@
                 <el-button @keyup.enter.native="handelTableQuery()" @click="handelTableQuery()" size="mini" type="primary" icon="el-icon-search">查询</el-button>
             </el-form-item>
         </el-form>
-        <el-form :inline="true" v-if="showTopButtonArea || showTopButton">
+        <el-form ref="buttons" :inline="true" v-if="showTopButtonArea || showTopButton">
             <el-form-item v-if="showTopButton">
                 <!--<el-button @click="handelTableQuery()" type="success" icon="el-icon-refresh" plain size="mini">刷新</el-button>-->
-                <el-button v-if="hasButton('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
-                <el-button v-if="hasButton('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
+                <el-button v-if="buttons.add && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
+                <el-button v-if="buttons.edit && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowSave(null)" type="warning" icon="el-icon-success" plain size="mini">保存</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-                <el-button v-if="hasButton('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
+                <el-button v-if="buttons.del && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
             </el-form-item>
             <el-form-item>
                 <slot name = "buttonArea"></slot>
@@ -26,11 +26,11 @@
             <slot></slot>
             <el-table-column label="操作" v-if="showRowButtonArea || showRowButton">
                 <template slot-scope="scope" v-if="showRowButton">
-                    <el-button v-if="hasButton('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
-                    <el-button v-if="hasButton('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
+                    <el-button v-if="buttons.add && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
+                    <el-button v-if="buttons.edit && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowSave(scope.$index)" type="warning" icon="el-icon-success" plain class="tableRowButton">保存</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain class="tableRowButton">取消</el-button>
-                    <el-button v-if="hasButton('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
+                    <el-button v-if="buttons.del && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
                 </template>
                 <slot name = "buttonArea"></slot>
             </el-table-column>
@@ -40,10 +40,13 @@
 </template>
 
 <script>
-    import jsonUtil from '@/utils/jsonUtil';
+    import jsonUtil from '../../utils/jsonUtil';
     import comUtil from '../../utils/comUtil';
+    import dic from './js/dic';
+    import privilege from './js/privilege';
     export default {
         name: 'XTableEdit',
+        mixins:[dic,privilege],
         props: {
             multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选 */
             showQuery:{type: Boolean, default: true},   /* 是否显示查询区域 */
@@ -54,7 +57,6 @@
             showTopButtonArea:{type: Boolean, default: false},  /* 是否显示表格顶部按钮区域 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
-            dic:{type: Array, default(){return null}},  /* 字典配置 */
             attField:{type: String, default: null},
 
             size: String,
@@ -101,12 +103,10 @@
         },
         data(){
             return {
-                isTree: null,   /* 是否是树型结构，通过是否引入XTableTreeColumn树型列判断 */
-                xTableTreeColumn: null, /* 树型列对象 */
-                fields:null,    /* 查询字段,通过列绑定的字段计算并缓存起来 */
+                isTree: null,   /* 缓存是否是树型结构，通过是否引入XTableTreeColumn树型列判断 */
+                xTableTreeColumn: null, /* 缓存树型列对象 */
+                fields:null,    /* 缓存查询字段,通过列绑定的字段计算并缓存起来 */
 
-                query: {querySymbol: {}},   /* 查询条件 */
-                buttons:null, /* 操作按钮 */
                 editRow:{action:null,rowNumber:null,rowData:null},   /* 正在操作的行 */
                 keyField:'',    /* 主键字段 */
                 total:0,        /* 总行数 */
@@ -115,40 +115,6 @@
                 currentPageX: this.currentPage, /* 当前页码 */
                 multipleSelection: null,   /* 单选或多选的结果,注意多选时是json数组 */
                 isRunStatus:false   /* 检查是否在执行状态,避免多次提交 */
-            }
-        },
-        created() {
-            if(this.dic){
-                for (let v of this.dic) {
-                    if(!this.$global.dic[v.name]){
-                        let query=comUtil.getDataSource(v.datasource);
-                        query.fields = v.datasource.valueField + ',' + v.datasource.labelField;
-                        if(v.datasource.parentField){
-                            query.fields += ',' + v.datasource.parentField;
-                        }
-                        // console.log(query);
-                        this.$axios.syncPostJson(v.datasource.url || '/data/query',query,(res)=>{
-                            if(res.code==1) {
-                                this.$global.dic[v.name] = {valueField:v.datasource.valueField,labelField:v.datasource.labelField,data:res.data.rows};
-                                if(v.datasource.parentField){
-                                    this.$global.dic[v.name].parentField = v.datasource.parentField;
-                                }
-                            }else{
-                                this.$global.dic[v.name] = [];
-                            }
-                        });
-                    }
-                }
-            }
-
-            if(this.showRowButton || this.showTopButton) {
-                this.$axios.postJson('/privilege/getButtons', this.dataSource.module || this.$parent.$data.module).then(res => {
-                    if (res.code == 1) {
-                        this.buttons = res.data.buttons;
-                    }
-                }).catch(() => {
-
-                });
             }
         },
         computed: {
@@ -169,16 +135,6 @@
             },
             endRun(){
                 this.isRunStatus = false;
-            },
-            hasButton(val){
-                if(this.buttons){
-                    for (let v of this.buttons) {
-                        if(v.name && v.name == val){
-                            return true;
-                        }
-                    }
-                }
-                return false;
             },
             rowKey(row){
                 return row[this.keyField];

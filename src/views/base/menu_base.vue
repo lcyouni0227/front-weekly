@@ -43,7 +43,7 @@
         </x-table-column>
         <x-table-column prop="icon" label="菜单图标" width="200">
             <template slot-scope="scope" slot="show">
-                <i :class="scope.row.icon">{{scope.row.icon}}</i>
+                <i :class="scope.row.icon"/>
             </template>
             <template slot-scope="scope" slot="edit">
                 <x-select-icon v-model="scope.row.icon" dialog-width="500"/>
@@ -60,10 +60,6 @@
         data(){
             return {
                 query: {querySymbol: {}},
-                // data:[{
-                //     id:111,
-                //     _pid:0
-                // }]
             }
         }
     };
