@@ -71,7 +71,6 @@
         methods: {
             // 单击节点
             onClickNode(node) {
-                console.log(2222222222);
                 this.labelModel = node[this.dataField.label];
                 this.valueModel = node[this.dataField.valueField];
                 this.onCloseTree();
@@ -82,12 +81,10 @@
             },
             // 显示时触发
             onShowPopover() {
-                // this.showStatus = true;
                 this.$refs.tree.filter(false);
             },
             // 隐藏时触发
             onHidePopover() {
-                // this.showStatus = false;
                 this.$emit('selected', this.valueModel);
             }
         },
