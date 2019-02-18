@@ -134,8 +134,12 @@ Vue.prototype.$style = style;
 // Vue.mixin(query);
 
 new Vue({
+    el: '#app',
     router,
     store,
     i18n,
-    render: h => h(App)
-}).$mount('#app');
+    render: h => h(App),
+    data: {
+        eventHub: new Vue()
+    }
+});

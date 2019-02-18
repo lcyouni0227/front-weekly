@@ -23,11 +23,11 @@
 <script>
     export default {
         name: 'XSplitter',
-        // props: {
-        //     styles: String,
-        //     leftstyle:String,
-        //     rightstyle:String
-        // },
+        props: {
+            styles: String,
+            leftstyle:String,
+            rightstyle:String
+        },
         methods:{
             /*左侧伸缩隐藏*/
             // slide(){

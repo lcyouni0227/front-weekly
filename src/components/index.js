@@ -6,6 +6,7 @@ import XTableEdit from './component/xtable-edit';
 import XSelect from './component/xselect';
 import XSelectTree from './component/xselect-tree';
 import XSelectIcon from './component/xselect-icon';
+import XTree from './component/xtree';
 
 export default {
     install: (Vue) => {
@@ -17,6 +18,7 @@ export default {
         Vue.component(XSelect.name, XSelect);
         Vue.component(XSelectTree.name, XSelectTree);
         Vue.component(XSelectIcon.name, XSelectIcon);
+        Vue.component(XTree.name, XTree);
 
     }
 }

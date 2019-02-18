@@ -1,11 +1,6 @@
 <template>
-    <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autocomplete="autocomplete" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
-        <el-option
-            v-for="(item,index) in rows"
-            :key="index"
-            :label="item[dataField.labelField]"
-            :value="item[dataField.valueField]">
-        </el-option>
+    <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
+        <el-option v-for="(item,index) in rows" :key="index" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
     </el-select>
 </template>
 
@@ -18,7 +13,7 @@
             value: {type: String},  /* 接受外部v-model传入的值 */
             name: String,
             id: String,
-            autocomplete: {type: String, default: 'off'},
+            // autocomplete: {type: String, default: 'off'},
             autoComplete: String,
             automaticDropdown: Boolean,
             size: {type: String, default(){this.$style.size}},
