@@ -67,7 +67,7 @@
                         // console.log(e.target.offsetLeft);
                         // console.log((parseInt(e.target.style.left)-13)+'px');
                         leftDom.style.width = (e.target.offsetLeft-11)+'px';
-                        rightDom.style.width = 'calc(100% - 5px - ' + leftDom.style.width + ')';
+                        rightDom.style.width = 'calc(100% - 25px - ' + leftDom.style.width + ')';
                         document.onmousemove=null;
                         document.onmouseup=null;
                     };
@@ -131,7 +131,7 @@
     /* 右边部分样式 */
     .layout-splitter-right{
         float:right;
-        width:calc(70% - 5px);
+        width:calc(70% - 25px);
         height:100%;
         transition:1.5s;
         margin-left: 10px;

@@ -7,6 +7,7 @@ import XSelect from './component/xselect';
 import XSelectTree from './component/xselect-tree';
 import XSelectIcon from './component/xselect-icon';
 import XTree from './component/xtree';
+import XInput from './component/xinput';
 
 export default {
     install: (Vue) => {
@@ -19,6 +20,7 @@ export default {
         Vue.component(XSelectTree.name, XSelectTree);
         Vue.component(XSelectIcon.name, XSelectIcon);
         Vue.component(XTree.name, XTree);
+        Vue.component(XInput.name, XInput);
 
     }
 }
