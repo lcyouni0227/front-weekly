@@ -64,7 +64,9 @@
                         }else if(e.target.offsetLeft >= document.querySelector('.splitterContent').offsetWidth-5){
                             e.target.style.left = (document.querySelector('.splitterContent').offsetWidth-5) + 'px';
                         }
-                        leftDom.style.width = e.target.style.left;
+                        // console.log(e.target.offsetLeft);
+                        // console.log((parseInt(e.target.style.left)-13)+'px');
+                        leftDom.style.width = (e.target.offsetLeft-11)+'px';
                         rightDom.style.width = 'calc(100% - 5px - ' + leftDom.style.width + ')';
                         document.onmousemove=null;
                         document.onmouseup=null;
@@ -92,10 +94,11 @@
         height:100%;
         float:left;
         transition:1.5s;
+        margin-right: 10px;
     }
     /* 伸缩按钮部分 */
     .layout-area{
-        width:5px;
+        width:2px;
         height:100%;
         float:left;
         position:relative;
@@ -120,8 +123,8 @@
         position:absolute;
         cursor:col-resize;
         opacity:0.8;
-        left:30%;
-        width:5px;
+        left:calc(30% + 10px);
+        width:2px;
         height:100%;
         background-color: #efefef;
     }
@@ -131,5 +134,6 @@
         width:calc(70% - 5px);
         height:100%;
         transition:1.5s;
+        margin-left: 10px;
     }
 </style>
