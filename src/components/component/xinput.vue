@@ -4,8 +4,8 @@
     inputSize ? 'el-input--' + inputSize : '',
     {
       'is-disabled': inputDisabled,
-      'el-input-group': $slots.prepend || $slots.append || label,
-      'el-input-group--append': $slots.append,
+      'el-input-group': $slots.prepend || $slots.append || label || dialog,
+      'el-input-group--append': $slots.append || dialog,
       'el-input-group--prepend': $slots.prepend,
       'el-input--prefix': $slots.prefix || prefixIcon,
       'el-input--suffix': $slots.suffix || suffixIcon || clearable
@@ -74,6 +74,21 @@
             <div class="el-input-group__append" v-if="$slots.append">
                 <slot name="append"></slot>
             </div>
+            <div class="el-input-group__append">
+                <el-button icon="el-icon-edit-outline" @click="_openDialog"></el-button>
+            </div>
+            <x-dialog
+                :title="dialog.title"
+                :visible.sync="dialogVisible"
+                :width="dialog.width || '50%'">
+                <slot name="dialogContent" v-if="$slots.dialogContent"></slot>
+                <component :is="dialog.content" v-else></component>
+                <span slot="footer" >
+                    <el-button @click="dialogVisible = false">{{dialog.cancelLabel || '取 消'}}</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">{{dialog.okLabel || '确 定'}}</el-button>
+                </span>
+            </x-dialog>
+
         </template>
         <textarea
             v-else
@@ -103,8 +118,22 @@
     export default {
         name: "XInput",
         mixins:[Input],
+        data(){
+            return {
+                dialogVisible:false
+            }
+        },
         props: {
             label: String, /* 接收label参数 */
+            dialog:{Type:Object,default:null}
+        },
+        methods:{
+            _openDialog(){
+                this.dialogVisible = true;
+            },
+            handleClose(){
+
+            }
         }
     }
 </script>

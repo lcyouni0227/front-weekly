@@ -22,7 +22,16 @@
         </x-table-column>
         <x-table-column prop="uuid" label="数据源编号" width="200px"/>
         <x-table-column prop="name" label="数据源名称" width="200px"/>
-        <x-table-column prop="sqlinfo" label="sql语句"/>
+        <x-table-column prop="sqlinfo" label="sql语句">
+            <template slot-scope="scope" slot="edit">
+                <x-input v-model="scope.row.sqlinfo" :size="$style.size()" clearable placeholder="请输入"
+                         :dialog="{title:'SQL编辑器',width:'50%',height:'30px',content:'x-code-edit-sql'}"
+                >
+                    <x-code-edit-sql slot="dialogContent"/>
+                </x-input>
+            </template>
+
+        </x-table-column>
         <x-table-column prop="memo" label="备注" width="150px"/>
     </x-table-edit>
 </template>
