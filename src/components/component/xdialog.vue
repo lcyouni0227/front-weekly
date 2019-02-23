@@ -64,7 +64,7 @@
                         }else {
                             styL = +sty.left.replace(/\px/g, '');
                             styT = +sty.top.replace(/\px/g, '');
-                        };
+                        }
 
                         document.onmousemove = function (e) {
                             // 通过事件委托，计算移动的距离
@@ -122,6 +122,9 @@
         overflow:auto;
         max-height:calc(100% - 30px);
         max-width:calc(100% - 30px);
+    }
+    .el-dialog .el-dialog__header{
+        background-color:#f3f5f6;
     }
     .custom{
         overflow:auto

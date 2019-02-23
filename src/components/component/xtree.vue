@@ -12,7 +12,7 @@
     </section>
 </template>
 <script>
-    import xtree from './js/xtree';
+    import xtree from './support/xtree';
     export default {
         name: 'XTree',
         mixins:[xtree]

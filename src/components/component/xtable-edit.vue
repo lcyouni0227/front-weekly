@@ -42,8 +42,8 @@
 <script>
     import jsonUtil from '../../utils/jsonUtil';
     import comUtil from '../../utils/comUtil';
-    import dic from './js/dic';
-    import privilege from './js/privilege';
+    import dic from './support/dic';
+    import privilege from './support/privilege';
     export default {
         name: 'XTableEdit',
         mixins:[dic,privilege],

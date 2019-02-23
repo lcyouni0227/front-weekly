@@ -22,7 +22,7 @@
 </template>
 
 <script>
-    import xtree from './js/xtree';
+    import xtree from './support/xtree';
     export default {
         name: 'XSelectTree',
         mixins:[xtree],

@@ -25,7 +25,7 @@
 </template>
 
 <script>
-    import xcodeEdit from './js/xcode-edit';
+    import xcodeEdit from './support/xcode-edit';
     require("codemirror/addon/hint/sql-hint");
     require("codemirror/mode/sql/sql");
     export default {
@@ -64,5 +64,10 @@
         width: 100%;
         font-size: 11pt;
         font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+    }
+</style>
+<style >
+    .CodeMirror-hints{
+        z-index: 100000!important;
     }
 </style>

@@ -130,9 +130,6 @@
         methods:{
             _openDialog(){
                 this.dialogVisible = true;
-            },
-            handleClose(){
-
             }
         }
     }
