@@ -1,139 +1,130 @@
-<!-- 左右分栏可拖动改变大小 -->
 <template>
-    <div class="splitterContent" v-bind="$attrs">
-        <!-- 左边内容部分 -->
-        <transition name='left'>
-            <div class='layout-splitter-left' :style="leftstyle" >
-                <slot name="left"></slot>
-            </div>
-        </transition>
-        <!-- 分割线部分 -->
-        <div class='layout-area'>
-            <!--<div @click="slide"></div>-->
+    <div class="split-panel" @mousemove="dragMove" @mouseup="dragStop" :class="{'dragging': dragging, 'vert': layoutType == 'vertical', 'hori': layoutType == 'horizontal'}">
+        <div class="split-panel-part" :style="layoutType == 'horizontal' ? {width: panelSize1} : {height: panelSize1}">
+            <slot name="1"></slot>
         </div>
-        <!-- 拖动代理div -->
-        <div class='layout-splitter-proxy' @mousedown.prevent='dragStart'></div>
-        <!-- 右边内容部分 -->
-        <div class='layout-splitter-right' :style="rightstyle">
-            <slot name="right"></slot>
+        <div class="split-panel-gutter" @mousedown="dragStart" :style="layoutType == 'horizontal' ? {width: gutterSizeString} : {height: gutterSizeString}"></div>
+        <div class="split-panel-part" :style="layoutType == 'horizontal' ? {width: panelSize2} : {height: panelSize2}">
+            <slot name="2"></slot>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: 'XSplitter',
-        props: {
-            styles: String,
-            leftstyle:String,
-            rightstyle:String
+        name:'XSplitter',
+        props: ['layout', 'gutter', 'init', 'min', 'max'],
+        data() {
+            return {
+                layoutType: this.layout || 'horizontal',
+                gutterSize: this.gutter || 4,   /* 分割线宽度 */
+                percent: this.init || 30,       /* 初始化百分比 */
+                minPercent: this.min || 0,      /* 第一栏最小宽(高)度 */
+                maxPercent: this.max || 100,    /* 第一栏最大宽(高)度 */
+                dragging: false,
+            };
         },
-        methods:{
-            /*左侧伸缩隐藏*/
-            // slide(){
-            //     this.leftshow = !this.leftshow;
-            //     let proxyDom = document.querySelector('.layout-splitter-proxy');
-            //     let leftDom = document.querySelector('.layout-splitter-left');
-            //     let rightDom = document.querySelector('.layout-splitter-right');
-            //     if(!this.leftshow){ //隐藏左侧div
-            //         proxyDom.style.left = '0px';
-            //         leftDom.style.width = '0px';
-            //         rightDom.style.width = 'calc(100% - 5px)';
-            //     }else{
-            //         // let that = this;
-            //         setTimeout(()=>{
-            //             proxyDom.style.left = '30%';
-            //             leftDom.style.width = proxyDom.style.left;
-            //             rightDom.style.width = 'calc(70% - 5px)';
-            //         },30)
-            //
-            //     }
-            // },
-            /*拖拽*/
-            dragStart(e){
-                let leftDom = document.querySelector('.layout-splitter-left');
-                let rightDom = document.querySelector('.layout-splitter-right');
-                e.target.onmousedown = function(ev){
-                    let disX = ev.clientX - e.target.offsetLeft;
-                    document.onmousemove = function(ev){
-                        e.target.style.left = (ev.clientX - disX) + 'px';
-                    };
-                    document.onmouseup = function(){
-                        if(e.target.offsetLeft <= 0){
-                            e.target.style.left = '0px';
-                        }else if(e.target.offsetLeft >= document.querySelector('.splitterContent').offsetWidth-5){
-                            e.target.style.left = (document.querySelector('.splitterContent').offsetWidth-5) + 'px';
-                        }
-                        // console.log(e.target.offsetLeft);
-                        // console.log((parseInt(e.target.style.left)-13)+'px');
-                        leftDom.style.width = (e.target.offsetLeft-11)+'px';
-                        rightDom.style.width = 'calc(100% - 25px - ' + leftDom.style.width + ')';
-                        document.onmousemove=null;
-                        document.onmouseup=null;
-                    };
-                };
+        computed: {
+            gutterSizeString() {
+                return `${this.gutterSize}px`;
+            },
+            panelSize1() {
+                if (this.percent < this.minPercent) {
+                    this.percent = this.minPercent;
+                }
+                return `calc(${this.percent}% - ${this.gutterSize}px)`;
+            },
+            panelSize2() {
+                if (this.percent > this.maxPercent) {
+                    this.percent = this.maxPercent;
+                }
+                return `${100 - this.percent}%`;
             },
         },
-    }
+        methods: {
+            dragStart(e) {
+                e.preventDefault();
+                this.dragging = true;
+                this.startPos = this.layoutType === 'horizontal' ? e.pageX : e.pageY;
+                this.startSplit = this.percent;
+                e.stopPropagation();
+            },
+            dragMove(e) {
+                if (this.dragging) {
+                    e.preventDefault();
+                    const dx = (this.layoutType === 'horizontal' ? e.pageX : e.pageY) - this.startPos;
+                    const totalSize = this.layoutType === 'horizontal' ? this.$el.offsetWidth : this.$el.offsetHeight;
+                    this.percent = this.startSplit + Math.round((dx / totalSize) * 100);
+                    e.stopPropagation();
+                }
+            },
+            dragStop(e) {
+                if (this.dragging) {
+                    e.preventDefault();
+                    this.dragging = false;
+                    e.stopPropagation();
+                }
+            },
+        },
+    };
 </script>
 
 <style scoped>
-    .splitterContent {
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        text-align: center;
-        margin-top: 0px;
-        height: 100%;
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    .split-panel {
         width: 100%;
-        position:relative;
+        height: 100%;
     }
-    /* 左侧伸缩样式 */
-    .layout-splitter-left{
-        width:30%;
-        height:100%;
-        float:left;
-        transition:1.5s;
-        margin-right: 10px;
+
+    .split-panel-part {
+        display: inline-block;
+        float: left;
+        overflow: auto;
     }
-    /* 伸缩按钮部分 */
-    .layout-area{
-        width:2px;
-        height:100%;
-        float:left;
-        position:relative;
-        background-color: #efefef;
+    .split-panel.hori > .split-panel-part {
+        height: 100%;
     }
-    /* 伸缩按钮居中 */
-    .layout-area>div{
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        top: 0px;
-        bottom: 0px;
-        background-color:#999;
-        margin: auto 0px;
-        height: 30px;
-        padding-top:15px;
-        cursor:pointer;
-        z-index:999;
+    .split-panel.vert > .split-panel-part {
+        width: 100%;
     }
-    /* 拖拽div */
-    .layout-splitter-proxy{
-        position:absolute;
-        cursor:col-resize;
-        opacity:0.8;
-        left:calc(30% + 10px);
-        width:2px;
-        height:100%;
-        background-color: #efefef;
+
+    .split-panel-gutter {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        z-index: 1;
+        float: left;
+        background-clip: padding-box;
     }
-    /* 右边部分样式 */
-    .layout-splitter-right{
-        float:right;
-        width:calc(70% - 25px);
-        height:100%;
-        transition:1.5s;
-        margin-left: 10px;
+    .split-panel.hori > .split-panel-gutter {
+        height: 100%;
+        cursor: col-resize;
+        border-left: 1px solid rgba(0,0,0,0.2);
+        border-right: 1px solid rgba(0,0,0,0.2);
+    }
+    .split-panel.vert > .split-panel-gutter {
+        width: 100%;
+        cursor: row-resize;
+        border-top: 1px solid rgba(0,0,0,0.2);
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+    }
+    .split-panel.hori > .split-panel-gutter:hover,
+    .split-panel.hori > .split-panel-gutter:focus {
+        border-left: 1px solid rgba(0, 0, 0, 0.8);
+        border-right: 1px solid rgba(0, 0, 0, 0.8);
+    }
+    .split-panel.vert > .split-panel-gutter:hover,
+    .split-panel.vert > .split-panel-gutter:focus {
+        border-top: 1px solid rgba(0, 0, 0, 0.8);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+    }
+
+    .split-panel.hori.dragging {
+        cursor: col-resize;
+    }
+    .split-panel.vert.dragging {
+        cursor: row-resize;
     }
 </style>
