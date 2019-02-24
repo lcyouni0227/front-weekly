@@ -5,7 +5,7 @@
             <i :class="getIcon" class="icon" @click.prevent="toggle"></i>
         </div>
         <transition name="fade">
-            <div class="collapse-content-box" v-if="active" :style="{height:height}" :class="{scrollclass:scroll}" >
+            <div class="collapse-content-box" v-if="active" :style="{height:height}" :class="{scrollXclass:scrollX,scrollYclass:scrollY}" >
                 <slot></slot>
             </div>
         </transition>
@@ -25,7 +25,8 @@
             title: String,
             height: String,
             width: String,
-            scroll:{type: Boolean, default: true}
+            scrollX:{type: Boolean, default: true},     /* 是否要横向滚动条 */
+            scrollY:{type: Boolean, default: true}      /* 是否要竖向滚动条 */
         },
         computed:{
             getIcon(){
@@ -68,7 +69,6 @@
     }
 
     .collapse .collapse-header::before {
-        overflow: scroll;
         -moz-transition: all .2s;
         -o-transition: all .2s;
         -webkit-transition: all .2s;
@@ -122,7 +122,12 @@
         border-radius: 5px;
         background: rgba(0,0,0,0);
     }
-    .scrollclass {
-        overflow: scroll;
+    .scrollXclass {
+        overflow-x: scroll!important;
+        overflow-y: hidden;
+    }
+    .scrollYclass {
+        overflow-y: scroll!important;
+        overflow-x: hidden;
     }
 </style>
