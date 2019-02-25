@@ -29,15 +29,9 @@
                 return `${this.gutterSize}px`;
             },
             panelSize1() {
-                if (this.percent < this.minPercent) {
-                    this.percent = this.minPercent;
-                }
                 return `calc(${this.percent}% - ${this.gutterSize}px)`;
             },
             panelSize2() {
-                if (this.percent > this.maxPercent) {
-                    this.percent = this.maxPercent;
-                }
                 return `${100 - this.percent}%`;
             },
         },
@@ -55,6 +49,11 @@
                     const dx = (this.layoutType === 'horizontal' ? e.pageX : e.pageY) - this.startPos;
                     const totalSize = this.layoutType === 'horizontal' ? this.$el.offsetWidth : this.$el.offsetHeight;
                     this.percent = this.startSplit + Math.round((dx / totalSize) * 100);
+                    if (this.percent < this.minPercent) {
+                        this.percent = this.minPercent;
+                    }else if (this.percent > this.maxPercent) {
+                        this.percent = this.maxPercent;
+                    }
                     e.stopPropagation();
                 }
             },
