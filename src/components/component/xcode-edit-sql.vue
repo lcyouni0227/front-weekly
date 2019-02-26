@@ -1,40 +1,45 @@
 <template>
     <section>
-        <el-form :inline="true">
-            <el-form-item>
-                <el-button @click="test" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">测试</el-button>
-                <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
-                <el-button @click="cancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-            </el-form-item>
-        </el-form>
         <el-form>
             <el-form-item>
-                <textarea ref="code" class="code" v-model="code"></textarea>
+                <textarea ref="code" class="code" v-model="xcode"></textarea>
             </el-form-item>
         </el-form>
         <el-form>
             <el-form-item>
                 <el-tabs >
                     <el-tab-pane label="执行结果">
-
+                        <x-table-edit :data="rows" :data-source="{module:'datasql'}" :showTopButton="false">
+                            <x-table-column :prop="key" :label="key" v-for ="(value,key) in rows[0]" :key="key"></x-table-column>
+                        </x-table-edit>
                     </el-tab-pane>
                 </el-tabs>
+            </el-form-item>
+        </el-form>
+        <el-form :inline="true" align="center">
+            <el-form-item>
+                <el-button @click="run()" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">运行</el-button>
+                <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
+                <el-button @click="cancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
             </el-form-item>
         </el-form>
     </section>
 </template>
 
 <script>
+    import runStatus from './support/run-status';
     import xcodeEdit from './support/xcode-edit';
     require("codemirror/addon/hint/sql-hint");
     require("codemirror/mode/sql/sql");
     export default {
         name: "XCodeEditSql",
-        mixins:[xcodeEdit],
+        mixins:[xcodeEdit,runStatus],
         data(){
             return {
+                xcode:this.code,
                 mime:'text/x-mariadb',
-                hintOptions:this._getDBTableField()
+                hintOptions:this._getDBTableField(),
+                rows:[]
             }
         },
         methods: {
@@ -46,8 +51,19 @@
                     }});
                 return hintOptions;
             },
-            test(){
-
+            run(){
+                console.log(this.xcode);
+                // this.$axios.postJson('/data/query',query).then(res => {
+                //     if(res.code==1) {
+                //         this.total = res.data.total;
+                //         this.keyField = res.data.keyField;
+                //         this._clearSelect();
+                //         this.rows = res.data.rows;
+                //     }
+                //     this.endRun();
+                // }).catch(() => {
+                //     this.endRun();
+                // });
             },
             submit(){
 

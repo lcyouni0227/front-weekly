@@ -45,9 +45,10 @@
     import comUtil from '../../utils/comUtil';
     import dic from './support/dic';
     import privilege from './support/privilege';
+    import runStatus from './support/run-status';
     export default {
         name: 'XTableEdit',
-        mixins:[dic,privilege],
+        mixins:[dic,privilege,runStatus],
         props: {
             multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
@@ -58,11 +59,11 @@
             attField:{type: String, default: null},
 
             size: String,
-            width: [String, Number],
-            height: [String, Number],
+            width: [{type: String, default: '100%'}, Number],
+            height: [{type: String, default: '100%'}, Number],
             maxHeight: [String, Number],
             fit: {type: Boolean, default: true},
-            stripe: Boolean,
+            stripe: {type: Boolean, default: true},
             border: Boolean,
             context: {},
             showHeader: {type: Boolean, default: true},
@@ -77,7 +78,7 @@
             headerRowStyle: [Object, Function],
             headerCellClassName: [String, Function],
             headerCellStyle: [Object, Function],
-            highlightCurrentRow: Boolean,
+            highlightCurrentRow: {type: Boolean, default: true},
             currentRowKey: [String, Number],
             emptyText: String,
             expandRowKeys: Array,
@@ -124,16 +125,6 @@
             }
         },
         methods: {
-            isRun(){
-                if(this.isRunStatus){
-                    return true;
-                }
-                this.isRunStatus = true;
-                return false;
-            },
-            endRun(){
-                this.isRunStatus = false;
-            },
             rowKey(row){
                 return row[this.keyField];
             },

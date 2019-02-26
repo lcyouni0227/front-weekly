@@ -53,7 +53,7 @@
         },
         created(){
             //初始化下拉框的值
-            this.svalue=this.value;
+            this.svalue = this.value;
             if(this.dataSource.dic){
                 let v = this.$global.dic[this.dataSource.dic];
                 this.dataField.valueField = v.valueField;

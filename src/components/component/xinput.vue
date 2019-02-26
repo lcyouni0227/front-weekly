@@ -81,10 +81,11 @@
                 :width="dialog && dialog.width || '50%'">
                 <slot name="dialogContent" v-if="$slots.dialogContent"></slot>
                 <component :is="dialog && dialog.content" v-else></component>
-                <span slot="footer" >
-                    <el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>
-                    <el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>
-                </span>
+                <slot name="dialogFooter"></slot>
+                <!--<span slot="footer" >-->
+                    <!--<el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>-->
+                    <!--<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>-->
+                <!--</span>-->
             </x-dialog>
 
         </template>
