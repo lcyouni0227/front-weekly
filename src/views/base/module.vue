@@ -4,20 +4,14 @@
                  :data-source="{module:'module'}"
                   :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}]"
     >
-        <template slot="queryArea">
-            <el-form-item label="所属系统">
-                <x-select v-model="query.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
-            </el-form-item>
-            <el-form-item label="模块编号:">
-                <el-input v-model="query.mid" :size="$style.size()" clearable placeholder="模块编号"></el-input>
-            </el-form-item>
-            <el-form-item label="模块名称:">
-                <el-input v-model="query.name" v-query="'like'" :size="$style.size()" clearable placeholder="模块名称"></el-input>
-            </el-form-item>
-            <el-form-item label="模块表:">
-                <el-input v-model="query.tablename" v-query="'like'" :size="$style.size()" clearable placeholder="模块表"></el-input>
-            </el-form-item>
-        </template>
+        <x-query slot="query">
+            <x-query-item>
+                <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>
+            </x-query-item>
+            <x-query-item prop="mid" label="模块编号"/>
+            <x-query-item prop="name" opt="like" label="模块名称"/>
+            <x-query-item prop="tablename" opt="like" label="所属表"/>
+        </x-query>
         <x-table-column prop="sysid" label="所属系统" width="200">
             <template slot-scope="scope" slot="show">
                 {{scope.row.sysid | dic('system')}}
@@ -34,11 +28,6 @@
 
 <script>
     export default {
-        name:'module',
-        data(){
-            return {
-                query: {querySymbol: {}},
-            }
-        }
+        name:'module'
     };
 </script>

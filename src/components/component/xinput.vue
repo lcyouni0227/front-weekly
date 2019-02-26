@@ -4,7 +4,7 @@
     inputSize ? 'el-input--' + inputSize : '',
     {
       'is-disabled': inputDisabled,
-      'el-input-group': $slots.prepend || $slots.append || label || dialog,
+      'el-input-group': $slots.prepend || $slots.append || labelX || dialog,
       'el-input-group--append': $slots.append || dialog,
       'el-input-group--prepend': $slots.prepend,
       'el-input--prefix': $slots.prefix || prefixIcon,
@@ -16,7 +16,7 @@
     >
         <template v-if="type !== 'textarea'">
             <!-- 前置元素 -->
-            <label class="x-input-label" >{{label}}</label>
+            <label class="x-input-label" >{{labelX}}</label>
             <div class="el-input-group__prepend" v-if="$slots.prepend">
                 <slot name="prepend"></slot>
             </div>
@@ -38,7 +38,7 @@
                 @focus="handleFocus"
                 @blur="handleBlur"
                 @change="handleChange"
-                :aria-label="label"
+                :aria-label="labelX"
             >
             <!-- 前置内容 -->
             <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
@@ -49,9 +49,7 @@
         </i>
       </span>
             <!-- 后置内容 -->
-            <span
-                class="el-input__suffix"
-                v-if="$slots.suffix || suffixIcon || showClear || validateState && needStatusIcon">
+            <span class="el-input__suffix" v-if="$slots.suffix || suffixIcon || showClear || validateState && needStatusIcon">
         <span class="el-input__suffix-inner">
           <template v-if="!showClear">
             <slot name="suffix"></slot>
@@ -74,18 +72,18 @@
             <div class="el-input-group__append" v-if="$slots.append">
                 <slot name="append"></slot>
             </div>
-            <div class="el-input-group__append">
+            <div class="el-input-group__append" v-if="dialog">
                 <el-button icon="el-icon-edit-outline" @click="_openDialog"></el-button>
             </div>
             <x-dialog
-                :title="dialog.title"
+                :title="dialog && dialog.title || ''"
                 :visible.sync="dialogVisible"
-                :width="dialog.width || '50%'">
+                :width="dialog && dialog.width || '50%'">
                 <slot name="dialogContent" v-if="$slots.dialogContent"></slot>
-                <component :is="dialog.content" v-else></component>
+                <component :is="dialog && dialog.content" v-else></component>
                 <span slot="footer" >
-                    <el-button @click="dialogVisible = false">{{dialog.cancelLabel || '取 消'}}</el-button>
-                    <el-button type="primary" @click="dialogVisible = false">{{dialog.okLabel || '确 定'}}</el-button>
+                    <el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>
+                    <el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>
                 </span>
             </x-dialog>
 
@@ -108,28 +106,58 @@
             @focus="handleFocus"
             @blur="handleBlur"
             @change="handleChange"
-            :aria-label="label"
+            :aria-label="labelX"
         >
     </textarea>
     </div>
 </template>
 <script>
     import {Input} from 'element-ui'
+    import Query from './support/query'
+    import store from '@/store';
     export default {
         name: "XInput",
-        mixins:[Input],
+        mixins:[Input,Query],
         data(){
             return {
                 dialogVisible:false
             }
         },
         props: {
-            label: String, /* 接收label参数 */
-            dialog:{Type:Object,default:null}
+            size: {type: String, default:store.state.controlStyle.size},
+            clearable: {type: Boolean, default: true},
+            dialog:{Type:Object,default(){return null}}
+        },
+        computed: {
+            showClear() {
+                return this.clearable &&
+                    !this.inputDisabled &&
+                    !this.readonly &&
+                    (this.focused || this.hovering);
+            }
         },
         methods:{
+            handleInput(event) {
+                if(this.value) {
+                    if (this.isOnComposition) return;
+                    if (event.target.value === this.nativeInputValue) return;
+                    this.$emit('input', event.target.value);
+                    this.$nextTick(() => {
+                        let input = this.getInput();
+                        input.value = this.value;
+                    });
+                }
+            },
             _openDialog(){
                 this.dialogVisible = true;
+            }
+        },
+        mounted(){
+            let v = this._checkQuery();
+            if(v){
+                this.$refs.input.addEventListener('change',(e)=>{
+                    v.v.changValue(v.field,e.target.value);
+                });
             }
         }
     }

@@ -1,12 +1,17 @@
 <template>
-    <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
-        <el-option v-for="(item,index) in rows" :key="index" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
-    </el-select>
+    <div class="el-input-group">
+        <label class="x-input-label" >{{labelX}}</label>
+        <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
+            <el-option v-for="(item,index) in rows" :key="index" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
+        </el-select>
+    </div>
 </template>
 
 <script>
+    import Query from './support/query'
     export default {
         name: 'XSelect',
+        mixins:[Query],
         props: {
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
 
@@ -42,7 +47,8 @@
             return {
                 dataField:{labelField:'id',valueField:'name'},
                 rows: [],
-                svalue:''
+                svalue:'',
+                isQuery:null
             };
         },
         created(){
@@ -71,13 +77,28 @@
                 });
             }
         },
+        mounted(){
+            this.isQuery = this._checkQuery();
+        },
         watch:{
             //判断下拉框的值是否有改变
             svalue(val, oldVal) {
                 if(val!=oldVal){
                     this.$emit('input', this.svalue);
+                    if(this.isQuery){
+                        this.isQuery.v.changValue(this.isQuery.field,val);
+                    }
                 }
             },
         },
     };
 </script>
+<style scoped>
+    .x-input-label{
+        display:table-cell;
+        vertical-align: middle;
+        color: #909399;
+        position: relative;
+        white-space: nowrap;
+    }
+</style>

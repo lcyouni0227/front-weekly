@@ -4,14 +4,13 @@
                  :data-source="{module:'datasql'}"
                   :dic="[{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}]"
         >
-        <template slot="queryArea">
-            <el-form-item label="数据源编号:">
-                <el-input v-model="query.uuid" :size="$style.size()" clearable placeholder="数据源编号"></el-input>
-            </el-form-item>
-            <el-form-item label="数据源名称:">
-                <el-input v-query="'like'" v-model="query.name" :size="$style.size()" clearable placeholder="数据源名称"></el-input>
-             </el-form-item>
-        </template>
+        <x-query slot="query">
+            <x-query-item>
+                <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>
+            </x-query-item>
+            <x-query-item prop="uuid" label="数据源编号"/>
+            <x-query-item prop="name" opt="like" label="数据源名称"/>
+        </x-query>
         <x-table-column prop="mid" label="所属模块" width="200">
             <template slot-scope="scope" slot="show">
                 {{scope.row.mid | dic('module')}}

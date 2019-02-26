@@ -105,22 +105,22 @@ router.beforeEach((to, from, next) => {
     }
 });
 
-/**
- * 查询指令,用于查询字段的条件字符串
- */
-Vue.directive('query', {
-    bind: function (el, binding, vnode) {
-        if(vnode.data.model && vnode.data.model.expression) {
-            if(!vnode.context.query){
-                vnode.context.query={};
-            }
-            if(!vnode.context.query.querySymbol){
-                vnode.context.query.querySymbol = {}
-            }
-            vnode.context.query.querySymbol[vnode.data.model.expression] = binding.value;
-        }
-    }
-});
+// /**
+//  * 查询指令,用于查询字段的条件字符串
+//  */
+// Vue.directive('query', {
+//     bind: function (el, binding, vnode) {
+//         if(vnode.data.model && vnode.data.model.expression) {
+//             if(!vnode.context.query){
+//                 vnode.context.query={};
+//             }
+//             if(!vnode.context.query.querySymbol){
+//                 vnode.context.query.querySymbol = {}
+//             }
+//             vnode.context.query.querySymbol[vnode.data.model.expression] = binding.value;
+//         }
+//     }
+// });
 
 Vue.prototype.$style = style;
 

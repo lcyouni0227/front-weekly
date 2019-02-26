@@ -1,22 +1,23 @@
 <template>
     <section>
-        <el-form :inline="true" v-if="showQuery">
-            <slot name="queryArea"></slot>
-            <el-form-item>
-                <el-button @keyup.enter.native="handelTableQuery()" @click="handelTableQuery()" size="mini" type="primary" icon="el-icon-search">查询</el-button>
-            </el-form-item>
-        </el-form>
-        <el-form ref="buttons" :inline="true" v-if="showTopButtonArea || showTopButton">
+        <slot name="query"></slot>
+        <!--<el-form :inline="true" v-if="showQuery">-->
+            <!--<slot name="queryArea"></slot>-->
+            <!--<el-form-item>-->
+                <!--<el-button @keyup.enter.native="handelQuery()" @click="handelQuery()" size="mini" type="primary" icon="el-icon-search">查询</el-button>-->
+            <!--</el-form-item>-->
+        <!--</el-form>-->
+        <el-form :inline="true" v-if="$slots.topButtonArea || showTopButton">
             <el-form-item v-if="showTopButton">
-                <!--<el-button @click="handelTableQuery()" type="success" icon="el-icon-refresh" plain size="mini">刷新</el-button>-->
-                <el-button v-if="buttons.add && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
-                <el-button v-if="buttons.edit && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
+                <!--<el-button @click="handelQuery()" type="success" icon="el-icon-refresh" plain size="mini">刷新</el-button>-->
+                <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
+                <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowSave(null)" type="warning" icon="el-icon-success" plain size="mini">保存</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-                <el-button v-if="buttons.del && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
+                <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
             </el-form-item>
-            <el-form-item>
-                <slot name = "buttonArea"></slot>
+            <el-form-item v-if="$slots.topButtonArea">
+                <slot name = "topButtonArea"></slot>
             </el-form-item>
         </el-form>
         <el-table ref="table" :row-key="rowKey" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="rows" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
@@ -24,15 +25,15 @@
             <el-table-column v-else width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
             <!--<el-table-column type="index" label="序" align="center" width="30"></el-table-column>-->
             <slot></slot>
-            <el-table-column label="操作" v-if="showRowButtonArea || showRowButton">
+            <el-table-column label="操作" v-if="$slots.rowButtonArea || showRowButton">
                 <template slot-scope="scope" v-if="showRowButton">
-                    <el-button v-if="buttons.add && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
-                    <el-button v-if="buttons.edit && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowSave(scope.$index)" type="warning" icon="el-icon-success" plain class="tableRowButton">保存</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain class="tableRowButton">取消</el-button>
-                    <el-button v-if="buttons.del && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
                 </template>
-                <slot name = "buttonArea"></slot>
+                <slot name = "rowButtonArea"></slot>
             </el-table-column>
         </el-table>
         <el-pagination style="text-align:center" v-if="showPagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :layout="pagerLayout" :current-page="currentPage" :page-sizes="pageSizes" :page-size="pageSize" :total="total" :pageCount="pageCount" :small="small" :popperClass="popperClass" :prevText="prevText" :nextText="nextText" :background="background" :disabled="disabled"></el-pagination>
@@ -49,12 +50,9 @@
         mixins:[dic,privilege],
         props: {
             multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选 */
-            showQuery:{type: Boolean, default: true},   /* 是否显示查询区域 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
             showPagination: {type: Boolean, default: true}, /* 是否显示分页工具条 */
-            showRowButtonArea:{type: Boolean, default: false},  /* 是否在表格内每行最后1列显示操作按钮列*/
             showRowButton:{type: Boolean, default: false}, /* 是否在表格内每行最后1列显示操作按钮 */
-            showTopButtonArea:{type: Boolean, default: false},  /* 是否显示表格顶部按钮区域 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
             attField:{type: String, default: null},
@@ -164,57 +162,41 @@
                     this.editRow.rowNumber = jsonUtil.findIndexFromArrayNoChildren(this.$refs.table.store.states.data,row,this.keyField);
                 }
             },
-            handelTableQuery(){
+            handelQuery(filter){
                 if(this.isRun()){
                     return;
                 }
                 let query = comUtil.getDataSource(this.dataSource);
                 query.page = this.currentPageX;
                 query.size = this.pageSizeX;
-                if(this.showQuery && this.$parent.query){
-                    let rule=[];
-                    for(let key in this.$parent.query){
-                        if(key != "querySymbol" && this.$parent.query[key] !='') {
-                            let item = {};
-                            item.name = key;
-                            item.val = this.$parent.query[key];
-                            if (this.$parent.query.querySymbol['query.' + key]) {
-                                item.opt = this.$parent.query.querySymbol['query.' + key];
-                            } else {
-                                item.opt = '=';
-                            }
-                            rule.push(item);
+                if(filter){
+                    query.filter = filter;
+                }
+                if(this.dataSource.module){
+                    if(this.fields == null){
+                        let attfield = [];
+                        if(this.$attrs.attField){
+                            attfield = this.$attrs.attField.toLowerCase().split(",");
                         }
-                    }
-                    if(rule.length>0){
-                        query.filter = {'out':'and','in':'and','rule':rule};
-                    }
-                    if(this.dataSource.module){
-                        if(this.fields == null){
-                            let attfield = [];
-                            if(this.$attrs.attField){
-                                attfield = this.$attrs.attField.toLowerCase().split(",");
-                            }
-                            if(this.attField){
-                                attfield = attfield.concat(this.attField.toLowerCase().split(","));
-                            }
-                            for(let v of this.$refs.table.columns) {
-                                if (v.property) {
-                                    for(let i = 0;i<attfield.length;i++){
-                                        if (attfield[i] == v.property.toLowerCase()){
-                                            attfield.splice(i, 1);
-                                            break;
-                                        }
+                        if(this.attField){
+                            attfield = attfield.concat(this.attField.toLowerCase().split(","));
+                        }
+                        for(let v of this.$refs.table.columns) {
+                            if (v.property) {
+                                for(let i = 0;i<attfield.length;i++){
+                                    if (attfield[i] == v.property.toLowerCase()){
+                                        attfield.splice(i, 1);
+                                        break;
                                     }
-                                    this.fields == null ? this.fields = v.property : this.fields += ',' + v.property;
                                 }
-                            }
-                            for(let v of attfield){
-                                this.fields == null ? this.fields = v : this.fields += ',' + v;
+                                this.fields == null ? this.fields = v.property : this.fields += ',' + v.property;
                             }
                         }
-                        query.fields = this.fields;
+                        for(let v of attfield){
+                            this.fields == null ? this.fields = v : this.fields += ',' + v;
+                        }
                     }
+                    query.fields = this.fields;
                 }
                 // console.log(query);
                 this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
@@ -357,7 +339,7 @@
                                 }
                                 if(this.isTree && this.editRow.action == 'edit' && diff[this.xTableTreeColumn.child.parentField]){
                                     this.endRun();
-                                    this.handelTableQuery();
+                                    this.handelQuery();
                                 }
                                 this._clearSelect();
                             }
@@ -477,11 +459,11 @@
 
             handleSizeChange(val) {
                 this.pageSizeX = val;
-                this.handelTableQuery();
+                this.handelQuery();
             },
             handleCurrentChange(val) {
                 this.currentPageX = val;
-                this.handelTableQuery();
+                this.handelQuery();
             },
             _clearSelect(){
                 this.multipleSelection = null;
@@ -490,7 +472,7 @@
             }
         },
         mounted() {
-            this.handelTableQuery();
+            this.handelQuery();
         }
     };
 </script>

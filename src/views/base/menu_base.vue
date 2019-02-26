@@ -7,14 +7,12 @@
                   ,{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}
                   ,{name:'menu_base', datasource:{parentField:'_pid',valueField:'muid',labelField:'name',module:'menu_base'}}]"
     >
-        <template slot="queryArea">
-            <el-form-item label="所属系统">
-                <x-select v-model="query.sysid" :data-source="{dic:'system'}" :size="$style.size()" placeholder="请选择所属系统"></x-select>
-            </el-form-item>
-            <el-form-item label="菜单名称">
-                <el-input v-model="query.name" v-query="'like'" :size="$style.size()" clearable placeholder="菜单名称"></el-input>
-            </el-form-item>
-        </template>
+        <x-query slot="query">
+            <x-query-item>
+                <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>
+            </x-query-item>
+            <x-query-item prop="name" opt="like" label="菜单名称"/>
+        </x-query>
         <x-table-tree-column prop="name" parent-field="_pid" value-field="muid" label="菜单名称" width="200"/>
         <x-table-column prop="muid" label="菜单编号" width="200"/>
         <x-table-column prop="sysid" label="所属系统" width="200">
@@ -56,11 +54,6 @@
 
 <script>
     export default {
-        name:'menu_base',
-        data(){
-            return {
-                query: {querySymbol: {}},
-            }
-        }
+        name:'menu_base'
     };
 </script>

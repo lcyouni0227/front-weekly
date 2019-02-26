@@ -12,6 +12,8 @@ import XInput from './component/xinput';
 import XCodeEditSql from './component/xcode-edit-sql';
 import XDialog from './component/xdialog';
 import XPanel from './component/xpanel';
+import XQuery from './component/xquery';
+import XQueryItem from './component/xquery-item';
 
 export default {
     install: (Vue) => {
@@ -29,6 +31,8 @@ export default {
         Vue.component(XCodeEditSql.name, XCodeEditSql);
         Vue.component(XDialog.name, XDialog);
         Vue.component(XPanel.name, XPanel);
+        Vue.component(XQuery.name, XQuery);
+        Vue.component(XQueryItem.name, XQueryItem);
 
     }
 }
