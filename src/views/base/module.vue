@@ -1,9 +1,6 @@
 <!-- 模块管理 -->
 <template>
-    <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
-                 :data-source="{module:'module'}"
-                  :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}]"
-    >
+    <x-table-edit :data-source="{module:'module'}" :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}]">
         <x-query slot="query">
             <x-query-item>
                 <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>

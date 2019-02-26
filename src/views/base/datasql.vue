@@ -1,12 +1,9 @@
 <!-- data-sql管理 -->
 <template>
-    <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
-                 :data-source="{module:'datasql'}"
-                  :dic="[{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}]"
-        >
+    <x-table-edit :data-source="{module:'datasql'}" :dic="[{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}]">
         <x-query slot="query">
             <x-query-item>
-                <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>
+                <x-select prop="mid" label="所属模块" :data-source="{dic:'module'}" placeholder="请选择所属模块"></x-select>
             </x-query-item>
             <x-query-item prop="uuid" label="数据源编号"/>
             <x-query-item prop="name" opt="like" label="数据源名称"/>
@@ -23,7 +20,7 @@
         <x-table-column prop="name" label="数据源名称" width="200px"/>
         <x-table-column prop="sqlinfo" label="sql语句">
             <template slot-scope="scope" slot="edit">
-                <x-input v-model="scope.row.sqlinfo" :size="$style.size()" clearable placeholder="请输入"
+                <x-input v-model="scope.row.sqlinfo" clearable placeholder="请输入"
                          :dialog="{title:'SQL编辑器',width:'50%',height:'30px',content:'x-code-edit-sql'}"
                 >
                     <x-code-edit-sql slot="dialogContent"/>

@@ -1,8 +1,6 @@
 <!-- 子系统管理 -->
 <template>
-    <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
-                 :data-source="{module:'system'}"
-        >
+    <x-table-edit :data-source="{module:'system'}">
         <x-query slot="query">
             <x-query-item prop="sysid" label="系统编号"/>
             <x-query-item prop="name" opt="like" label="系统名称"/>

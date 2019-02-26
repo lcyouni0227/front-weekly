@@ -1,12 +1,10 @@
 <!-- 菜单模板管理 -->
 <template>
-    <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
-                  :att-field="'_pid,muid'"
+    <x-table-edit :att-field="'_pid,muid'"
                   :data-source="{module:'menu_base'}"
                   :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}
                   ,{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}
-                  ,{name:'menu_base', datasource:{parentField:'_pid',valueField:'muid',labelField:'name',module:'menu_base'}}]"
-    >
+                  ,{name:'menu_base', datasource:{parentField:'_pid',valueField:'muid',labelField:'name',module:'menu_base'}}]">
         <x-query slot="query">
             <x-query-item>
                 <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>
