@@ -43,30 +43,18 @@
             <!-- 前置内容 -->
             <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
         <slot name="prefix"></slot>
-        <i class="el-input__icon"
-           v-if="prefixIcon"
-           :class="prefixIcon">
-        </i>
+        <i class="el-input__icon" v-if="prefixIcon" :class="prefixIcon"></i>
       </span>
             <!-- 后置内容 -->
-            <span class="el-input__suffix" v-if="$slots.suffix || suffixIcon || showClear || validateState && needStatusIcon">
+        <span class="el-input__suffix" v-if="$slots.suffix || suffixIcon || showClear || validateState && needStatusIcon">
         <span class="el-input__suffix-inner">
           <template v-if="!showClear">
             <slot name="suffix"></slot>
-            <i class="el-input__icon"
-               v-if="suffixIcon"
-               :class="suffixIcon">
-            </i>
+            <i class="el-input__icon" v-if="suffixIcon" :class="suffixIcon"></i>
           </template>
-          <i v-else
-             class="el-input__icon el-icon-circle-close el-input__clear"
-             @click="clear"
-          ></i>
+          <i v-else class="el-input__icon el-icon-circle-close el-input__clear" @click="clear"></i>
         </span>
-        <i class="el-input__icon"
-           v-if="validateState"
-           :class="['el-input__validateIcon', validateIcon]">
-        </i>
+        <i class="el-input__icon" v-if="validateState" :class="['el-input__validateIcon', validateIcon]"></i>
       </span>
             <!-- 后置元素 -->
             <div class="el-input-group__append" v-if="$slots.append">
@@ -87,7 +75,6 @@
                     <!--<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>-->
                 <!--</span>-->
             </x-dialog>
-
         </template>
         <textarea
             v-else
@@ -109,7 +96,7 @@
             @change="handleChange"
             :aria-label="labelX"
         >
-    </textarea>
+        </textarea>
     </div>
 </template>
 <script>
@@ -121,6 +108,7 @@
         mixins:[Input,Query],
         data(){
             return {
+                parentQuery:null,
                 dialogVisible:false
             }
         },
@@ -129,24 +117,22 @@
             clearable: {type: Boolean, default: true},
             dialog:{Type:Object,default(){return null}}
         },
-        computed: {
-            showClear() {
-                return this.clearable &&
-                    !this.inputDisabled &&
-                    !this.readonly &&
-                    (this.focused || this.hovering);
-            }
-        },
         methods:{
             handleInput(event) {
-                if(this.value) {
-                    if (this.isOnComposition) return;
-                    if (event.target.value === this.nativeInputValue) return;
-                    this.$emit('input', event.target.value);
+                if (this.isOnComposition) return;
+                if (event.target.value === this.nativeInputValue) return;
+                this.$emit('input', event.target.value);
+                if(this.value){
                     this.$nextTick(() => {
                         let input = this.getInput();
                         input.value = this.value;
                     });
+                }
+            },
+            handleChange(event) {
+                this.$emit('change', event.target.value);
+                if(this.parentQuery){
+                    this.parentQuery.v.changValue(this.parentQuery.field,event.target.value);
                 }
             },
             _openDialog(){
@@ -154,12 +140,7 @@
             }
         },
         mounted(){
-            let v = this._checkQuery();
-            if(v){
-                this.$refs.input.addEventListener('change',(e)=>{
-                    v.v.changValue(v.field,e.target.value);
-                });
-            }
+            this.parentQuery = this._checkQuery();
         }
     }
 </script>
