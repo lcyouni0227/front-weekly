@@ -3,8 +3,8 @@
         <div ref="tagsView"
              class="tags-outer"
 
-             @mousewheel="handlescroll"
-             @DOMMouseScroll="handlescroll"
+             @mousewheel="handleScroll"
+             @DOMMouseScroll="handleScroll"
         >
             <div class="tags-handle">
                 <el-dropdown trigger="click" @command="handleCommand">
@@ -25,7 +25,7 @@
                         size="large"
                         closable
                         :key="item.path"
-                        :class="item.name==viewName? 'el-tag-active' : ''"
+                        :class="item.name===viewName? 'el-tag-active' : ''"
                         @click.native="goto(item)"
                         @close="closeTag(item)"
                 >
@@ -75,10 +75,25 @@
                 }
             },
             closeTag(tag) {
-                if (this.visitedViews.length === 1) {
-                    this.$router.push('index');
+                if (this.visitedViews.length <= 1) {
+                    this.$router.push('/index');
+                } else {
+                    for (let i = 0; i < this.visitedViews.length; i++) {
+                        if (this.visitedViews[i].path === tag.path) {
+                            if (i === 0) {
+                                this.$router.push(this.visitedViews[i + 1]);
+                            } else {
+                                this.$router.push(this.visitedViews[i - 1]);
+
+                            }
+                            break;
+                        }
+                    }
+
+
                 }
                 this.$store.dispatch('removeVisitedTag', tag);
+
             },
             goto(tag) {
                 this.$router.push(tag.path);
@@ -94,20 +109,19 @@
                 this.$store.dispatch('addVisitedTag', route)
 
             },
-            handlescroll(event) {
-                console.log( this.$refs.tagsView.offsetWidth)
+            handleScroll(event) {
+                console.log(this.$refs.tagsView.offsetWidth)
                 let type = event.type;
                 let delta = 0;
                 if (type === 'DOMMouseScroll' || type === 'mousewheel') {
-                    delta = event.wheelDelta ? event.wheelDelta : -(event.detail || 0) * 40
+                    delta = event.wheelDelta ? event.wheelDelta : -(event.detail || 0) * 40;
                 }
                 let left = 0;
                 if (delta > 0) {
                     left = Math.min(0, this.tagsScrollLeft + delta)
                 } else {
-                    console.log('sdfsdf', this.$refs.tagsView.offsetWidth)
                     if (this.$refs.tagsView.offsetWidth - 100 < this.$refs.tagsScroll.offsetWidth) {
-                        if (this.tagsScrollLeft <-(this.$refs.tagsScroll.offsetWidth - this.$refs.tagsView.offsetWidth + 100)) {
+                        if (this.tagsScrollLeft < -(this.$refs.tagsScroll.offsetWidth - this.$refs.tagsView.offsetWidth + 100)) {
                             left = this.tagsScrollLeft
                         } else {
                             left = Math.max(
@@ -173,7 +187,7 @@
                     transition: all .3s;
                     border-radius: 2px;
                     cursor: pointer;
-                    margin: 1px 4px 0px 0px;
+                    margin: 1px 4px 0 0;
                     user-select: none;
                 }
 
