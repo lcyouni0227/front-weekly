@@ -175,7 +175,7 @@
                 this.$refs[formName].validate(async valid => {
                     if (valid) {
                         that.$axios.postJson('/public/login',this.login).then(res => {
-                            if (res.code == 1) {
+                            if (res.code === 1) {
                                 that.$message({message: "登陆成功", type: 'success'});
                                 that.$router.push('/index');
                             } else {

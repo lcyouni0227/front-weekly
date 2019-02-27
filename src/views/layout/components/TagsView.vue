@@ -76,6 +76,10 @@
             },
             closeTag(tag) {
                 if (this.visitedViews.length <= 1) {
+                    if (tag.path ==='/index') {
+                        return;
+
+                    }
                     this.$router.push('/index');
                 } else {
                     for (let i = 0; i < this.visitedViews.length; i++) {
@@ -110,7 +114,6 @@
 
             },
             handleScroll(event) {
-                console.log(this.$refs.tagsView.offsetWidth)
                 let type = event.type;
                 let delta = 0;
                 if (type === 'DOMMouseScroll' || type === 'mousewheel') {
