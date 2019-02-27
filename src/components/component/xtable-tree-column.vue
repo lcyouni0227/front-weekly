@@ -18,7 +18,8 @@
     export default {
         name: 'XTableTreeColumn',
         props: {
-            prop: String,
+            edit: {type: Boolean, default: true},   /* 是否编辑 */
+            prop: String,   /* 字段名称 */
             parentField: {type: String, default: '_pid'},
             valueField: {type: String, default: 'id'},
             childField: {type: String, default: 'children'}
@@ -51,7 +52,7 @@
             },
             isEdit(scope){
                 let v = this.$parent.$parent.editRow;
-                return (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
+                return this.edit && (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
             },
             childStyles(row) {
                 return {

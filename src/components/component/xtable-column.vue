@@ -15,15 +15,13 @@
     export default {
         name: 'XTableColumn',
         props: {
-            prop: {
-                type: String
-            }
+            edit:{type:Boolean,default:true},   /* 是否编辑 */
+            prop: {type: String}        /* 字段名称 */
         },
         methods: {
             isEdit(scope){
                 let v = this.$parent.$parent.editRow;
-                return (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
-                // return this.$parent.$parent.editRow && this.$parent.$parent.editRow.key == scope.row[this.$parent.$parent.keyField];
+                return this.edit && (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
             }
         }
     }
