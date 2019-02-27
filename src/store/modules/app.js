@@ -21,7 +21,6 @@ const app = {
         },
         REMOVE_VISITED_TAG: (state, view) => {
             for (let [index, item] of state.visitedViews.entries()) {
-                console.log(index)
                 if (item.path === view.path) {
                     state.visitedViews.splice(index, 1);
                     break;
@@ -29,11 +28,11 @@ const app = {
             }
         },
         CLOSE_OTHER_TAG: (state, view) => {
-            const newView = new Array({
+
+            state.visitedViews = new Array({
                 name: view.name,
                 path: view.path
             });
-            state.visitedViews = newView;
         },
         CLOSE_ALL_TAG: state => {
             state.visitedViews = [];
@@ -49,10 +48,7 @@ const app = {
             commit('ADD_VISITED_TAG', view);
         },
         removeVisitedTag({commit}, view) {
-            // return new Promise(resolve => {
             commit('REMOVE_VISITED_TAG', view);
-            //     resolve(state.visitedViews);
-            // })
         },
         removeOtherTag({commit}, view) {
             commit('CLOSE_OTHER_TAG', view);
