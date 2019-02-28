@@ -1,7 +1,7 @@
 <!-- 图标选择器 -->
 <template>
     <el-popover ref="popover" placement="bottom-start">
-        <el-table :data="data" border :show-header=false :fit=true style="width:100%" :max-height="dialogHeight" @cell-click="cell">
+        <el-table :data="data" border :show-header=false :fit=true style="width:100%;overflow: auto" :max-height="dialogHeight" @cell-click="cell">
             <template v-for="(v,index) in cols">
                 <el-table-column :prop="'cc'+index" :key="index" align="center" >
                     <template slot-scope="scope" >
