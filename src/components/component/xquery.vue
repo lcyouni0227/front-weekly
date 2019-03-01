@@ -18,14 +18,8 @@
             }
         },
         methods: {
-            changValue(key,val){
-                this.query[key] = val;
-            },
             getQuery(){
                 return this.query;
-            },
-            setOpt(key,val){
-                this.query.querySymbol['query.' + key] = val;
             },
             getQueryFormat(){
                 let rule=[];
@@ -47,12 +41,22 @@
                 }
                 return null;
             },
+            changValue(key,val){
+                this.query[key] = val;
+            },
+            setOpt(key,val){
+                this.query.querySymbol['query.' + key] = val;
+            },
             handelQuery(){
-                let parent = this.$parent;
-                while (!parent.handelQuery) {
-                    parent = parent.$parent;
+                if(this.queryFunction){
+                    this.queryFunction(this.query,this.getQueryFormat());
+                }else {
+                    let parent = this.$parent;
+                    while (!parent.handelQuery) {
+                        parent = parent.$parent;
+                    }
+                    parent.handelQuery && parent.handelQuery(this.getQueryFormat());
                 }
-                parent.handelQuery && parent.handelQuery(this.getQueryFormat());
             }
         }
     };

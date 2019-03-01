@@ -2,15 +2,15 @@
     <section>
         <el-form>
             <el-form-item>
-                <textarea ref="code" class="code" v-model="xcode"></textarea>
+                <textarea ref="code" v-bind="$attrs" class="code" v-model="code"></textarea>
             </el-form-item>
         </el-form>
         <el-form>
             <el-form-item>
                 <el-tabs >
                     <el-tab-pane label="执行结果">
-                        <x-table-edit :data="rows" :data-source="{module:'datasql'}" :showTopButton="false">
-                            <x-table-column :prop="key" :label="key" v-for ="(value,key) in rows[0]" :key="key"></x-table-column>
+                        <x-table-edit ref="xtable" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
+                            <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]"></el-table-column>
                         </x-table-edit>
                     </el-tab-pane>
                 </el-tabs>
@@ -36,7 +36,6 @@
         mixins:[xcodeEdit,runStatus],
         data(){
             return {
-                xcode:this.code,
                 mime:'text/x-mariadb',
                 hintOptions:this._getDBTableField(),
                 rows:[]
@@ -52,18 +51,21 @@
                 return hintOptions;
             },
             run(){
-                console.log(this.xcode);
-                // this.$axios.postJson('/data/query',query).then(res => {
-                //     if(res.code==1) {
-                //         this.total = res.data.total;
-                //         this.keyField = res.data.keyField;
-                //         this._clearSelect();
-                //         this.rows = res.data.rows;
-                //     }
-                //     this.endRun();
-                // }).catch(() => {
-                //     this.endRun();
-                // });
+                let query = {};
+                query.sql = this.getCode();
+                let data = this.$refs.xtable.getQueryData();
+                query.page = data.page;
+                query.size = data.size;
+                this.$axios.postJson('/data/querySQL',query).then(res => {
+                    if(res.code==1) {
+                        this.rows = JSON.parse(res.data.rows);
+                        this.$refs.xtable.total = res.data.total;
+                        // this.$refs.xtable.setData(res.data);
+                    }
+                    this.endRun();
+                }).catch(() => {
+                    this.endRun();
+                });
             },
             submit(){
 

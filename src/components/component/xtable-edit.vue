@@ -20,9 +20,9 @@
                 <slot name = "topButtonArea"></slot>
             </el-form-item>
         </el-form>
-        <el-table ref="table" :row-key="rowKey" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="rows" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
+        <el-table ref="table" :row-key="rowKey" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="nativeRowsValue" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
             <el-table-column v-if="multiSelect" type="selection" width="30"></el-table-column>
-            <el-table-column v-else width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
+            <el-table-column v-if="singleSelect" width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
             <!--<el-table-column type="index" label="序" align="center" width="30"></el-table-column>-->
             <slot></slot>
             <el-table-column label="操作" v-if="$slots.rowButtonArea || showRowButton">
@@ -50,13 +50,17 @@
         name: 'XTableEdit',
         mixins:[dic,privilege,runStatus],
         props: {
-            multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选 */
+            multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选,显示复选框 */
+            singleSelect:{type: Boolean, default: true},    /* 表格是否允许单选,显示单选框 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
             showPagination: {type: Boolean, default: true}, /* 是否显示分页工具条 */
             showRowButton:{type: Boolean, default: false}, /* 是否在表格内每行最后1列显示操作按钮 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
-            attField:{type: String, default: null},
+            attField:{type: String, default: null}, /* 附加字段 */
+            load:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
+
+            data:{type: Array, default(){return []}},
 
             size: String,
             width: [{type: String, default: '100%'}, Number],
@@ -104,12 +108,12 @@
             return {
                 isTree: null,   /* 缓存是否是树型结构，通过是否引入XTableTreeColumn树型列判断 */
                 xTableTreeColumn: null, /* 缓存树型列对象 */
-                fields:null,    /* 缓存查询字段,通过列绑定的字段计算并缓存起来 */
+                fields:'',    /* 缓存查询字段,通过列绑定的字段计算并缓存起来 */
 
                 editRow:{action:null,rowNumber:null,rowData:null},   /* 正在操作的行 */
                 keyField:'',    /* 主键字段 */
                 total:0,        /* 总行数 */
-                rows:[],        /* 表格数据 */
+                rows:this.data,        /* 表格数据 */
                 pageSizeX:this.pageSize,    /* 每页记录数 */
                 currentPageX: this.currentPage, /* 当前页码 */
                 multipleSelection: null,   /* 单选或多选的结果,注意多选时是json数组 */
@@ -122,9 +126,111 @@
             },
             isSelect(){
                 return this.editRow.rowNumber != null;
+            },
+            nativeRowsValue() {
+                return this.rows === null || this.rows === undefined ? [] : this.rows;
+            }
+        },
+        watch:{
+            data(val){
+                this.rows = val;
             }
         },
         methods: {
+            /* 获得查询裸数据 */
+            getQueryData(){
+                if(!this.load){
+                    this.getFields();
+                }
+                let filter = this.getFilter();
+                return {
+                    module:this.dataSource.module,
+                    source:this.dataSource.source,
+                    fields:this.fields,
+                    page:this.currentPageX,
+                    size:this.pageSizeX,
+                    filter:filter
+                }
+            },
+            /* 获得查询列表字段 */
+            getFields(){
+                if(this.dataSource.module){
+                    if(this.fields === ''){
+                        let attfield = [];
+                        if(this.$attrs.attField){
+                            attfield = this.$attrs.attField.toLowerCase().split(",");
+                        }
+                        if(this.attField){
+                            attfield = attfield.concat(this.attField.toLowerCase().split(","));
+                        }
+                        for(let v of this.$refs.table.columns) {
+                            if (v.property) {
+                                for(let i = 0;i<attfield.length;i++){
+                                    if (attfield[i] == v.property.toLowerCase()){
+                                        attfield.splice(i, 1);
+                                        break;
+                                    }
+                                }
+                                this.fields === '' ? this.fields = v.property : this.fields += ',' + v.property;
+                            }
+                        }
+                        for(let v of attfield){
+                            this.fields === '' ? this.fields = v : this.fields += ',' + v;
+                        }
+                    }
+                }
+                return this.fields;
+            },
+            /* 获得查询参数 */
+            getFilter(){
+                if(this.$slots.query){
+                    return this.$slots.query[0].componentInstance.getQueryFormat();
+                }else{
+                    return null;
+                }
+            },
+            /* 获得组装后的查询json对象 */
+            getQuery(filter){
+                let query = comUtil.getDataSource(this.dataSource);
+                query.page = this.currentPageX;
+                query.size = this.pageSizeX;
+                query.fields = this.getFields();
+                if(!filter){
+                    filter = this.getFilter();
+                }
+                if(filter){
+                    query.filter = filter;
+                }
+                return query;
+            },
+            /* 外部获得值传入控件内 */
+            setData(data){
+                this.total = data.total;
+                this.keyField = data.keyField;
+                this._clearSelect();
+                if(this.isTree == null){
+                    for (let v of this.$options._renderChildren){
+                        if (v.tag.indexOf("XTableTreeColumn")>0){
+                            this.isTree = true;
+                            this.xTableTreeColumn = v;
+                            this.rows = v.componentInstance.toTree(data.rows);
+                            this.endRun();
+                            return;
+                        }
+                    }
+                    this.isTree = false;
+                }else if(this.isTree){
+                    this.rows = this.xTableTreeColumn.componentInstance.toTree(data.rows);
+                    this.endRun();
+                    return;
+                }
+                if(Object.prototype.toString.call(data.rows) === "[object String]"){
+                    this.rows = JSON.parse(data.rows);
+                }else {
+                    this.rows = data.rows;
+                }
+                // this.$emit('updata:rows',this.rows);
+            },
             rowKey(row){
                 return row[this.keyField];
             },
@@ -157,61 +263,9 @@
                 if(this.isRun()){
                     return;
                 }
-                let query = comUtil.getDataSource(this.dataSource);
-                query.page = this.currentPageX;
-                query.size = this.pageSizeX;
-                if(filter){
-                    query.filter = filter;
-                }
-                if(this.dataSource.module){
-                    if(this.fields == null){
-                        let attfield = [];
-                        if(this.$attrs.attField){
-                            attfield = this.$attrs.attField.toLowerCase().split(",");
-                        }
-                        if(this.attField){
-                            attfield = attfield.concat(this.attField.toLowerCase().split(","));
-                        }
-                        for(let v of this.$refs.table.columns) {
-                            if (v.property) {
-                                for(let i = 0;i<attfield.length;i++){
-                                    if (attfield[i] == v.property.toLowerCase()){
-                                        attfield.splice(i, 1);
-                                        break;
-                                    }
-                                }
-                                this.fields == null ? this.fields = v.property : this.fields += ',' + v.property;
-                            }
-                        }
-                        for(let v of attfield){
-                            this.fields == null ? this.fields = v : this.fields += ',' + v;
-                        }
-                    }
-                    query.fields = this.fields;
-                }
-                // console.log(query);
-                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
+                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',this.getQuery(filter)).then(res => {
                     if(res.code==1) {
-                        this.total = res.data.total;
-                        this.keyField = res.data.keyField;
-                        this._clearSelect();
-                        if(this.isTree == null){
-                            for (let v of this.$options._renderChildren){
-                                if (v.tag.indexOf("XTableTreeColumn")>0){
-                                    this.isTree = true;
-                                    this.xTableTreeColumn = v;
-                                    this.rows = v.componentInstance.toTree(res.data.rows);
-                                    this.endRun();
-                                    return;
-                                }
-                            }
-                            this.isTree = false;
-                        }else if(this.isTree){
-                            this.rows = this.xTableTreeColumn.componentInstance.toTree(res.data.rows);
-                            this.endRun();
-                            return;
-                        }
-                        this.rows = res.data.rows;
+                        this.setData(res.data);
                     }
                     this.endRun();
                 }).catch(() => {
@@ -463,7 +517,9 @@
             }
         },
         mounted() {
-            this.handelQuery();
+            if(this.load){
+                this.handelQuery();
+            }
         }
     };
 </script>
