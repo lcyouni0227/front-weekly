@@ -67,6 +67,8 @@ if (typeof Object.assign != 'function') {
 export default {
     name: "XCodeEdit",
     props: {
+        width:{Type:String,default:'100%'},    /* 编辑器宽度 */
+        height:{Type:String,default:'100px'},    /* 编辑器高度 */
         code:String,
         theme:{type: String, default: 'default'},
         options: {type: Object, default: () => ({})},
@@ -130,6 +132,8 @@ export default {
             if(this.code){
                 this.cminstance.setValue(this.code);
             }
+            this.cminstance.setSize('width',this.width);
+            this.cminstance.setSize('height',this.height);
             //代码自动提示功能，记住使用cursorActivity事件不要使用change事件，这是一个坑，那样页面直接会卡死
             this.cminstance.on('cursorActivity', () =>{
                 this.cminstance.showHint()
