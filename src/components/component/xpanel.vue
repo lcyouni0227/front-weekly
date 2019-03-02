@@ -1,11 +1,11 @@
 <template>
-    <div class="collapse collapse-item" :class="{'is-active': active}" :style="{width:width}">
-        <div class="collapse-header touchable" :aria-expanded="active?'true':'false'" v-if="title">
+    <div ref="panel" class="collapse collapse-item" :class="{'is-active': active}" :style="{width:width,height:height}">
+        <div ref="title" class="collapse-header touchable" :aria-expanded="active?'true':'false'" v-if="title">
             {{title}}
-            <i :class="getIcon" class="icon" @click.prevent="toggle"></i>
+            <i v-if="closeBtn" :class="getIcon" class="icon" @click.prevent="toggle"></i>
         </div>
         <transition name="fade">
-            <div class="collapse-content-box" v-if="active" :style="{height:height}" :class="{scrollXclass:scrollX,scrollYclass:scrollY}" >
+            <div class="collapse-content-box" v-if="active" style="height:100%" :class="{scrollXclass:scrollX,scrollYclass:scrollY}" >
                 <slot></slot>
             </div>
         </transition>
@@ -21,10 +21,11 @@
             }
         },
         props: {
+            closeBtn:{type: Boolean, default: true},    /* 是否显示折叠按钮 */
             selected: {type: Boolean, default: true},   /* 折叠或展开状态 */
             title: String,
-            height: String,
-            width: String,
+            height: {type: String, default: '100%'},
+            width: {type: String, default: '100%'},
             scrollX:{type: Boolean, default: true},     /* 是否要横向滚动条 */
             scrollY:{type: Boolean, default: true}      /* 是否要竖向滚动条 */
         },

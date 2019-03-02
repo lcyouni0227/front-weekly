@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="resultTab">
         <slot name="query"></slot>
         <!--<el-form :inline="true" v-if="showQuery">-->
             <!--<slot name="queryArea"></slot>-->
@@ -523,3 +523,24 @@
         }
     };
 </script>
+<style>
+    /*.resultTab>.el-table th>.cell, .resultTab>.el-table td>.cell{*/
+        /*text-align: center;*/
+        /*white-space: nowrap;*/
+    /*}*/
+    /*滚动条样式*/
+    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+        border-radius: 15px;
+        -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+        background: rgba(0,0,0,0.1);
+    }
+    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar-track {/*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
+        border-radius: 5px;
+        background: rgba(0,0,0,0);
+    }
+</style>

@@ -1,28 +1,17 @@
 <template>
     <section>
-        <el-form>
-            <el-form-item>
-                <textarea ref="code" v-bind="$attrs" class="code" v-model="code"></textarea>
-            </el-form-item>
-        </el-form>
-        <el-form>
-            <el-form-item>
-                <el-tabs >
-                    <el-tab-pane label="执行结果">
-                        <x-table-edit ref="xtable" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
-                            <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]"></el-table-column>
-                        </x-table-edit>
-                    </el-tab-pane>
-                </el-tabs>
-            </el-form-item>
-        </el-form>
-        <el-form :inline="true" align="center">
-            <el-form-item>
+        <x-splitter layout="vertical">
+            <textarea slot="1" ref="code" v-bind="$attrs" class="code" v-model="code"></textarea>
+            <div slot="2" style="height: 100%">
                 <el-button @click="run()" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">运行</el-button>
                 <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
-                <el-button @click="cancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-            </el-form-item>
-        </el-form>
+                <x-panel title="执行结果" width="100%" :closeBtn="false">
+                    <x-table-edit ref="xtable" class="resultTab" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
+                        <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]"></el-table-column>
+                    </x-table-edit>
+                </x-panel>
+            </div>
+        </x-splitter>
     </section>
 </template>
 
@@ -69,9 +58,6 @@
             },
             submit(){
 
-            },
-            cancel(){
-
             }
         }
     }
@@ -87,5 +73,9 @@
 <style >
     .CodeMirror-hints{
         z-index: 100000!important;
+    }
+    .resultTab>.el-table th>.cell, .resultTab>.el-table td>.cell{
+        text-align: center;
+        white-space: nowrap;
     }
 </style>
