@@ -7,6 +7,9 @@ import $ from 'jquery';
 
 let loadingInstance = null;
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
+axios.defaults.baseURL = baseUrl;
+axios.defaults.crossDomain = true;
+axios.defaults.withCredentials = true;
 const http = axios.create({
     baseURL: baseUrl,
     timeout: timeout,
@@ -154,7 +157,8 @@ function ajax(method='post',url,params,isLoading = true, isMessage = false) {
     ).then(res => {
         endLoading();
         return checkStatus(res, isMessage);
-    }).catch(() => {
+    }).catch((e) => {
+        console.log(e);
         endLoading();
         Message({
             showClose: true,
@@ -193,7 +197,8 @@ export default {
                 callback && callback(res);
                 endLoading();
             },
-            error: function() {
+            error: function(e) {
+                console.log(e);
                 endLoading();
                 Message({
                     showClose: true,
@@ -253,7 +258,7 @@ export default {
         if (isLoading) {
             startLoading();
         }
-        return axios({
+        return http({
             method: 'post',
             url: url,
             params,
@@ -263,7 +268,8 @@ export default {
         }).then((res) => {
             endLoading();
             return checkStatus(res, isMessage)
-        }).catch(() => {
+        }).catch((e) => {
+            console.log(e);
             endLoading();
             Message({
                 showClose: true,
@@ -274,9 +280,10 @@ export default {
     },
 
     /**
-     *
+     * 文件下载
      * @param url
-     * @param data
+     * @param params: json格式参数
+     * @param saveFileName:保存的文件名称
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
@@ -284,18 +291,35 @@ export default {
         if (isLoading) {
             startLoading();
         }
-        return axios({
+        return http({
             method: 'post',
             url: url,
-            params,
-            headers: {
-                'Content-Type': 'application/x-download;charset=UTF-8'
-            },
+            data:JSON.stringify(params),
             responseType: 'blob',
         }).then((res) => {
+            let saveFileName=res.headers['content-disposition'];
+            if(saveFileName){
+                let i= saveFileName.lastIndexOf("filename=\"");
+                saveFileName=saveFileName.substring(i+10);
+                saveFileName=saveFileName.substring(0,saveFileName.length-1);
+            }
+            const blob = new Blob([res.data])
+            if ('download' in document.createElement('a')) { // 非IE下载
+                const link = document.createElement('a');
+                link.download = saveFileName;
+                link.style.display = 'none';
+                link.href = URL.createObjectURL(blob);
+                document.body.appendChild(link);
+                link.click();
+                URL.revokeObjectURL(link.href); // 释放URL 对象
+                document.body.removeChild(link);
+            } else { // IE10+下载
+                navigator.msSaveBlob(blob, saveFileName)
+            }
             endLoading();
             return res
-        }).catch(() => {
+        }).catch((e) => {
+            console.log(e);
             endLoading();
             Message({
                 showClose: true,
