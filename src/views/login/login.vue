@@ -3,19 +3,19 @@
         <h3 class="headertip"><img src="@/project/lamp/img/logo.png" alt="">智能灯控信息管理平台</h3>
         <el-form ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
             <h3 class="title">智慧灯控管理平台</h3>
-            <el-form-item prop="username">
-                <el-input type="text" v-model="login.username" auto-complete="off" placeholder="用户名" size="big"></el-input>
+            <el-form-item prop="passport">
+                <el-input type="text" v-model="login.passport" auto-complete="off" placeholder="用户名" size="big"></el-input>
             </el-form-item>
             <el-form-item prop="password">
                 <el-input type="password" v-model="login.password" auto-complete="off" placeholder="密码" size="big"></el-input>
             </el-form-item>
-            <el-form-item prop="code">
-                <el-input type="text" v-model="login.code" auto-complete="off" class="codeInput" size="big"></el-input>
-                <img id="code" :src="$baseImgUrl + imageUrl" alt="点击刷新" class="codeImg" @click.stop="changeCode()"/>
+            <el-form-item prop="checkcode">
+                <el-input size="big" class="codeInput" @keyup.enter.native="handleLogin" :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
+                <img :src="$baseImgUrl + imageUrl" alt="点击刷新" class="codeImg" @click.stop="handleCode"/>
             </el-form-item>
-            <el-checkbox size="big" v-model="checked" class="rememberme">记住密码</el-checkbox>
+            <el-checkbox v-model="remember" class="remember">记住密码</el-checkbox>
             <el-form-item>
-                <el-button type="primary" style="width:100%;" @click="login">{{$t('login.btn')}}</el-button>
+                <el-button type="primary" style="width:100%;" @click="handleLogin">{{$t('login.btn')}}</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -73,7 +73,7 @@
         border: 1px solid #eaeaea;
         box-shadow: 0 0 25px #cac6c6;
     }
-    label.el-checkbox.rememberme {
+    label.el-checkbox.remember {
         margin: 0px 0px 15px;
         text-align: left;
     }

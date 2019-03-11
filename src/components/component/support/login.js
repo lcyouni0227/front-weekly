@@ -35,25 +35,17 @@ export default {
                 ]
             },
             remember: true,
-            switchLeft: false,
-            switchRight: false,
-            notforget: true,
-            forgetForm: {
-                email: '',
-                newPassword: '',
-                confirmPassword: ''
-            }
         }
     },
     methods: {
         /**
          * 变换验证码
          */
-        changeCode: function () {
+        handleCode: function () {
             let rand = Math.floor(Math.random() * (1000 + 1));
             this.imageUrl = "/public/checkCode?" + rand;
         },
-        login() {
+        handleLogin() {
             this.$refs['form'].validate(async valid => {
                 if (valid) {
                     this.$axios.postJson('/public/login',this.login).then(res => {
@@ -61,21 +53,17 @@ export default {
                             this.$message({message: "登陆成功", type: 'success'});
                             this.$router.push('/index');
                         } else {
-                            this.changeCode();
+                            this.handleCode();
                             this.$message({message: res.message, type: 'error'});
                         }
                     }).catch(res=>{
-                        this.changeCode();
+                        this.handleCode();
                         this.$message({message: res.message, type: 'warning'});
                     })
                 } else {
                     this.$message.error(this.$t('login.validfaild'))
                 }
             })
-        },
-        forgetHandle() {
-            this.$message.success(this.$t('login.pwdChanged'));
-            this.wrapSwitch(true)
         }
     }
 }

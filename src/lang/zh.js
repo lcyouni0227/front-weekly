@@ -6,7 +6,6 @@ export default {
         name: "徐延旭"
     },
     login: {
-
         title: "系统登录",
         btn: "登录",
         radioEN: "英语",
@@ -27,7 +26,7 @@ export default {
         confirm_passwrd: "请输入确认密码",
         forget_btn: "重置",
         forget_back: "返回",
-        validfaild: "登陆校验未通过，是不是哪里出问题了？",
+        validfaild: "数据输入不完整,请检查后重新输入。",
         pwdChanged: "密码重置成功！"
     },
 }

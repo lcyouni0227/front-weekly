@@ -15,7 +15,11 @@ var loginData = function () {
     };
     return mockData
 };
-Mock.mock('/user/loginData', 'get', loginData);
+Mock.mock('/api/public/login', 'post', ()=>{
+    return {
+        code:1
+    }
+});
 Mock.mock('/api/privilege/getButtons', 'post', ()=>{
     return {
         code:1,
