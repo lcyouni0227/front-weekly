@@ -6,8 +6,8 @@
         </el-header>
 
         <el-container>
-            <el-aside :width="isCollapse?'64px':'164px'">
-                <side-menu class="sidebar-container"/>
+            <el-aside :width="isCollapse?'60px':'180px'">
+                <side-menu/>
             </el-aside>
             <el-main>
                 <tags-view/>
@@ -18,7 +18,8 @@
 </template>
 
 <script>
-    import sideMenu from './components/SideMenu.vue';
+    // import sideMenu from './components/SideMenu.vue';
+    import sideMenu from '@/components/component/xmain-menu';
     import TopBar from './components/TopBar'
     import AppMain from "./components/AppMain";
     import TagsView from "./components/TagsView";

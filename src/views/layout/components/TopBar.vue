@@ -9,18 +9,16 @@
             </el-col>
             <el-col :span="12">
                 <el-row type="flex" class="row-right" justify="end" style="margin-right:-15px">
-                    <el-col :span="3">
+                    <el-col :span="6">
                         <div class="user">
-                            <img src="@/assets/img/login/cont.png" alt="头像">
-                            <a class="user">{{userName}}</a></div>
-
+                            欢迎您:{{userName}}
+                        </div>
                     </el-col>
                     <el-col :span="1">
                         <lang-select/>
                     </el-col>
                     <el-col :span="1">
-                        <i :class="[isFullscreen? 'icon-zuixiaohua': 'icon-quanping','iconfont','']" title="切换全屏"
-                           @click="toggleFullscreen"></i>
+                        <i :class="[isFullscreen? 'icon-zuixiaohua': 'icon-quanping','iconfont','']" title="切换全屏" @click="toggleFullscreen"></i>
                     </el-col>
                     <el-col :span="1">
                         <i class="icon-tuichu iconfont logout" title="退出" @click.prevent="logout"></i>
@@ -64,9 +62,24 @@
                 this.isFullscreen = !screenfull.isFullscreen
             },
             logout() {
-                this.$router.push('/')
-            },
+                this.$confirm('确定退出系统吗?', '退出提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'error'
+                }).then(() => {
+                    this.$axios.postJson('/public/logout').then((res)=>{
+                        if(res.code==1){
+                            this.$router.push('/login')
+                        }else{
+                            this.$message.warning('登出异常,请稍后再试！');
+                        }
+                    }).catch(()=>{
+                        this.$message.warning('登出异常,请稍后再试！');
+                    });
+                }).catch(() => {
 
+                });
+            }
         }
     }
 </script>

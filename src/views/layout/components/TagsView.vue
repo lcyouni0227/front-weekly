@@ -2,7 +2,6 @@
     <div class="tags-view">
         <div ref="tagsView"
              class="tags-outer"
-
              @mousewheel="handleScroll"
              @DOMMouseScroll="handleScroll"
         >
@@ -16,11 +15,8 @@
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
-            <div class="tags-labels"
-                 ref="tagsScroll"
-                 :style="{ left: tagsScrollLeft + 'px' }">
-                <el-tag
-                        ref="tag"
+            <div class="tags-labels" ref="tagsScroll" :style="{ left: tagsScrollLeft + 'px' }">
+                <el-tag ref="tag"
                         v-for="(item) in visitedViews"
                         size="large"
                         closable

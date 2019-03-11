@@ -13,7 +13,7 @@
                 <div class="content_r l">
                     <h4>用户登录</h4>
                     <div class="int_box">
-                        <span class="l"><img src="@/assets/img/login/user_ico.png"/></span>
+                        <span class="l"><img src="@/assets/img/user_ico.png"/></span>
                         <input v-model="loginForm.username" type="text" placeholder="用户名" class="ipt_user l"/>
                     </div>
                     <div class="int_box">
@@ -44,10 +44,6 @@
                         <p class="foot_p">Chongqing Logistics Finance Service Co., Ltd. ALL Rights Reserved</p>
                         <p class="foot_p">重庆北部新区上峰上座21楼 | 023-63203039</p>
                         <p class="foot_p">备案/许可证编号：渝ICP备18001680号-1</p>
-                    </div>
-                    <div class="footer_r l">
-                        <img src="@/assets/img/login/weix_code.jpg"/>
-                        <p>官方微信</p>
                     </div>
                 </div>
             </div>
