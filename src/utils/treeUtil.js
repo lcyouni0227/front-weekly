@@ -127,7 +127,7 @@ function replaceTreeNode(tree, newNode, valueField = 'id', value = null) {
             if(value != null){
                 //值比较
                 if(value === v[valueField]) {
-                    tree[i] = newNode
+                    tree[i] = newNode;
                     break;
                 }
             }else{

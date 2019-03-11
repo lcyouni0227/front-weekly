@@ -21,9 +21,12 @@ Mock.mock('/api/privilege/getButtons', 'post', ()=>{
         code:1,
         data: {
             buttons: {
-                add:{template: ''},
-                edit:{template: ''},
-                del:{template: ''}
+                add:{
+                    action:'',
+                    template:''
+                },
+                edit:{},
+                del:{}
             }
         }
     }
@@ -38,6 +41,26 @@ Mock.mock('/api/getMenu', 'get', () => {
                 path: '/index',
                 component: 'layout/index',
                 children: [{
+                    name: 'test1',
+                    icon: 'el-icon-time',
+                    path: '/index/test1',
+                    component:'base/test1'
+                },{
+                    name: 'test',
+                    icon: 'el-icon-time',
+                    path: '/index/test',
+                    component:'base/test'
+                },{
+                    name: '个人资料柜New',
+                    icon: 'el-icon-time',
+                    path: '/index/owndisk',
+                    component:'owndisk/owndisk'
+                },{
+                    name: '个人资料柜',
+                    icon: 'el-icon-time',
+                    path: '/index/file',
+                    component:'owndisk/file'
+                },{
                     name: '子系统管理',
                     icon: 'el-icon-time',
                     path: '/index/system',

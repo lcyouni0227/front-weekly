@@ -303,7 +303,8 @@ export default {
                 saveFileName=saveFileName.substring(i+10);
                 saveFileName=saveFileName.substring(0,saveFileName.length-1);
             }
-            const blob = new Blob([res.data])
+            // const blob = new Blob([res.data],{type: res.headers['content-type']});
+            const blob = new Blob([res.data]);
             if ('download' in document.createElement('a')) { // 非IE下载
                 const link = document.createElement('a');
                 link.download = saveFileName;

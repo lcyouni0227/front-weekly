@@ -255,5 +255,5 @@ function binl2b64(binarray)
   return str;
 }
 
-let md5={hex_md5:hex_md5}
+let md5={hex_md5:hex_md5};
 export default md5

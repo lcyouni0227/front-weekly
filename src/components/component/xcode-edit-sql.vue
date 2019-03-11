@@ -74,8 +74,10 @@
     .CodeMirror-hints{
         z-index: 100000!important;
     }
+    .code + .cm-s-default{
+        height: 100%!important;
+    }
     .resultTab>.el-table th>.cell, .resultTab>.el-table td>.cell{
-        text-align: center;
         white-space: nowrap;
     }
 </style>

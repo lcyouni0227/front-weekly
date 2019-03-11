@@ -64,6 +64,7 @@
                 <el-button icon="el-icon-edit-outline" @click="_openDialog"></el-button>
             </div>
             <x-dialog
+                custom-class="inputDialog"
                 :title="dialog && dialog.title || ''"
                 :visible.sync="dialogVisible"
                 :width="dialog && dialog.width || '50%'">
@@ -152,5 +153,13 @@
         color: #909399;
         position: relative;
         white-space: nowrap;
+    }
+</style>
+<style>
+    .inputDialog .el-dialog__body{
+        height: 100%;
+    }
+    .inputDialog{
+        height: 60%;
     }
 </style>
