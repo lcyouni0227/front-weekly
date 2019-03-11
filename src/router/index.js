@@ -8,8 +8,13 @@ const routes = [
         path: '/',
         name: '登录',
         component: login,
+    },{
+        path: '/login',
+        name: '登录',
+        component: login,
     }
 ];
+
 
 export default new Router({
     mode: 'history',
