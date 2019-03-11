@@ -129,7 +129,7 @@
             },
             // 颜色面板
             colorPanel () {
-                let colorArr = []
+                let colorArr = [];
                 for (let color of this.colorConfig) {
                     colorArr.push(this.gradient(color[1], color[0], 5))
                 }
@@ -142,8 +142,8 @@
             },
             // 更新组件的值 value
             updataValue (value) {
-                this.$emit('input', value)
-                this.$emit('change', value)
+                this.$emit('input', value);
+                this.$emit('change', value);
                 this.openStatus = false
             },
             // 设置默认颜色
@@ -160,13 +160,13 @@
             },
             // RGB 颜色 转 HEX 颜色
             rgbToHex (r, g, b) {
-                let hex = ((r << 16) | (g << 8) | b).toString(16)
+                let hex = ((r << 16) | (g << 8) | b).toString(16);
                 return '#' + new Array(Math.abs(hex.length - 7)).join('0') + hex
             },
             // HEX 转 RGB 颜色
             hexToRgb (hex) {
-                hex = this.parseColor(hex)
-                let rgb = []
+                hex = this.parseColor(hex);
+                let rgb = [];
                 for (let i = 1; i < 7; i += 2) {
                     rgb.push(parseInt('0x' + hex.slice(i, i + 2)))
                 }
@@ -175,13 +175,13 @@
             // 计算渐变过渡颜色
             gradient (startColor, endColor, step) {
                 // 讲 hex 转换为 rgb
-                let sColor = this.hexToRgb(startColor)
-                let eColor = this.hexToRgb(endColor)
+                let sColor = this.hexToRgb(startColor);
+                let eColor = this.hexToRgb(endColor);
                 // 计算R\G\B每一步的差值
-                let rStep = (eColor[0] - sColor[0]) / step
-                let gStep = (eColor[1] - sColor[1]) / step
-                let bStep = (eColor[2] - sColor[2]) / step
-                let gradientColorArr = []
+                let rStep = (eColor[0] - sColor[0]) / step;
+                let gStep = (eColor[1] - sColor[1]) / step;
+                let bStep = (eColor[2] - sColor[2]) / step;
+                let gradientColorArr = [];
                 // 计算每一步的hex值
                 for (let i = 0; i < step; i++) {
                     gradientColorArr.push(this.rgbToHex(parseInt(rStep * i + sColor[0]), parseInt(gStep * i + sColor[1]), parseInt(bStep * i + sColor[2])))

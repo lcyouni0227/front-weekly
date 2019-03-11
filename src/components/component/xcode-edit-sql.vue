@@ -7,7 +7,7 @@
                 <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
                 <x-panel title="执行结果" width="100%" :closeBtn="false">
                     <x-table-edit ref="xtable" class="resultTab" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
-                        <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]"></el-table-column>
+                        <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]" :key="key"></el-table-column>
                     </x-table-edit>
                 </x-panel>
             </div>

@@ -14,6 +14,7 @@ import XDialog from './component/xdialog';
 import XPanel from './component/xpanel';
 import XQuery from './component/xquery';
 import XQueryItem from './component/xquery-item';
+import XUEditor from './component/xueditor'
 
 export default {
     install: (Vue) => {
@@ -33,6 +34,6 @@ export default {
         Vue.component(XPanel.name, XPanel);
         Vue.component(XQuery.name, XQuery);
         Vue.component(XQueryItem.name, XQueryItem);
-
+        Vue.component(XUEditor.name, XUEditor);
     }
 }

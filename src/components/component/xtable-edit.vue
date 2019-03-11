@@ -1,20 +1,14 @@
 <template>
-    <section class="resultTab">
+    <section>
         <slot name="query"></slot>
-        <!--<el-form :inline="true" v-if="showQuery">-->
-            <!--<slot name="queryArea"></slot>-->
-            <!--<el-form-item>-->
-                <!--<el-button @keyup.enter.native="handelQuery()" @click="handelQuery()" size="mini" type="primary" icon="el-icon-search">查询</el-button>-->
-            <!--</el-form-item>-->
-        <!--</el-form>-->
         <el-form :inline="true" v-if="$slots.topButtonArea || showTopButton">
             <el-form-item v-if="showTopButton">
                 <!--<el-button @click="handelQuery()" type="success" icon="el-icon-refresh" plain size="mini">刷新</el-button>-->
-                <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
-                <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
+                <el-button v-if="button.hasOwnProperty('add') && buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
+                <el-button v-if="button.hasOwnProperty('edit') && buttons.hasOwnProperty('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowSave(null)" type="warning" icon="el-icon-success" plain size="mini">保存</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-                <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
+                <el-button v-if="button.hasOwnProperty('del') && buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
             </el-form-item>
             <el-form-item v-if="$slots.topButtonArea">
                 <slot name = "topButtonArea"></slot>
@@ -27,11 +21,11 @@
             <slot></slot>
             <el-table-column label="操作" v-if="$slots.rowButtonArea || showRowButton">
                 <template slot-scope="scope" v-if="showRowButton">
-                    <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
-                    <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
+                    <el-button v-if="button.hasOwnProperty('add') && buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
+                    <el-button v-if="button.hasOwnProperty('edit') && buttons.hasOwnProperty('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowSave(scope.$index)" type="warning" icon="el-icon-success" plain class="tableRowButton">保存</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain class="tableRowButton">取消</el-button>
-                    <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
+                    <el-button v-if="button.hasOwnProperty('del') && buttons.hasOwnProperty('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
                 </template>
                 <slot name = "rowButtonArea"></slot>
             </el-table-column>
@@ -50,6 +44,7 @@
         name: 'XTableEdit',
         mixins:[dic,privilege,runStatus],
         props: {
+            button:{type: Object, default(){return {add:{},edit:{},del:{}}}},
             multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选,显示复选框 */
             singleSelect:{type: Boolean, default: true},    /* 表格是否允许单选,显示单选框 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
@@ -137,6 +132,25 @@
             }
         },
         methods: {
+            /* 直接增加一行数据,注意判断数据重复问题 */
+            addRowData(row,index){
+                if (index == null) {
+                    if (this.editRow.rowNumber != null) {
+                        index = this.editRow.rowNumber;
+                    } else {
+                        index = -1;
+                    }
+                }
+                index++;
+                let data = this.$refs.table.store.states.data;
+                data.splice(index, 0, row);
+                this.$refs.table.store.commit('setData', data);
+                return index;
+            },
+            /* 获得选中行数据 */
+            getSelectRow(){
+                return this.multipleSelection;
+            },
             /* 获得查询裸数据 */
             getQueryData(){
                 if(!this.load){
@@ -259,13 +273,20 @@
                     this.editRow.rowNumber = jsonUtil.findIndexFromArrayNoChildren(this.$refs.table.store.states.data,row,this.keyField);
                 }
             },
-            handelQuery(filter){
+            handelQuery(filter,befor,after){
                 if(this.isRun()){
                     return;
                 }
-                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',this.getQuery(filter)).then(res => {
+                let query = this.getQuery(filter);
+                if(befor){
+                    befor(query);
+                }
+                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
                     if(res.code==1) {
                         this.setData(res.data);
+                        if(after){
+                            after(res);
+                        }
                     }
                     this.endRun();
                 }).catch(() => {
@@ -273,23 +294,27 @@
                 });
             },
             handelTableRowAdd(index){
-                if(this.isRun()){
+                if (this.isRun()) {
                     return;
                 }
-                if(index == null){
-                    if(this.editRow.rowNumber != null){
-                        index = this.editRow.rowNumber;
-                    }else{
-                        index = -1;
+                if(this.$options._parentListeners.addAction){
+                    this.$emit('addAction',this);
+                }else {
+                    if (index == null) {
+                        if (this.editRow.rowNumber != null) {
+                            index = this.editRow.rowNumber;
+                        } else {
+                            index = -1;
+                        }
                     }
+                    index++;
+                    this.$parent.beforeTableRowAdd && this.$parent.beforeTableRowAdd(this, index);
+                    let data = this.$refs.table.store.states.data;
+                    data.splice(index, 0, JSON.parse(JSON.stringify(this.initNewRowData)));
+                    this.$refs.table.store.commit('setData', data);
+                    this.editRow = {action: 'add', rowNumber: index};
+                    this.$parent.afterTableRowAdd && this.$parent.afterTableRowAdd(this, index);
                 }
-                index ++;
-                this.$parent.beforeTableRowAdd && this.$parent.beforeTableRowAdd(this,index);
-                let data = this.$refs.table.store.states.data;
-                data.splice(index,0,JSON.parse(JSON.stringify(this.initNewRowData)));
-                this.$refs.table.store.commit('setData', data);
-                this.editRow = {action:'add', rowNumber:index};
-                this.$parent.afterTableRowAdd && this.$parent.afterTableRowAdd(this,index);
                 this.endRun();
             },
             handelTableRowEdit(index) {
@@ -523,24 +548,3 @@
         }
     };
 </script>
-<style>
-    /*.resultTab>.el-table th>.cell, .resultTab>.el-table td>.cell{*/
-        /*text-align: center;*/
-        /*white-space: nowrap;*/
-    /*}*/
-    /*滚动条样式*/
-    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
-        border-radius: 15px;
-        -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
-        background: rgba(0,0,0,0.1);
-    }
-    .resultTab>div .el-table__body-wrapper::-webkit-scrollbar-track {/*滚动条里面轨道*/
-        -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,0.1);
-        border-radius: 5px;
-        background: rgba(0,0,0,0);
-    }
-</style>

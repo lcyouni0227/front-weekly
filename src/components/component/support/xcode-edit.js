@@ -171,8 +171,8 @@ export default {
                     // 循环事件，并兼容 run-time 事件命名
                     this.cminstance.on(event, (...args) => {
                         // console.log('当有事件触发了', event, args)
-                        this.$emit(event, ...args)
-                        const lowerCaseEvent = event.replace(/([A-Z])/g, '-$1').toLowerCase()
+                        this.$emit(event, ...args);
+                        const lowerCaseEvent = event.replace(/([A-Z])/g, '-$1').toLowerCase();
                         if (lowerCaseEvent !== event) {
                             this.$emit(lowerCaseEvent, ...args)
                         }
