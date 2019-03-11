@@ -1,18 +1,16 @@
 <template>
-    <section>
-        <x-splitter layout="vertical">
-            <textarea slot="1" ref="code" v-bind="$attrs" class="code" v-model="code"></textarea>
-            <div slot="2" style="height: 100%">
-                <el-button @click="run()" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">运行</el-button>
-                <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
-                <x-panel title="执行结果" width="100%" :closeBtn="false">
-                    <x-table-edit ref="xtable" class="resultTab" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
-                        <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]" :key="key"></el-table-column>
-                    </x-table-edit>
-                </x-panel>
-            </div>
-        </x-splitter>
-    </section>
+    <x-splitter layout="vertical">
+        <textarea slot="1" ref="code" v-bind="$attrs" class="code" v-model="code"></textarea>
+        <div slot="2" style="height: 100%">
+            <el-button @click="run()" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">运行</el-button>
+            <el-button @click="submit()" type="warning" icon="el-icon-success" plain size="mini">确定</el-button>
+            <x-panel title="执行结果" width="100%" :closeBtn="false">
+                <x-table-edit ref="xtable" class="resultTab" border :load="false" :data="rows" :showTopButton="false" :singleSelect="false">
+                    <el-table-column :prop="key" :label="key" v-for ="(val, key) in rows[0]" :key="key"></el-table-column>
+                </x-table-edit>
+            </x-panel>
+        </div>
+    </x-splitter>
 </template>
 
 <script>

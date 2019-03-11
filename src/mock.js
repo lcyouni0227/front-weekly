@@ -2,24 +2,14 @@
 import Mock from 'mockjs';
 //使用mockjs模拟数据
 
-var loginData = function () {
-    var mockData = [];
-    mockData = {
-        "code": "1",
-        "message": "登录成功",
-        "data": [
-            {
-                user: "工作台",
-                password: "0"
-            },]
-    };
-    return mockData
-};
-Mock.mock('/api/public/login', 'post', ()=>{
-    return {
-        code:1
-    }
-});
+// Mock.mock('/api/public/login', 'post', ()=>{
+//     return {
+//         code:1,
+//         data:{
+//             name:'张三'
+//         }
+//     }
+// });
 Mock.mock('/api/privilege/getButtons', 'post', ()=>{
     return {
         code:1,
@@ -43,19 +33,14 @@ Mock.mock('/api/getMenu', 'get', () => {
                 name: '基础设置',
                 icon: 'el-icon-time',
                 path: '/index',
-                component: 'layout/index',
+                component: 'lamp/index',
                 children: [{
                     name: 'test1',
                     icon: 'el-icon-time',
                     path: '/index/test1',
-                    component:'base/test1'
+                    component:'lamp/test1'
                 },{
-                    name: 'test',
-                    icon: 'el-icon-time',
-                    path: '/index/test',
-                    component:'base/test'
-                },{
-                    name: '个人资料柜New',
+                    name: '个人资料柜',
                     icon: 'el-icon-time',
                     path: '/index/owndisk',
                     component:'owndisk/owndisk'
@@ -68,37 +53,32 @@ Mock.mock('/api/getMenu', 'get', () => {
                     name: '子系统管理',
                     icon: 'el-icon-time',
                     path: '/index/system',
-                    component:'base/system'
-                },{
-                    name: 'tree',
-                    icon: 'el-icon-time',
-                    path: '/index/tree',
-                    component:'base/tree'
+                    component:'common/system'
                 },{
                     name: '菜单模板',
                     icon: 'el-icon-time',
                     path: '/index/menu_base',
-                    component:'base/menu_base'
+                    component:'common/menu_base'
                 },{
                     name: '模块管理',
                     icon: 'el-icon-time',
                     path: '/index/module',
-                    component:'base/module'
+                    component:'common/module'
                 },{
                     name: '数据源定义',
                     icon: 'el-icon-time',
                     path: '/index/sql',
-                    component:'base/datasql'
+                    component:'common/datasql'
                 },{
                     name: '角色管理',
                     icon: 'el-icon-time',
                     path: '/index/role',
-                    component:'base/role'
+                    component:'common/role'
                 },{
                     name: '机构管理',
                     icon: 'el-icon-time',
                     path: '/index/org',
-                    component:'base/org'
+                    component:'common/org'
                 }
                 ]
             },

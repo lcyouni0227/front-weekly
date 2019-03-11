@@ -26,7 +26,7 @@
 </template>
 <script>
     export default {
-        name: "XMainMenu",
+        name: "XIndexMenu",
         created() {
             this.menu = this.$store.state.controlStyle.menu;
             // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器

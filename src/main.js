@@ -75,7 +75,7 @@ function filterAsyncRouter(asyncRouterMap) {
             } else {
                 let v=route.component;
                 // route.component = resolve => require.ensure([], () => resolve(require('@/views/'+ v +'.vue')));
-                route.component = resolve => require(['@/views/'+ v +'.vue'], resolve)
+                route.component = resolve => require(['@/project/'+ v +'.vue'], resolve)
             }
         }
         if (route.children && route.children.length) {

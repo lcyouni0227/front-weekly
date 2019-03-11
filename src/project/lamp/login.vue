@@ -1,8 +1,8 @@
 <template>
     <div class="login-container">
-        <h3 class="headertip"><img src="./img/logo.png" alt="">智能灯控信息管理平台</h3>
+        <h3 class="headertip"><img :src="logo">{{projectName}}</h3>
         <el-form ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
-            <h3 class="title">智慧灯控管理平台</h3>
+            <h3 class="title">{{projectName}}</h3>
             <el-form-item prop="passport">
                 <el-input type="text" v-model="login.passport" auto-complete="off" placeholder="用户名" size="big"></el-input>
             </el-form-item>
@@ -25,7 +25,13 @@
     import login from '@/components/component/support/login'
     export default {
         name:"login",
-        mixins:[login]
+        mixins:[login],
+        data(){
+            return {
+                logo:'/project/lamp/img/logo.png',
+                projectName:'智慧灯控管理平台'
+            }
+        }
     }
 </script>
 
@@ -33,15 +39,16 @@
     .title{
         font-size: 22px;
         margin-bottom: 20px;
-
     }
     .codeInput{
-        width: 256px;
+        width: 275px;
     }
     .codeImg{
         height: 32px;
         width: 80px;
         float: right;
+        padding-top: 4px;
+        padding-right: 10px;
     }
     .headertip {
         position: absolute;
