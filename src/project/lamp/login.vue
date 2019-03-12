@@ -1,6 +1,6 @@
 <template>
     <div class="login-container">
-        <h3 class="headertip"><img :src="logo">{{projectName}}</h3>
+        <h3 class="headertip"><img src="@/project/lamp/img/logo.png">{{projectName}}</h3>
         <el-form ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
             <h3 class="title">{{projectName}}</h3>
             <el-form-item prop="passport">
@@ -28,10 +28,15 @@
         mixins:[login],
         data(){
             return {
-                logo:'/project/lamp/img/logo.png',
+                logo:'/img/logo.png',
                 projectName:'智慧灯控管理平台'
             }
-        }
+        },
+        // computed:{
+        //     logo(){
+        //        return require('../../assets/image/pic1.jpg')
+        //     }
+        // }
     }
 </script>
 

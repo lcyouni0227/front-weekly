@@ -34,4 +34,28 @@
         }
     }
 </script>
-
+<style lang="less" scoped>
+    .el-container {
+        width: 100%;
+        height: 100%;
+    }
+    .el-header {
+        padding: 0;
+        font-size: 0;
+        line-height: 60px;
+        background: white;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    .el-aside {
+        transition: width .3s;
+        background:#545c64;
+        color: #fff;
+        overflow: hidden;
+    }
+    .el-main {
+        padding: 0;
+        height: 100%;
+        overflow: auto
+    }
+</style>
