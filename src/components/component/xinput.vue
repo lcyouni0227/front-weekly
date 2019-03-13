@@ -4,7 +4,7 @@
     inputSize ? 'el-input--' + inputSize : '',
     {
       'is-disabled': inputDisabled,
-      'el-input-group': $slots.prepend || $slots.append || labelX || dialog,
+      'el-input-group': $slots.prepend || $slots.append || label || dialog,
       'el-input-group--append': $slots.append || dialog,
       'el-input-group--prepend': $slots.prepend,
       'el-input--prefix': $slots.prefix || prefixIcon,
@@ -16,7 +16,7 @@
     >
         <template v-if="type !== 'textarea'">
             <!-- 前置元素 -->
-            <label class="x-input-label" >{{labelX}}</label>
+            <label class="x-input-label" >{{label}}</label>
             <div class="el-input-group__prepend" v-if="$slots.prepend">
                 <slot name="prepend"></slot>
             </div>
@@ -38,7 +38,7 @@
                 @focus="handleFocus"
                 @blur="handleBlur"
                 @change="handleChange"
-                :aria-label="labelX"
+                :aria-label="label"
             >
             <!-- 前置内容 -->
             <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
@@ -95,53 +95,32 @@
             @focus="handleFocus"
             @blur="handleBlur"
             @change="handleChange"
-            :aria-label="labelX"
+            :aria-label="label"
         >
         </textarea>
     </div>
 </template>
 <script>
     import {Input} from 'element-ui'
-    import Query from './support/query'
     import store from '@/store';
     export default {
         name: "XInput",
-        mixins:[Input,Query],
+        mixins:[Input],
         data(){
             return {
-                parentQuery:null,
                 dialogVisible:false
             }
         },
         props: {
-            size: {type: String, default:store.state.controlStyle.size},
+            label:{type: String, default:''},
+            size:{type: String, default:store.state.controlStyle.size},
             clearable: {type: Boolean, default: true},
             dialog:{Type:Object,default(){return null}}
         },
         methods:{
-            handleInput(event) {
-                if (this.isOnComposition) return;
-                if (event.target.value === this.nativeInputValue) return;
-                this.$emit('input', event.target.value);
-                if(this.value){
-                    this.$nextTick(() => {
-                        let input = this.getInput();
-                        input.value = this.value;
-                    });
-                }
-            },
-            handleChange(event) {
-                this.$emit('change', event.target.value);
-                if(this.parentQuery){
-                    this.parentQuery.v.changValue(this.parentQuery.field,event.target.value);
-                }
-            },
             _openDialog(){
                 this.dialogVisible = true;
             }
-        },
-        mounted(){
-            this.parentQuery = this._checkQuery();
         }
     }
 </script>

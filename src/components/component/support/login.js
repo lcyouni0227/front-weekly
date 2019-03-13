@@ -69,6 +69,11 @@ export default {
                     this.$message.error(this.$t('login.validfaild'))
                 }
             })
+        },
+        handleFindPassword(){
+            if(this.findPassword){
+
+            }
         }
     }
 }
