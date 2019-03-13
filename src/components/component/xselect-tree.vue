@@ -30,7 +30,7 @@
         name: 'XSelectTree',
         mixins:[xtree],
         props: {
-            label:{type:String,default:''},
+            label:{type:String,default:''}, /* 选择框前的文本 */
             value: String,      /* 接收绑定参数 */
             placeholder: {type: String, required: false, default: '请选择'},   /* 输入框占位符 */
             dialogWidth:String, /*  弹出框宽度 */

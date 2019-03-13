@@ -12,7 +12,7 @@
         name: 'XSelect',
         props: {
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
-            label:{type:String,default:''},
+            label:{type:String,default:''}, /* 选择框前的文本 */
             value: {type: String},  /* 接受外部v-model传入的值 */
             name: String,
             id: String,

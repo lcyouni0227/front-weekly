@@ -1,25 +1,29 @@
 <!-- 图标选择器 -->
 <template>
-    <el-popover ref="popover" placement="bottom-start">
-        <el-table :data="data" border :show-header=false :fit=true style="width:100%;overflow: auto" :max-height="dialogHeight" @cell-click="cell">
-            <template v-for="(v,index) in cols">
-                <el-table-column :prop="'cc'+index" :key="index" align="center" >
-                    <template slot-scope="scope" >
-                        <i :class="scope.row[index]"></i>
-                    </template>
-                </el-table-column>
-            </template>
-        </el-table>
-        <el-input ref="input" slot="reference" readonly clearable v-model="labelModel" :style="`width: ${width}px`" suffix-icon="el-icon-arrow-down" :placeholder="placeholder">
-            <i slot="prefix" :class="labelModel + ' el-input__icon'"></i>
-        </el-input>
-    </el-popover>
+    <div class="el-input-group">
+        <label class="x-input-label" >{{label}}</label>
+        <el-popover ref="popover" placement="bottom-start">
+            <el-table :data="data" border :show-header=false :fit=true style="width:100%;overflow: auto" :max-height="dialogHeight" @cell-click="cell">
+                <template v-for="(v,index) in cols">
+                    <el-table-column :prop="'cc'+index" :key="index" align="center" >
+                        <template slot-scope="scope" >
+                            <i :class="scope.row[index]"></i>
+                        </template>
+                    </el-table-column>
+                </template>
+            </el-table>
+            <el-input ref="input" slot="reference" readonly clearable v-model="labelModel" :style="`width: ${width}px`" suffix-icon="el-icon-arrow-down" :placeholder="placeholder">
+                <i slot="prefix" :class="labelModel + ' el-input__icon'"></i>
+            </el-input>
+        </el-popover>
+    </div>
 </template>
 
 <script>
     export default {
         name: 'XSelectIcon',
         props: {
+            label:{type:String,default:''}, /* 选择框前的文本 */
             value: String, /* 接收绑定参数 */
             width: String, /* 输入框宽度 */
             dialogWidth:String, /*  弹出框宽度 */
@@ -68,6 +72,7 @@
                 this.labelModel =row[index];
                 this.$refs.popover.showPopper = false;
                 this.$emit('input',this.labelModel);
+                this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,this.valueModel);
             }
         },
     };
