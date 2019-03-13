@@ -1,22 +1,33 @@
 <template>
     <div class="login-container">
         <h3 class="headertip"><img :src="logo">{{projectName}}</h3>
-        <el-form ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
+        <el-form v-if="!findPassword" ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
             <h3 class="title">{{projectName}}</h3>
             <el-form-item prop="passport">
-                <el-input type="text" v-model="login.passport" auto-complete="off" placeholder="用户名" size="big"></el-input>
+                <x-input label="账号:" type="text" v-model="login.passport" auto-complete="off" placeholder="用户名" size="big"></x-input>
             </el-form-item>
             <el-form-item prop="password">
-                <el-input type="password" v-model="login.password" auto-complete="off" placeholder="密码" size="big"></el-input>
+                <x-input label="密码:" type="password" v-model="login.password" auto-complete="off" placeholder="密码" size="big"></x-input>
             </el-form-item>
             <el-form-item prop="checkcode">
-                <el-input size="big" class="codeInput" @keyup.enter.native="handleLogin" :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
+                <x-input label="验证码:" size="big" class="codeInput" @keyup.enter.native="handleLogin" :placeholder="$t('login.checkCodePlaceholder')" v-model="login.checkcode"/>
                 <img :src="$baseImgUrl + imageUrl" alt="点击刷新" class="codeImg" @click.stop="handleCode"/>
             </el-form-item>
-            <el-checkbox v-model="remember" class="remember">记住密码</el-checkbox>
             <el-form-item>
-                <el-button type="primary" style="width:100%;" @click="handleLogin">{{$t('login.btn')}}</el-button>
+                <el-button type="primary" style="margin-top:10px;width:100%;" @click="handleLogin">{{$t('login.btn')}}</el-button>
             </el-form-item>
+            <el-checkbox v-model="remember" class="remember">记住密码</el-checkbox>
+            <el-button type="text" @click="handleFindPassword" style="float:right">忘记密码</el-button>
+        </el-form>
+        <el-form v-else ref="form" :model="login" :rules="rules" status-icon label-position="left" label-width="0px" class="login-page">
+            <div class="title">找回密码</div>
+            <el-form-item prop="passport">
+                <x-input label="邮箱:" type="text" v-model="login.passport" auto-complete="off" :placeholder="$t('login.forget_email')" size="big"></x-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" style="width:100%;" @click="handleFindPassword" size="big">确认</el-button>
+            </el-form-item>
+            <el-button type="text" style="float: left;" size="big" @click="handleFindPassword">{{$t('login.forget_back')}}</el-button>
         </el-form>
     </div>
 </template>
@@ -29,7 +40,8 @@
         data(){
             return {
                 logo:'/lamp/img/logo.png',
-                projectName:'智慧灯控管理平台'
+                projectName:'智慧灯控管理平台',
+                findPassword:false
             }
         },
         mounted() {
@@ -39,6 +51,11 @@
             link.rel = 'shortcut icon';
             link.href = this.logo;
             document.getElementsByTagName('head')[0].appendChild(link);
+        },
+        methods:{
+            handleFindPassword(){
+                this.findPassword = !this.findPassword;
+            }
         }
     }
 </script>
