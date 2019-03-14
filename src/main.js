@@ -70,7 +70,8 @@ Vue.filter('dic', function(value, name) {
 function filterAsyncRouter(asyncRouterMap) {
     return asyncRouterMap.filter(route => {
         if (route.component) {
-             route.component = resolve => require(['@/project/'+ route.component +'.vue'], resolve)
+            let v=route.component;
+             route.component = resolve => require(['@/project/'+ v +'.vue'], resolve)
         }
         if (route.children && route.children.length) {
             route.children = filterAsyncRouter(route.children)
