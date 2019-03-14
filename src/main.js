@@ -70,13 +70,7 @@ Vue.filter('dic', function(value, name) {
 function filterAsyncRouter(asyncRouterMap) {
     return asyncRouterMap.filter(route => {
         if (route.component) {
-            if (route.component === 'Layout') {//Layout组件特殊处理
-                // route.component = Layout
-            } else {
-                let v=route.component;
-                // route.component = resolve => require.ensure([], () => resolve(require('@/views/'+ v +'.vue')));
-                route.component = resolve => require(['@/project/'+ v +'.vue'], resolve)
-            }
+             route.component = resolve => require(['@/project/'+ route.component +'.vue'], resolve)
         }
         if (route.children && route.children.length) {
             route.children = filterAsyncRouter(route.children)
@@ -93,45 +87,16 @@ router.beforeEach((to, from, next) => {
         $http.get('/getMenu', {}, true, false).then(res => {
             let menu = filterAsyncRouter(res.data);
             store.commit('setMenu',menu);
-            // localStorage.setItem("menu",JSON.stringify(menu));
             router.addRoutes(menu);
             next({ ...to, replace: true })
         }).catch(() => {
-
         });
-
     }else{
         next({replace: true })
     }
 });
 
-// /**
-//  * 查询指令,用于查询字段的条件字符串
-//  */
-// Vue.directive('query', {
-//     bind: function (el, binding, vnode) {
-//         if(vnode.data.model && vnode.data.model.expression) {
-//             if(!vnode.context.query){
-//                 vnode.context.query={};
-//             }
-//             if(!vnode.context.query.querySymbol){
-//                 vnode.context.query.querySymbol = {}
-//             }
-//             vnode.context.query.querySymbol[vnode.data.model.expression] = binding.value;
-//         }
-//     }
-// });
-
 Vue.prototype.$style = style;
-
-// let query = {
-//     created: function () {
-//         if(!this.query){
-//             this.query={};
-//         }
-//     }
-// };
-// Vue.mixin(query);
 
 new Vue({
     el: '#app',
