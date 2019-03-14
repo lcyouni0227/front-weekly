@@ -5,10 +5,6 @@ Vue.use(Router);
 const login = () => import('@/project/lamp/login');
 const routes = [
     {
-        path: '/',
-        name: '登录',
-        component: login,
-    },{
         path: '/login',
         name: '登录',
         component: login,
@@ -18,5 +14,5 @@ const routes = [
 
 export default new Router({
     mode: 'history',
-    routes: routes
+    routes: routes,
 })
