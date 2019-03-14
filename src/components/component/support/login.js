@@ -56,7 +56,7 @@ export default {
                         if (res.code === 1) {
                             sessionStorage.setItem("name",res.data.name||'');
                             this.$message({message: "登陆成功", type: 'success'});
-                            this.$router.push('/index');
+                            this.$router.push('/');
                         } else {
                             this.handleCode();
                             this.$message({message: res.message, type: 'error'});

@@ -15,6 +15,7 @@ import XPanel from './component/xpanel';
 import XQuery from './component/xquery';
 import XQueryItem from './component/xquery-item';
 import XUEditor from './component/xueditor'
+import XTreeMenu from './component/xtree-menu'
 
 export default {
     install: (Vue) => {
@@ -35,5 +36,6 @@ export default {
         Vue.component(XQuery.name, XQuery);
         Vue.component(XQueryItem.name, XQueryItem);
         Vue.component(XUEditor.name, XUEditor);
+        Vue.component(XTreeMenu.name, XTreeMenu);
     }
 }
