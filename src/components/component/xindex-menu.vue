@@ -79,20 +79,6 @@
             .out {width: 30px;}
         }
     }
-    .el-menu {
-        height: 100%;
-        font-size: 14px;
-        border: 0;
-        .isCollapse {width: 100%;}
-    }
-
-    // 美化左侧导航的留白
-    .el-submenu .el-menu-item {
-        padding: 0 20px;
-        min-width: 160px;
-        font-size: 14px;
-        padding-left: 53px !important;
-    }
     .scrollbar-wrapper {
         height: 100%;
         .el-scrollbar__view {height: 100%;}
