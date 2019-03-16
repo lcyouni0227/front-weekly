@@ -2,6 +2,10 @@
 <template>
     <el-scrollbar id="sidebar-wrap" class="scrollbar-wrapper">
         <el-menu :collapse="isCollapse" background-color="#545c64" text-color="#fff" :default-active="defaultActive" :unique-opened="true" :router="true" mode="vertical">
+            <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color:rgb(52,68,74)">
+                <span v-show="!isCollapse">菜    单</span>
+                <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
+            </h3>
             <x-tree-menu :data="menu"></x-tree-menu>
         </el-menu>
         <!--<el-menu background-color="#545c64" text-color="#fff" :default-active="defaultActive" :unique-opened="true" :router="true" mode="vertical" :collapse="isCollapse">-->
