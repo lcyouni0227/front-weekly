@@ -4,7 +4,7 @@
             <x-index-top-bar/>
         </el-header>
         <el-container>
-            <el-aside :width="isCollapse?'50px':'164px'">
+            <el-aside :width="isCollapse?'64px':'250px'">
                 <x-index-menu/>
             </el-aside>
             <el-main>
@@ -48,7 +48,6 @@
         overflow: hidden;
     }
     .el-aside {
-        transition: width .3s;
         background:#545c64;
         color: #fff;
         overflow: hidden;
