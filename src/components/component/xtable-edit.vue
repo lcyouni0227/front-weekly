@@ -297,7 +297,7 @@
                 if (this.isRun()) {
                     return;
                 }
-                if(this.$options._parentListeners.addAction){
+                if(this.$options._parentListeners && this.$options._parentListeners.addAction){
                     this.$emit('addAction',this);
                 }else {
                     if (index == null) {

@@ -1,12 +1,24 @@
 <!-- 左侧导航组件 -->
 <template>
     <el-scrollbar id="sidebar-wrap" class="scrollbar-wrapper">
-        <el-menu :collapse="isCollapse" background-color="#545c64" text-color="#fff" :default-active="defaultActive" :unique-opened="true" :router="true" mode="vertical">
+        <el-menu background-color="#545c64" text-color="#fff" :collapse-transition="false" :default-active="defaultActive" :unique-opened="true" :router="true" mode="vertical" :collapse="isCollapse">
             <h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color:rgb(52,68,74)">
                 <span v-show="!isCollapse">菜    单</span>
                 <i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>
             </h3>
-            <x-tree-menu :data="menu"></x-tree-menu>
+            <template v-for="item in menu">
+                <el-submenu v-if="item.children && item.children.length > 0" :index="item.path" :key="item.path">
+                    <template slot="title">
+                        <i :class="item.icon"></i>
+                        <span slot="title">{{item.name}}</span>
+                    </template>
+                    <x-tree-menu :data="item.children"></x-tree-menu>
+                </el-submenu>
+                <el-menu-item v-else :index="item.path" :key="item.path">
+                    <i :class="item.icon"></i>
+                    <span slot="title">{{item.name}}</span>
+                </el-menu-item>
+            </template>
         </el-menu>
     </el-scrollbar>
 </template>
@@ -52,6 +64,9 @@
             // 每次离开当前界面时，清除定时器
             clearInterval(this.timer);
             this.timer = null
+        },
+        mounted(){
+            this.$router.push("/dashboard");
         }
     };
 </script>
@@ -63,19 +78,22 @@
             font-size: 14px;
             color: #fff;
             box-sizing: border-box;
+            position: relative;
             span {
                 display: inline-block;
-                width: 100px;
+                width: 100%;
                 text-align: center;
-                font-size: 14px;
-                padding-left: 30px;
+                font-size: 14px
             }
             i {
                 display: inline-block;
                 width: 30px;
                 text-align: center;
+                position: absolute;
+                right: 0px;
+                font-size: 18px;
             }
-            .in {width: 64px;}
+            .in {width:100%;}
             .out {width: 30px;}
         }
     }

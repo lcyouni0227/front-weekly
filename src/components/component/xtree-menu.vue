@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <section>
         <template v-for="item in data">
             <el-submenu v-if="item.children" :index="item.path">
                 <template slot="title">
@@ -13,7 +13,7 @@
                 <span slot="title">{{item.name}}</span>
             </el-menu-item>
         </template>
-    </div>
+    </section>
 </template>
 
 <script>
