@@ -4,7 +4,7 @@
             <x-index-top-bar/>
         </el-header>
         <el-container>
-            <el-aside :width="isCollapse?'64px':'164px'">
+            <el-aside :width="isCollapse?'50px':'164px'">
                 <x-index-menu/>
             </el-aside>
             <el-main>
