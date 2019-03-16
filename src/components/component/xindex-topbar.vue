@@ -73,6 +73,7 @@
                 }).then(() => {
                     this.$axios.postJson('/public/logout').then((res)=>{
                         if(res.code==1){
+                            this.$store.state.controlStyle.menu = null;
                             this.$router.push('/login')
                         }else{
                             this.$message.warning('登出异常,请稍后再试！');

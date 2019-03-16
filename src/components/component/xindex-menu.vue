@@ -8,34 +8,13 @@
             </h3>
             <x-tree-menu :data="menu"></x-tree-menu>
         </el-menu>
-        <!--<el-menu background-color="#545c64" text-color="#fff" :default-active="defaultActive" :unique-opened="true" :router="true" mode="vertical" :collapse="isCollapse">-->
-            <!--<h3 class="isCollapse" :class="[isCollapse ? 'in': 'out']" style="background-color:rgb(52,68,74)">-->
-                <!--<span v-show="!isCollapse">菜    单</span>-->
-                <!--<i :class="[isCollapse ? 'icon-indent in': 'icon-outdent out','iconfont']" @click="toggleSiderBar"></i>-->
-            <!--</h3>-->
-            <!--<template v-for="item in menu">-->
-                <!--<el-submenu v-if="item.children && item.children.length > 0" :index="item.path" :key="item.path">-->
-                    <!--<template slot="title">-->
-                        <!--<i :class="item.icon"></i>-->
-                        <!--<span slot="title">{{item.name}}</span>-->
-                    <!--</template>-->
-                    <!--<el-menu-item v-for="child in item.children" :index="child.path" :key="child.path">-->
-                        <!--<span slot="title">{{child.name}}</span>-->
-                    <!--</el-menu-item>-->
-                <!--</el-submenu>-->
-                <!--<el-menu-item v-else :index="item.path" :key="item.path">-->
-                    <!--<i :class="item.icon"></i>-->
-                    <!--<span slot="title">{{item.name}}</span>-->
-                <!--</el-menu-item>-->
-            <!--</template>-->
-        <!--</el-menu>-->
     </el-scrollbar>
 </template>
 <script>
     export default {
         name: "XIndexMenu",
         created() {
-            this.menu = this.$store.state.controlStyle.menu[0].children;
+            this.menu = this.$store.state.controlStyle.menu;
             // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器
             clearInterval(this.timer);
             this.timer = setInterval(() => {

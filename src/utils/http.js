@@ -122,7 +122,7 @@ function checkCode(res, isMessage) {
                 message = "未登陆";
             }
             router.push({
-                path: "/"
+                path: "/login"
             });
             break;
         case -3:

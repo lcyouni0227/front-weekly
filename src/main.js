@@ -66,7 +66,7 @@ Vue.filter('dic', function(value, name) {
  * 遍历后台传来的路由字符串,转换为组件对象
  * @param asyncRouterMap
  * @returns {*}
- */
+//  */
 function filterAsyncRouter(asyncRouterMap) {
     return asyncRouterMap.filter(route => {
         if (route.component) {
@@ -84,12 +84,14 @@ function filterAsyncRouter(asyncRouterMap) {
  * 路由检查
  */
 router.beforeEach((to, from, next) => {
-    if(!store.state.controlStyle.menu) {
-        $http.get('/getMenu', {}, true, false).then(res => {
-            let menu = filterAsyncRouter(res.data);
-            store.commit('setMenu',menu);
-            router.addRoutes(menu);
-            next({ ...to, replace: true })
+    if(!store.state.controlStyle.menu && to.fullPath !=='/login') {
+        $http.postJson('/getMenu', {}).then(res => {
+            if(res.code==1) {
+                let menu = filterAsyncRouter(res.data);
+                store.commit('setMenu', menu);
+                router.addRoutes(menu);
+                next({...to, replace: true})
+            }
         }).catch(() => {
         });
     }else{
