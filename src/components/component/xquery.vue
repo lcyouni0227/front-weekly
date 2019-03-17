@@ -24,7 +24,7 @@
             getQueryFormat(){
                 let rule=[];
                 for(let key in this.query){
-                    if(key != "querySymbol" && this.query[key] !='') {
+                    if(key != "querySymbol" && this.query[key] !=='' && this.query[key] !==undefined) {
                         let item = {};
                         item.name = key;
                         item.val = this.query[key];
