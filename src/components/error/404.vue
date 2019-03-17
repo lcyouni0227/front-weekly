@@ -15,7 +15,7 @@
         name: "Error",
         methods: {
             backToIndex() {
-                this.$router.push("/index");
+                this.$router.push("/");
             }
         }
     }

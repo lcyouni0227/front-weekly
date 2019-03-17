@@ -21,6 +21,9 @@ export default {
                             if (v.datasource.parentField) {
                                 query.fields += ',' + v.datasource.parentField;
                             }
+                            if(v.datasource.addField){
+                                query.fields += ',' + v.datasource.addField;
+                            }
                             // console.log(query);
                             this.$axios.syncPostJson(v.datasource.url || '/data/query', query, (res) => {
                                 if (res.code == 1) {

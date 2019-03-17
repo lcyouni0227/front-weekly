@@ -11,6 +11,7 @@
     export default {
         name: 'XSelect',
         props: {
+            casWatch:String,
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
             label:{type:String,default:''}, /* 选择框前的文本 */
             value: {type: String},  /* 接受外部v-model传入的值 */
@@ -43,6 +44,7 @@
         },
         data(){
             return {
+                casVal:null,  /* 级联选择前条件的初始值 */
                 dataField:{labelField:'id',valueField:'name'},
                 rows: [],
                 svalue:''
@@ -50,28 +52,89 @@
         },
         created(){
             //初始化下拉框的值
-            this.svalue = this.value;
-            if(this.dataSource.dic){
-                let v = this.$global.dic[this.dataSource.dic];
-                this.dataField.valueField = v.valueField;
-                this.dataField.labelField = v.labelField;
-                this.rows = v.data;
-            }else{
-                if(this.dataSource.valueField){
-                    this.dataField.valueField = this.dataSource.valueField;
-                }
-                if(this.dataSource.labelField){
-                    this.dataField.labelField = this.dataSource.labelField;
-                }
-                let query = this.$global.getDataSource(this.dataSource);
-                query.fields = this.dataField.valueField + ',' + this.dataField.labelField;
-                // console.log(query);
-                this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
-                    if (res.code == 1) {
-                        this.rows = res.data.rows;
+            this._getData();
+        },
+        methods:{
+            _getData(){
+                this.svalue = this.value;
+                if(this.dataSource.dic){
+                    let v = this.$global.dic[this.dataSource.dic];
+                    this.dataField.valueField = v.valueField;
+                    this.dataField.labelField = v.labelField;
+                    if(this.dataSource.rule) {
+                        this.rows = v.data.filter((item) => {
+                            for (let m of this.dataSource.rule) {
+                                switch (m.opt || '=') {
+                                    case '=':
+                                        if (item[m.name] != m.val) {
+                                            return false;
+                                        }
+                                        break;
+                                    case '>':
+                                        if (!(item[m.name] > m.val)) {
+                                            return false;
+                                        }
+                                        break;
+                                    case '>=':
+                                        if (!(item[m.name] >= m.val)) {
+                                            return false;
+                                        }
+                                        break;
+                                    case '<':
+                                        if (!(item[m.name] < m.val)) {
+                                            return false;
+                                        }
+                                        break;
+                                    case '<=':
+                                        if (!(item[m.name] <= m.val)) {
+                                            return false;
+                                        }
+                                        break;
+                                    case '!=':
+                                        if (!(item[m.name] != m.val)) {
+                                            return false;
+                                        }
+                                        break;
+                                    default:
+                                        if (item[m.name] != m.val) {
+                                            return false;
+                                        }
+                                        break;
+                                }
+                            }
+                            return true;
+                        })
+                    }else{
+                        this.rows = v.data;
                     }
-                }).catch(() => {
-                });
+                }else{
+                    if(this.dataSource.valueField){
+                        this.dataField.valueField = this.dataSource.valueField;
+                    }
+                    if(this.dataSource.labelField){
+                        this.dataField.labelField = this.dataSource.labelField;
+                    }
+                    let query = this.$global.getDataSource(this.dataSource);
+                    query.fields = this.dataField.valueField + ',' + this.dataField.labelField;
+                    if(this.dataSource.addField){
+                        query.fields += this.dataSource.addField;
+                    }
+                    if(this.dataSource.rule){
+                        query.filter = {'out':'and','in':'and','rule':this.dataSource.rule};
+                        for(let it of this.dataSource.rule){
+                            if((','+query.fields+',').indexOf(','+it.name+',')<0){
+                                query.fields += ',' + it.name;
+                            }
+                        }
+                    }
+                    // console.log(query);
+                    this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
+                        if (res.code == 1) {
+                            this.rows = res.data.rows;
+                        }
+                    }).catch(() => {
+                    });
+                }
             }
         },
         watch:{
@@ -82,6 +145,9 @@
                     this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,val)
                 }
             },
+            casWatch(){
+                this._getData();
+            }
         },
     };
 </script>
