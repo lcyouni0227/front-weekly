@@ -14,7 +14,7 @@
                 <slot name = "topButtonArea"></slot>
             </el-form-item>
         </el-form>
-        <el-table ref="table" :row-key="rowKey" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="nativeRowsValue" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :rowKey="rowKey" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
+        <el-table ref="table" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="nativeRowsValue" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :rowKey="rowKey" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
             <el-table-column v-if="multiSelect" type="selection" width="30"></el-table-column>
             <el-table-column v-if="singleSelect" width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
             <!--<el-table-column type="index" label="序" align="center" width="30"></el-table-column>-->
@@ -78,6 +78,7 @@
             headerCellClassName: [String, Function],
             headerCellStyle: [Object, Function],
             highlightCurrentRow: {type: Boolean, default: true},
+            rowKey: [String, Function],
             currentRowKey: [String, Number],
             emptyText: String,
             expandRowKeys: Array,
@@ -206,16 +207,20 @@
             /* 获得组装后的查询json对象 */
             getQuery(filter){
                 let query = comUtil.getDataSource(this.dataSource);
-                query.page = this.currentPageX;
-                query.size = this.pageSizeX;
-                query.fields = this.getFields();
-                if(!filter){
-                    filter = this.getFilter();
+                if(query) {
+                    query.page = this.currentPageX;
+                    query.size = this.pageSizeX;
+                    query.fields = this.getFields();
+                    if (!filter) {
+                        filter = this.getFilter();
+                    }
+                    if (filter) {
+                        query.filter = filter;
+                    }
+                    return query;
+                }else{
+                    return null;
                 }
-                if(filter){
-                    query.filter = filter;
-                }
-                return query;
             },
             /* 外部获得值传入控件内 */
             setData(data){
@@ -244,9 +249,6 @@
                     this.rows = data.rows;
                 }
                 // this.$emit('updata:rows',this.rows);
-            },
-            rowKey(row){
-                return row[this.keyField];
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
@@ -278,6 +280,9 @@
                     return;
                 }
                 let query = this.getQuery(filter);
+                if(!query){
+                    return;
+                }
                 if(befor){
                     befor(query);
                 }

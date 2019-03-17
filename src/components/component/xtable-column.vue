@@ -1,11 +1,11 @@
 <template>
     <el-table-column :prop="prop" v-bind="$attrs">
         <template slot-scope="scope">
-            <slot v-if="!isEdit(scope)" name="show" :row="scope.row" :$index="scope.$index">
+            <slot v-if="!isEdit(scope)" name="show" :row="scope.row">
                 {{ scope.row[prop] }}
             </slot>
-            <slot v-else name="edit" :row="scope.row" :$index="scope.$index">
-                <el-input v-model="scope.row[prop]" :size="$style.size()" clearable placeholder="请输入"></el-input>
+            <slot v-else name="edit" :row="scope.row">
+                <el-input type="text" v-model="scope.row[prop]" :size="$style.size()" clearable placeholder="请输入"></el-input>
             </slot>
         </template>
     </el-table-column>

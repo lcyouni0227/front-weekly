@@ -11,7 +11,6 @@
     "acorn": "^6.0.7",
     "axios": "^0.18.0",
     "codemirror": "^5.44.0",
-    "difflib": "^0.2.4",
     "element-ui": "^2.5.4",
     "jquery": "^3.3.1",
     "js-cookie": "^2.2.0",
