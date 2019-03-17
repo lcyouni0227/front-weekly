@@ -48,8 +48,7 @@
                 switch (command) {
                     case "closeAll":
                         this.$store.dispatch('removeAllTag');
-                        this.$router.push('/index');
-                        this.viewName = 'index';
+                        this.$router.push('/');
                         break;
                     case 'closeOther':
                         if (this.visitedViews.length === 1) break;
@@ -59,10 +58,7 @@
             },
             closeTag(tag) {
                 if (this.visitedViews.length <= 1) {
-                    if (tag.path ==='/index') {
-                        return;
-                    }
-                    this.$router.push('/index');
+                    this.$router.push('/');
                 } else {
                     for (let i = 0; i < this.visitedViews.length; i++) {
                         if (this.visitedViews[i].path === tag.path) {
@@ -70,7 +66,6 @@
                                 this.$router.push(this.visitedViews[i + 1]);
                             } else {
                                 this.$router.push(this.visitedViews[i - 1]);
-
                             }
                             break;
                         }

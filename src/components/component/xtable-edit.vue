@@ -52,7 +52,6 @@
             showRowButton:{type: Boolean, default: false}, /* 是否在表格内每行最后1列显示操作按钮 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
-            attField:{type: String, default: null}, /* 附加字段 */
             load:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
 
             data:{type: Array, default(){return []}},
@@ -172,11 +171,8 @@
                 if(this.dataSource.module){
                     if(this.fields === ''){
                         let attfield = [];
-                        if(this.$attrs.attField){
-                            attfield = this.$attrs.attField.toLowerCase().split(",");
-                        }
-                        if(this.attField){
-                            attfield = attfield.concat(this.attField.toLowerCase().split(","));
+                        if(this.dataSource.addField){
+                            attfield = this.dataSource.addField.toLowerCase().split(",");
                         }
                         for(let v of this.$refs.table.columns) {
                             if (v.property) {
@@ -282,6 +278,9 @@
                 let query = this.getQuery(filter);
                 if(!query){
                     return;
+                }
+                if(this.dataSource.orderBy){
+                    query.orderBy = this.dataSource.orderBy;
                 }
                 if(befor){
                     befor(query);

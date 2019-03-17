@@ -1,7 +1,6 @@
 <!-- 菜单模板管理 -->
 <template>
-    <x-table-edit :att-field="'_pid,muid'"
-                  :data-source="{module:'menu_base'}"
+    <x-table-edit :data-source="{module:'menu_base',addField:'_pid,muid'}"
                   :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}
                   ,{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}
                   ,{name:'menu_base', datasource:{parentField:'_pid',valueField:'muid',labelField:'name',module:'menu_base'}}]">
