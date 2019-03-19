@@ -17,7 +17,11 @@ export default {
                 if (this.dataSource.module || this.$parent.$data.module) {
                     this.$axios.postJson('/privilege/getButtons', this.dataSource.module || this.$parent.$data.module).then(res => {
                         if (res.code == 1) {
-                            this.buttons = res.data.buttons;
+                            if(this.button){
+                                this.buttons = Object.assign({},res.data.buttons,this.button)
+                            }else{
+                                this.buttons = res.data.buttons;
+                            }
                         }
                     }).catch(() => {
 

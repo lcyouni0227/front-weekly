@@ -4,11 +4,12 @@
         <el-form :inline="true" v-if="$slots.topButtonArea || showTopButton">
             <el-form-item v-if="showTopButton">
                 <!--<el-button @click="handelQuery()" type="success" icon="el-icon-refresh" plain size="mini">刷新</el-button>-->
-                <el-button v-if="button.hasOwnProperty('add') && buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
-                <el-button v-if="button.hasOwnProperty('edit') && buttons.hasOwnProperty('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
+                <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(null)" type="primary" icon="el-icon-circle-plus-outline" plain size="mini">新增</el-button>
+                <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null)" type="warning" icon="el-icon-edit" plain size="mini">修改</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowSave(null)" type="warning" icon="el-icon-success" plain size="mini">保存</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
-                <el-button v-if="button.hasOwnProperty('del') && buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
+                <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
+                <el-button v-if="buttons.hasOwnProperty('see') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null,true)" type="success" icon="el-icon-circle-close-outline" plain size="mini">查看</el-button>
             </el-form-item>
             <el-form-item v-if="$slots.topButtonArea">
                 <slot name = "topButtonArea"></slot>
@@ -21,16 +22,17 @@
             <slot></slot>
             <el-table-column label="操作" v-if="$slots.rowButtonArea || showRowButton">
                 <template slot-scope="scope" v-if="showRowButton">
-                    <el-button v-if="button.hasOwnProperty('add') && buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
-                    <el-button v-if="button.hasOwnProperty('edit') && buttons.hasOwnProperty('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('add') && !isEdit" @click="handelTableRowAdd(scope.$index)" type="primary" icon="el-icon-circle-plus-outline" plain class="tableRowButton">新增</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('edit') && !isEdit" @click="handelTableRowEdit(scope.$index)" type="warning" icon="el-icon-edit" plain class="tableRowButton">修改</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowSave(scope.$index)" type="warning" icon="el-icon-success" plain class="tableRowButton">保存</el-button>
                     <el-button v-if="isEdit && scope.$index == editRow.rowNumber" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain class="tableRowButton">取消</el-button>
-                    <el-button v-if="button.hasOwnProperty('del') && buttons.hasOwnProperty('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
+                    <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" @click="handelTableRowDelete(scope.$index)" type="danger" icon="el-icon-circle-close-outline" plain class="tableRowButton">删除</el-button>
                 </template>
                 <slot name = "rowButtonArea"></slot>
             </el-table-column>
         </el-table>
         <el-pagination style="text-align:center" v-if="showPagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :layout="pagerLayout" :current-page="currentPage" :page-sizes="pageSizes" :page-size="pageSize" :total="total" :pageCount="pageCount" :small="small" :popperClass="popperClass" :prevText="prevText" :nextText="nextText" :background="background" :disabled="disabled"></el-pagination>
+        <slot name="edit" :row="currRowData" :action="editRow.action==='see'"></slot>
     </section>
 </template>
 
@@ -44,7 +46,7 @@
         name: 'XTableEdit',
         mixins:[dic,privilege,runStatus],
         props: {
-            button:{type: Object, default(){return {add:{},edit:{},del:{}}}},
+            button:{type: Object, default(){return {}}},    /* 外部传入按钮 */
             multiSelect:{type: Boolean, default: false},    /* 表格是否允许多选,显示复选框 */
             singleSelect:{type: Boolean, default: true},    /* 表格是否允许单选,显示单选框 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
@@ -112,7 +114,11 @@
                 pageSizeX:this.pageSize,    /* 每页记录数 */
                 currentPageX: this.currentPage, /* 当前页码 */
                 multipleSelection: null,   /* 单选或多选的结果,注意多选时是json数组 */
-                isRunStatus:false   /* 检查是否在执行状态,避免多次提交 */
+                isRunStatus:false,   /* 检查是否在执行状态,避免多次提交 */
+
+                request:false,  /* 是否重新从数据库中拿一条记录,用于编辑功能 */
+                dialogEdit:null,    /* 弹出的编辑对话框实例 */
+                currRowData:{}  /* 正在新增或编辑的行数据 */
             }
         },
         computed: {
@@ -172,7 +178,12 @@
                     if(this.fields === ''){
                         let attfield = [];
                         if(this.dataSource.addField){
-                            attfield = this.dataSource.addField.toLowerCase().split(",");
+                            if(this.dataSource.addField === '*'){
+                                this.fields = '';
+                                return this.fields;
+                            }else{
+                                attfield = this.dataSource.addField.toLowerCase().split(",");
+                            }
                         }
                         for(let v of this.$refs.table.columns) {
                             if (v.property) {
@@ -282,15 +293,11 @@
                 if(this.dataSource.orderBy){
                     query.orderBy = this.dataSource.orderBy;
                 }
-                if(befor){
-                    befor(query);
-                }
+                befor && befor(query);
                 this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
                     if(res.code==1) {
                         this.setData(res.data);
-                        if(after){
-                            after(res);
-                        }
+                        after && after(res);
                     }
                     this.endRun();
                 }).catch(() => {
@@ -299,6 +306,12 @@
             },
             handelTableRowAdd(index){
                 if (this.isRun()) {
+                    return;
+                }
+                if(this.dialogEdit){
+                    this.currRowData = {};
+                    this.dialogEdit.open('add');
+                    this.endRun();
                     return;
                 }
                 if(this.$options._parentListeners && this.$options._parentListeners.addAction){
@@ -321,11 +334,12 @@
                 }
                 this.endRun();
             },
-            handelTableRowEdit(index) {
+            handelTableRowEdit(index,isSee) {
                 if(this.isRun()){
                     return;
                 }
                 this.$parent.beforeTableRowEdit && this.$parent.beforeTableRowEdit(this,index);
+
                 if(index == null){
                     if(this.editRow.rowNumber != null){
                         index = this.editRow.rowNumber;
@@ -334,10 +348,53 @@
                         return;
                     }
                 }
+                let rowData = this.$refs.table.store.states.data[index];
+                this.editRow.rowData = JSON.stringify(rowData);
+                if(this.dialogEdit){
+                    if(this.request){
+                        //重新请求拿编辑数据
+                        let query = comUtil.getDataSource(this.dataSource);
+                        query.filter = {'out':'and','in':'and','rule':[{name: this.keyField,opt:'=',val:rowData[this.keyField]}]};
+                        this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
+                            if(res.code==1 && res.data && res.data.rows && res.data.rows.length>0) {
+                                this.currRowData = res.data.rows[0];
+                                this.editRow.rowData = JSON.stringify(this.currRowData);
+                            }else{
+                                this.dialogEdit.close();
+                                this.$message({
+                                    type: 'error',
+                                    message: '网络错误,请稍后再试。'
+                                });
+                            }
+                        }).catch(() => {
+                            this.dialogEdit.close();
+                            this.$message({
+                                type: 'error',
+                                message: '网络错误,请稍后再试。'
+                            });
+                        });
+                    }else{
+                        this.currRowData = rowData;
+                    }
+                    if(isSee){
+                        this.editRow.action = 'see';
+                        this.dialogEdit.open('see');
+                    }else {
+                        this.editRow.action = '';
+                        this.dialogEdit.open('edit');
+                    }
+                    this.endRun();
+                    return;
+                }
                 this.editRow.action = 'edit';
-                this.editRow.rowData = JSON.stringify(this.$refs.table.store.states.data[index]);
                 this.$parent.afterTableRowEdit && this.$parent.afterTableRowEdit(this,index);
                 this.endRun();
+            },
+            /* 弹出对话框取消修改 */
+            handelDialogEditCancel(){
+                let data = this.$refs.table.store.states.data;
+                data[this.editRow.rowNumber] = JSON.parse(this.editRow.rowData);
+                this.$refs.table.store.commit('setData', data);
             },
             handelTableRowCancel() {
                 if(this.isRun()){
@@ -358,11 +415,11 @@
                 this.$parent.afterTableRowCancel && this.$parent.afterTableRowCancel(this,this.editRow);
                 this.endRun();
             },
-            handelTableRowSave(index) {
+            handelTableRowSave(index,action,isConfirm) {
                 if(this.isRun()){
                     return;
                 }
-                if(index == null){
+                if(index == null && !action){
                     if(this.editRow.rowNumber != null){
                         index = this.editRow.rowNumber;
                     }else{
@@ -371,11 +428,19 @@
                     }
                 }
                 let diff=null,id=null;
-                if(this.editRow.action=='add'){
-                    diff = this.$refs.table.store.states.data[this.editRow.rowNumber];
-                }else{
+                if(this.editRow.action=='add' || action == 'add'){
+                    if(action == 'add'){
+                        diff = this.currRowData;
+                    }else {
+                        diff = this.$refs.table.store.states.data[this.editRow.rowNumber];
+                    }
+                }else {
                     let oldRow = JSON.parse(this.editRow.rowData);
-                    diff= jsonUtil.diff(oldRow,this.$refs.table.store.states.data[this.editRow.rowNumber]);
+                    if(this.request){
+                        diff= jsonUtil.diff(oldRow,this.currRowData);
+                    }else{
+                        diff= jsonUtil.diff(oldRow,this.$refs.table.store.states.data[this.editRow.rowNumber]);
+                    }
                     id = oldRow[this.keyField];
                 }
                 if(!jsonUtil.isEmpty(diff)) {
@@ -387,47 +452,53 @@
                         this.endRun();
                         return;
                     }
-                    this.$confirm('数据未保存,是否保存?', '保存确认', {
-                        confirmButtonText: '保存',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        let saveData={
-                            module:this.dataSource.module || null,
-                            source:this.dataSource.source || null,
-                            pid:this.pid || null,
-                            rows:[
-                                {
-                                    "action": this.editRow.action,
-                                    "id": id,
-                                    "row": diff
-                                }
-                            ]
-                        };
-                        // console.log(saveData);
-                        this.$parent.beforeTableRowSave && this.$parent.beforeTableRowSave(this,index,saveData);
-                        this.$axios.postJson(this.dataSource.saveUrl || '/data/save',saveData,true,true).then((res) => {
-                            if(res.code==1) {
+                    if(isConfirm){
+                        this.$confirm('数据未保存,是否保存?', '保存确认', {
+                            confirmButtonText: '保存',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+
+                        }).catch(() => {
+                            this.endRun();
+                            return;
+                        });
+                    }
+                    let saveData={
+                        module:this.dataSource.module || null,
+                        source:this.dataSource.source || null,
+                        pid:this.pid || null,
+                        rows:[
+                            {
+                                "action": action || this.editRow.action,
+                                "id": id,
+                                "row": diff
+                            }
+                        ]
+                    };
+                    // console.log(saveData);
+                    this.$parent.beforeTableRowSave && this.$parent.beforeTableRowSave(this,index,saveData);
+                    this.$axios.postJson(this.dataSource.saveUrl || '/data/save',saveData,true,true).then((res) => {
+                        if(res.code==1) {
+                            if(action === 'add' || (action === 'edit' && this.request) || (this.isTree && this.editRow.action == 'edit' && diff[this.xTableTreeColumn.child.parentField])){
+                                this.endRun();
+                                this.handelQuery();
+                            }else{
                                 if (this.editRow.action == 'add') {
                                     this.total++;
                                 }
-                                if(this.isTree && this.editRow.action == 'edit' && diff[this.xTableTreeColumn.child.parentField]){
-                                    this.endRun();
-                                    this.handelQuery();
-                                }
-                                this._clearSelect();
                             }
-                            this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
-                            this.endRun();
-                        }).catch((res) => {
-                            this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
-                            this.endRun();
-                        });
-                    }).catch(() => {
+                            this._clearSelect();
+                        }
+                        this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
+                        this.endRun();
+                    }).catch((res) => {
+                        this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
                         this.endRun();
                     });
+
                 }else{
-                    this.$alert('不能保存,请录入数据后再保存。', '保存', {
+                    this.$alert('不能保存,请录入新数据后再保存。', '保存', {
                         confirmButtonText: '确定',
                         type:'warning'
                     });
@@ -530,7 +601,6 @@
                 });
 
             },
-
             handleSizeChange(val) {
                 this.pageSizeX = val;
                 this.handelQuery();
@@ -548,6 +618,17 @@
         mounted() {
             if(this.load){
                 this.handelQuery();
+            }
+            for(let v of this.$children){
+                if( v.$options._componentTag === 'x-dialog-edit'){
+                    this.dialogEdit = v;
+                    if(v.$attrs.hasOwnProperty('request')){
+                        if(this.dataSource.addField.trim() !== '*' && (v.$attrs.request == '' || Boolean(v.$attrs.request))){
+                            this.request = true;
+                        }
+                    }
+                    break;
+                }
             }
         }
     };
