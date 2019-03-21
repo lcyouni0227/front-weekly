@@ -9,15 +9,16 @@
                 <el-button v-if="isEdit" @click="handelTableRowSave(null)" type="warning" icon="el-icon-success" plain size="mini">保存</el-button>
                 <el-button v-if="isEdit" @click="handelTableRowCancel()" type="success" icon="el-icon-error" plain size="mini">取消</el-button>
                 <el-button v-if="buttons.hasOwnProperty('del') && !isEdit" :disabled="!isSelect" @click="handelTableRowDelete(null)" type="danger" icon="el-icon-circle-close-outline" plain size="mini">删除</el-button>
-                <el-button v-if="buttons.hasOwnProperty('see') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null,true)" type="success" icon="el-icon-circle-close-outline" plain size="mini">查看</el-button>
+                <el-button v-if="dialogEdit && buttons.hasOwnProperty('see') && !isEdit" :disabled="!isSelect" @click="handelTableRowEdit(null,true)" type="success" icon="el-icon-circle-close-outline" plain size="mini">查看</el-button>
             </el-form-item>
             <el-form-item v-if="$slots.topButtonArea">
                 <slot name = "topButtonArea"></slot>
             </el-form-item>
         </el-form>
-        <el-table ref="table" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="nativeRowsValue" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :rowKey="rowKey" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate">
-            <el-table-column v-if="multiSelect" type="selection" width="30"></el-table-column>
-            <el-table-column v-if="singleSelect" width="30"><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
+        <el-table ref="table" style="border-top:1px solid #ebeef5;" @row-click="handleClickRow" @selection-change="handleSelectionChange" :data="nativeRowsValue" :size="size" :width="width" :height="height" :maxHeight="maxHeight" :fit="fit" :stripe="stripe" :border="border" :context="context" :showHeader="showHeader" :showSummary="showSummary" :sumText="sumText" :summaryMethod="summaryMethod" :rowClassName="rowClassName" :rowStyle="rowStyle" :cellClassName="cellClassName" :cellStyle="cellStyle" :headerRowClassName="headerRowClassName" :headerRowStyle="headerRowStyle" :headerCellClassName="headerCellClassName" :headerCellStyle="headerCellStyle" :highlightCurrentRow="highlightCurrentRow" :rowKey="rowKey" :currentRowKey="currentRowKey" :emptyText="emptyText" :expandRowKeys="expandRowKeys" :defaultExpandAll="defaultExpandAll" :defaultSort="defaultSort" :tooltipEffect="tooltipEffect" :spanMethod="spanMethod" :selectOnIndeterminate="selectOnIndeterminate"
+                  @select="select" @select-all="selectAll">
+            <el-table-column v-if="multiSelect" type="selection" width="30" fixed></el-table-column>
+            <el-table-column v-if="singleSelect" width="30" fixed><template slot-scope="scope"><input type="radio" name="radio" v-model="editRow.rowNumber" :value="scope.$index"></template></el-table-column>
             <!--<el-table-column type="index" label="序" align="center" width="30"></el-table-column>-->
             <slot></slot>
             <el-table-column label="操作" v-if="$slots.rowButtonArea || showRowButton">
@@ -206,7 +207,14 @@
             /* 获得查询参数 */
             getFilter(){
                 if(this.$slots.query){
-                    return this.$slots.query[0].componentInstance.getQueryFormat();
+                    //TODO 现为2级，可优化为多级
+                    if(this.$slots.query[0] && this.$slots.query[0].componentInstance && this.$slots.query[0].componentInstance.getQueryFormat){
+                        return this.$slots.query[0].componentInstance.getQueryFormat();
+                    }else{
+                        if(this.$slots.query[0] && this.$slots.query[0].children  && this.$slots.query[0].children[0].componentInstance && this.$slots.query[0].children[0].componentInstance.getQueryFormat){
+                            return this.$slots.query[0].children[0].componentInstance.getQueryFormat();
+                        }
+                    }
                 }else{
                     return null;
                 }
@@ -271,8 +279,9 @@
                     }
                     this.editRow.rowNumber = index;
                 }
+                this.$emit('selection-change',val);
             },
-            handleClickRow(row){
+            handleClickRow(row, column, event){
                 if(!this.isEdit) {
                     if(this.multiSelect){
                         this.$refs.table.toggleRowSelection(row);
@@ -281,6 +290,7 @@
                     }
                     this.editRow.rowNumber = jsonUtil.findIndexFromArrayNoChildren(this.$refs.table.store.states.data,row,this.keyField);
                 }
+                this.$emit('row-click',row, column, event);
             },
             handelQuery(filter,befor,after){
                 if(this.isRun()){
@@ -498,9 +508,9 @@
                     });
 
                 }else{
-                    this.$alert('不能保存,请录入新数据后再保存。', '保存', {
-                        confirmButtonText: '确定',
-                        type:'warning'
+                    this.$message({
+                        type: 'warning',
+                        message: '数据未改变。'
                     });
                     this.endRun();
                 }
@@ -613,7 +623,14 @@
                 this.multipleSelection = null;
                 this.editRow = {action:null,rowNumber:null,rowData:null};
                 this.$refs.table.clearSelection();
-            }
+            },
+
+            select(selection, row){
+                this.$emit('select',selection, row);
+            },
+            selectAll(selection){
+                this.$emit('select-all',selection);
+            },
         },
         mounted() {
             if(this.load){
