@@ -42,10 +42,10 @@
 </template>
 
 <script>
-    import jsonUtil from '../../utils/jsonUtil';
-    import dic from './support/dic';
-    import runStatus from './support/run-status';
-    import dataSource from './support/data-source';
+    import jsonUtil from '../../../../utils/jsonUtil';
+    import dic from '../../support/dic';
+    import runStatus from '../../support/run-status';
+    import dataSource from '../../support/data-source';
     export default {
         name: 'XTableEdit',
         mixins:[dic,runStatus,dataSource],

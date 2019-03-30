@@ -1,19 +1,24 @@
-import XSplitter from './component/xsplitter';
-import XTableColumn from './component/xtable-column';
-import XTableTreeColumn from './component/xtable-tree-column';
 
-import XTableEdit from './component/xtable-edit';
+import XTableEdit from './component/xtable/src/xtable-edit';
+import XTableColumn from './component/xtable/src/xtable-column';
+import XTableTreeColumn from './component/xtable/src/xtable-tree-column';
+
+import XQuery from './component/query/src/xquery';
+import XQueryItem from './component/query/src/xquery-item';
+
+import XSplitter from './component/xsplitter';
+
 import XSelect from './component/xselect';
 import XSelectTree from './component/xselect-tree';
 import XSelectIcon from './component/xselect-icon';
 import XSelectColor from './component/xselect-color';
 import XSelectTable from './component/xselect-table'
+
 import XTree from './component/xtree';
 import XInput from './component/xinput';
 import XCodeEditSql from './component/xcode-edit-sql';
 import XPanel from './component/xpanel';
-import XQuery from './component/xquery';
-import XQueryItem from './component/xquery-item';
+
 import XDialog from './component/xdialog';
 import XDialogEdit from './component/xdialog-edit'
 import XFormItem from './component/xform-item'
