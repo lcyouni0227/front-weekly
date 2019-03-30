@@ -1,5 +1,5 @@
 <template>
-    <x-table-edit :data-source="{module:'role'}" :dic="[{name:'system', datasource:{valueField:'sysid',labelField:'name',module:'system'}}]">
+    <x-table-edit :data-source="{module:'role'}" :dic="[{name:'system', dataSource:{valueField:'sysid',labelField:'name',module:'system'}}]">
         <x-query slot="query">
             <x-query-item>
                 <x-select prop="sysid" label="所属系统" :data-source="{dic:'system'}" placeholder="请选择所属系统"></x-select>

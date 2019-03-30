@@ -1,6 +1,6 @@
 <!-- data-sql管理 -->
 <template>
-    <x-table-edit :data-source="{module:'datasql'}" :dic="[{name:'module', datasource:{valueField:'mid',labelField:'name',module:'module'}}]">
+    <x-table-edit :data-source="{module:'datasql'}" :dic="[{name:'module', dataSource:{valueField:'mid',labelField:'name',module:'module'}}]">
         <x-query slot="query">
             <x-query-item>
                 <x-select prop="mid" label="所属模块" :data-source="{dic:'module'}" placeholder="请选择所属模块"></x-select>

@@ -2,7 +2,7 @@
 <template>
     <x-splitter>
         <template slot="1">
-            <x-tree @node-click="onClickNode" :props="{parentField:'_pid',valueField:'oid',labelField:'name'}" :dataSource="{addField:'*',source:'org_tree'}" style="margin-right:10px"/>
+            <x-tree @node-click="onClickNode" :props="{parentField:'_pid',valueField:'_id',labelField:'name'}" :data="rows" style="margin-right:10px"/>
         </template>
         <template slot="2">
             <el-form ref="from" :model="row" label-position="right" label-width="100px" inline>
@@ -37,9 +37,8 @@
         mixins:[dataSource],
         data(){
             return {
-                module:'org',
                 checkPvButtons:true,    /* 需要对按钮权限进行检测 */
-                dataSource:{addField:'*',module:'org'},
+                dataSource:{addField:'*',module:'dic'},
                 rows:[],  /* 所有数据 */
                 initRow:{_pid:0}, /* 新增时的初化值 */
                 row:{}, /* 当前选中行值,改变该值不影响真实值 */
@@ -47,33 +46,34 @@
             }
         },
         created(){
-            // this.getQueryMuliData((res)=>{
-            //     if(res.code == 1){
-            //         this.keyField = res.data.keyField;
-            //         this.rows = res.data.rows;
-            //     }
-            // });
+            this.getDicMuliData();
         },
         methods: {
             onClickNode(data) {
                 delete data.children;
-                this.getQuerySingleData(this.dataSource,null,null,null,(res)=>{
-                    console.log(res);
-                    this.row = res.data.rows[0];
-                },this.dataSource,null,{name:'oid',val:data['oid']});
-                // this.row = JSON.parse(JSON.stringify(data));
+                this.row = JSON.parse(JSON.stringify(data));
                 this.handelSelect();
+            },
+            getDicMuliData(){
+                this.getQueryMuliData(this.dataSource,null,null,null,(res)=>{
+                    if(res.code == 1){
+                        this.keyField = res.data.keyField;
+                        this.rows = res.data.rows;
+                    }
+                });
             },
             refresh(res){
                 if(res.code == 1) {
-                    this.getQueryMuliData((res) => {
-                        if (res.code == 1) {
-                            this.keyField = res.data.keyField;
-                            this.rows = res.data.rows;
-                        }
-                    });
+                    this.getDicMuliData();
                 }
             }
         }
     };
 </script>
+<style>
+    .toolbar{
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+</style>
