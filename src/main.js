@@ -55,9 +55,11 @@ Vue.prototype.$global = global;
  * name:字典名称
  */
 Vue.filter('dic', function(value, name) {
-    for (let v of global.dic[name].data) {
-        if(v[global.dic[name].valueField] == value){
-            return v[global.dic[name].labelField];
+    if(global.dic[name] && global.dic[name].data) {
+        for (let v of global.dic[name].data) {
+            if (v[global.dic[name].valueField] == value) {
+                return v[global.dic[name].labelField];
+            }
         }
     }
 });

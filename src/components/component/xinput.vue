@@ -16,7 +16,7 @@
     >
         <template v-if="type !== 'textarea'">
             <!-- 前置元素 -->
-            <label class="x-input-label" >{{label}}</label>
+            <label class="x-input-label" v-if="label" >{{label}}</label>
             <div class="el-input-group__prepend" v-if="$slots.prepend">
                 <slot name="prepend"></slot>
             </div>

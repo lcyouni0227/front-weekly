@@ -3,7 +3,7 @@
         <slot/>
         <div slot="footer">
             <slot name="footer"/>
-            <el-button type="primary" @click="save" size="mini">保 存</el-button>
+            <el-button v-if="action==='add' || action==='edit'" type="primary" @click="save" size="mini">保 存</el-button>
             <el-button size="mini" @click="cancel">取消</el-button>
         </div>
     </x-dialog>

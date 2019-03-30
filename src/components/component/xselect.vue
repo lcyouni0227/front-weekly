@@ -1,20 +1,24 @@
 <template>
     <div class="el-input-group">
-        <label class="x-input-label" >{{label}}</label>
-        <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody">
-            <el-option v-for="(item,index) in rows" :key="index" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
+        <label class="x-input-label" v-if="label">{{label}}</label>
+        <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody"
+                    @change="change" @visible-change="visibleChange" @remove-tag="removeTag" @clear="clear" @blur="blur" @focus="focus">
+            <el-option v-for="(item) in rows" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
         </el-select>
     </div>
 </template>
 
 <script>
+    import dataSource from './support/data-source';
     export default {
         name: 'XSelect',
+        mixins:[dataSource],
         props: {
-            casWatch:String,
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
+            casWatch:String,    /* 设置当这个值改变时需重新加载数据 */
             label:{type:String,default:''}, /* 选择框前的文本 */
-            value: {type: String},  /* 接受外部v-model传入的值 */
+            value: [String,Number],  /* 接受外部v-model传入的值 */
+
             name: String,
             id: String,
             // autocomplete: {type: String, default: 'off'},
@@ -62,48 +66,7 @@
                     this.dataField.valueField = v.valueField;
                     this.dataField.labelField = v.labelField;
                     if(this.dataSource.rule) {
-                        this.rows = v.data.filter((item) => {
-                            for (let m of this.dataSource.rule) {
-                                switch (m.opt || '=') {
-                                    case '=':
-                                        if (item[m.name] != m.val) {
-                                            return false;
-                                        }
-                                        break;
-                                    case '>':
-                                        if (!(item[m.name] > m.val)) {
-                                            return false;
-                                        }
-                                        break;
-                                    case '>=':
-                                        if (!(item[m.name] >= m.val)) {
-                                            return false;
-                                        }
-                                        break;
-                                    case '<':
-                                        if (!(item[m.name] < m.val)) {
-                                            return false;
-                                        }
-                                        break;
-                                    case '<=':
-                                        if (!(item[m.name] <= m.val)) {
-                                            return false;
-                                        }
-                                        break;
-                                    case '!=':
-                                        if (!(item[m.name] != m.val)) {
-                                            return false;
-                                        }
-                                        break;
-                                    default:
-                                        if (item[m.name] != m.val) {
-                                            return false;
-                                        }
-                                        break;
-                                }
-                            }
-                            return true;
-                        })
+                        this.rows = this.getFilterResult(v.data,this.dataSource.rule);
                     }else{
                         this.rows = v.data;
                     }
@@ -114,39 +77,52 @@
                     if(this.dataSource.labelField){
                         this.dataField.labelField = this.dataSource.labelField;
                     }
-                    let query = this.$global.getDataSource(this.dataSource);
-                    query.fields = this.dataField.valueField + ',' + this.dataField.labelField;
-                    if(this.dataSource.addField){
-                        query.fields += this.dataSource.addField;
-                    }
-                    if(this.dataSource.rule){
-                        query.filter = {'out':'and','in':'and','rule':this.dataSource.rule};
-                        for(let it of this.dataSource.rule){
-                            if((','+query.fields+',').indexOf(','+it.name+',')<0){
-                                query.fields += ',' + it.name;
-                            }
-                        }
-                    }
+                    let query = this.getQuery(this.dataSource);
                     // console.log(query);
-                    this.$axios.postJson(this.dataSource.url || '/data/query', query).then(res => {
+                    this.$axios.postJson(this.dataSource.queryUrl || '/data/query', query).then(res => {
                         if (res.code == 1) {
                             this.rows = res.data.rows;
                         }
                     }).catch(() => {
                     });
                 }
+            },
+            change(val){
+                this.$emit('change', val);
+            },
+            visibleChange(bool){
+                this.$emit('visible-change', bool);
+            },
+            removeTag(tag){
+                this.$emit('remove-tag', tag);
+            },
+            clear(){
+                this.$emit('clear');
+            },
+            blur(event){
+                this.$emit('blur',event);
+            },
+            focus(event){
+                this.$emit('focus',event);
             }
         },
         watch:{
             //判断下拉框的值是否有改变
-            svalue(val, oldVal) {
-                if(val!=oldVal){
+            svalue(newVal, oldVal) {
+                if(newVal != oldVal){
                     this.$emit('input', this.svalue);
-                    this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,val)
+                    this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,newVal)
                 }
             },
-            casWatch(){
-                this._getData();
+            value(newVal, oldVal){
+                if(newVal != oldVal) {
+                    this.svalue = this.value;
+                }
+            },
+            casWatch(newVal, oldVal){
+                if(newVal != oldVal) {
+                    this._getData();
+                }
             }
         },
     };

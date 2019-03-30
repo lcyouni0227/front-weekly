@@ -5,9 +5,10 @@ import jsonUtil from './jsonUtil';
  * @param parentField:父字段名称
  * @param valueField:子字段名称
  * @param parentValue:父字段值,如果有值则代表只建立顶层为该值的树
+ * @param excludeVal:不能选择的项数组,会在该项下加disabled字段并设置为true
  * @returns :返回建立的树对象
  */
-function buildTree(listData, parentField = '_pid', valueField = 'id', parentValue = null) {
+function buildTree(listData, parentField = '_pid', valueField = 'id', parentValue) {
     const fa = (parentId) => {
         if(parentValue != null){
             const temp = [];

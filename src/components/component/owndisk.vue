@@ -3,7 +3,7 @@
     <x-table-edit ref="xtableEdit" highlight-current-row stripe style="width:100%;height:100%"
                   :button="{edit:{},del:{}}"
                   :multiSelect="true" :singleSelect="false"
-                  :data-source="{queryUrl:'/owndisk/query',saveUrl:'/owndisk/edit',deleteUrl:'/owndisk/delete',module:'owndisk'}"
+                  :data-source="{queryUrl:'/owndisk/query',saveUrl:'/owndisk/edit',delUrl:'/owndisk/delete',module:'owndisk'}"
     >
         <x-query slot="query">
             <x-query-item prop="name" opt="like" label="文件名"/>

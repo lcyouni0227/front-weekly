@@ -38,11 +38,12 @@
                 return hintOptions;
             },
             run(){
-                let query = {};
-                query.sql = this.getCode();
-                let data = this.$refs.xtable.getQueryData();
-                query.page = data.page;
-                query.size = data.size;
+                let query = this.$refs.xtable.getQuery();
+                // let query = {};
+                // query.sql = this.getCode();
+                // let data = this.$refs.xtable.getQueryData();
+                // query.page = data.page;
+                // query.size = data.size;
                 this.$axios.postJson('/data/querySQL',query).then(res => {
                     if(res.code==1) {
                         this.rows = JSON.parse(res.data.rows);

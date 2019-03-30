@@ -1,25 +1,12 @@
 <!-- 树状选择器 -->
 <template>
     <div class="el-input-group">
-        <label class="x-input-label" >{{label}}</label>
-        <el-popover
-            ref="popover"
-            placement="bottom-start"
-            trigger="click"
-            @show="onShowPopover"
-            @hide="onHidePopover">
-            <el-tree ref="tree" :style="`min-width:${treeWidth};min-height:${dialogHeight}`" :data="options" :props="dataField" :filter-node-method="filterNode" @node-click="onClickNode"
+        <label class="x-input-label" v-if="label">{{label}}</label>
+        <el-popover ref="popover" :disabled="disabled" placement="bottom-start" trigger="click" @show="onShowPopover" @hide="onHidePopover">
+            <el-tree ref="tree" :style="`min-width:${treeWidth};min-height:${dialogHeight}`" :data="rows" :props="dataField" :filter-node-method="filterNode" @node-click="onClickNode"
                 :emptyText="emptyText" :renderAfterExpand="renderAfterExpand" :nodeKey="nodeKey" :checkStrictly="checkStrictly" :defaultExpandAll="defaultExpandAll" :expandOnClickNode="expandOnClickNode" :checkOnClickNode="checkOnClickNode" :checkDescendants="checkDescendants" :autoExpandParent="autoExpandParent" :defaultCheckedKeys="defaultCheckedKeys" :defaultExpandedKeys="defaultExpandedKeys" :currentNodeKey="currentNodeKey" :renderContent="renderContent" :showCheckbox="showCheckbox" :draggable="draggable" :allowDrag="allowDrag" :allowDrop="allowDrop" :lazy="lazy" :highlightCurrent="highlightCurrent" :load="load" :accordion="accordion" :indent="indent" :iconClass="iconClass">
             </el-tree>
-            <el-input
-                slot="reference"
-                ref="input"
-                v-model="labelModel"
-                clearable
-                :style="`width: ${width}px`"
-                suffix-icon="el-icon-arrow-down"
-                :placeholder="placeholder">
-            </el-input>
+            <el-input ref="input" slot="reference" v-model="labelModel" :disabled="disabled" clearable :style="`width: ${width}px`" suffix-icon="el-icon-arrow-down" :placeholder="placeholder"></el-input>
         </el-popover>
     </div>
 </template>
@@ -31,7 +18,7 @@
         mixins:[xtree],
         props: {
             label:{type:String,default:''}, /* 选择框前的文本 */
-            value: String,      /* 接收绑定参数 */
+            disabled:Boolean,    /* 禁用 */
             placeholder: {type: String, required: false, default: '请选择'},   /* 输入框占位符 */
             dialogWidth:String, /*  弹出框宽度 */
             dialogHeight:{String,default:'auto'}, /* 弹出框高度 */
@@ -50,7 +37,7 @@
                 }
             },
             value(val) {
-                this.labelModel = this.queryTree(this.options, val);
+                this.labelModel = this.queryTree(this.rows, val);
             },
         },
         data() {
@@ -61,7 +48,7 @@
         created() {
             // 检测输入框原有值并显示对应 label
             if (this.value) {
-                this.labelModel = this.queryTree(this.options, this.value);
+                this.labelModel = this.queryTree(this.rows, this.value);
             }
             // 获取输入框宽度同步至树状菜单宽度
             this.$nextTick(() => {
@@ -75,6 +62,18 @@
         methods: {
             // 单击节点
             onClickNode(node) {
+                if(this.excludeVal){
+                    if(this.excludeVal.indexOf(node[this.dataField.valueField]) != -1){
+                        this.$message({
+                            type: 'error',
+                            message: '不能选择该选项。'
+                        });
+                        return;
+                    }
+                }
+                if(this.exclude && this.exclude(node)){
+                    return;
+                }
                 this.labelModel = node[this.dataField.label];
                 this.valueModel = node[this.dataField.valueField];
                 this.onCloseTree();

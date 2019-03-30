@@ -1,3 +1,4 @@
+<!-- 树型菜单,用于左面导航菜单 -->
 <template>
     <section>
         <template v-for="item in data">
@@ -6,7 +7,7 @@
                     <i :class="item.icon"/>
                     <span slot="title">{{item.name}}</span>
                 </template>
-                <x-tree-menu :data="item.children"></x-tree-menu>
+                <x-tree-menu :data="item.children"/>
             </el-submenu>
             <el-menu-item v-else :index="item.path">
                 <i :class="item.icon"/>

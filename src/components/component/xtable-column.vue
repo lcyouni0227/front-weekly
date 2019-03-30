@@ -1,13 +1,14 @@
 <template>
     <el-table-column :prop="prop" v-bind="$attrs">
         <template slot-scope="scope">
-            <slot v-if="!isEdit(scope)" name="show" :row="scope.row">
+            <slot v-if="!isAddOrEdit(scope)" name="show" :row="scope.row">
                 {{ scope.row[prop] }}
             </slot>
             <slot v-else name="edit" :row="scope.row">
                 <el-input-number v-if="isNumber()" v-model="scope.row[prop]" v-bind="$attrs"></el-input-number>
                 <el-input v-else v-model="scope.row[prop]" :size="$style.size()" v-bind="$attrs" clearable placeholder="请输入"></el-input>
             </slot>
+            <span><slot :row="scope.row" :index="scope.$index"/></span>
         </template>
     </el-table-column>
 </template>
@@ -28,9 +29,9 @@
                 }
                 return  false;
             },
-            isEdit(scope){
-                let v = this.$parent.$parent.editRow;
-                return this.edit && (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
+            isAddOrEdit(scope){
+                let v = this.$parent.$parent;
+                return this.edit && v.isAddOrEdit && v.editRow.rowNumber == scope.$index;
             }
         }
     }

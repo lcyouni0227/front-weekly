@@ -1,7 +1,7 @@
 <template>
     <el-table-column :prop="prop" v-bind="$attrs">
         <template slot-scope="scope">
-            <span v-if="!isEdit(scope)" @click.prevent="toggleHandle(scope.$index, scope.row)" :style="childStyles(scope.row)">
+            <span v-if="!isAddOrEdit(scope)" @click.prevent="toggleHandle(scope.$index, scope.row)" :style="childStyles(scope.row)">
                 <i :class="iconClasses(scope.row)" :style="iconStyles(scope.row)"></i>
                 <slot name="show" :row="scope.row" :$index="scope.$index">
                     {{ scope.row[prop] }}
@@ -50,9 +50,9 @@
                 // console.log(val)
                 return val;
             },
-            isEdit(scope){
-                let v = this.$parent.$parent.editRow;
-                return this.edit && (v.action === 'add' || v.action === 'edit') && v.rowNumber == scope.$index;
+            isAddOrEdit(scope){
+                let v = this.$parent.$parent;
+                return this.edit && v.isAddOrEdit && v.editRow.rowNumber == scope.$index;
             },
             childStyles(row) {
                 return {

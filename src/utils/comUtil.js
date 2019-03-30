@@ -1,14 +1,3 @@
-
-function getDataSource(dataSource) {
-    if(dataSource.source){
-        return {source:dataSource.source};
-    }else{
-        if(dataSource.module){
-            return {module:dataSource.module};
-        }
-    }
-}
-
 function getObjType(obj){
     let toString = Object.prototype.toString;
     let map = {
@@ -54,24 +43,7 @@ function deepClone(data){
     return obj;
 }
 
-/**
- * 简单json数组拷贝,注意json对象中还有对象的情况不适宜
- */
-function cloneSimpleJsonArray(array){
-    let data = [];
-    for (let item of array) {
-        let temp = {};
-        for (let key in item) {
-            temp[key] = item[key];
-        }
-        data.push(temp);
-    }
-    return data;
-}
-
 export default {
-    getDataSource,
     getObjType,
     deepClone,
-    cloneSimpleJsonArray
 }

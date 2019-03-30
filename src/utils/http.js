@@ -214,7 +214,6 @@ export default {
     //         let res = await ajax('post',url,JSON.stringify(params));
     //         // res = res.data;
     //         console.log(res);
-    //         return res;
     //         // return new Promise((resolve, reject) => {
     //         //     if (res.code === 0) {
     //         //         resolve(res)

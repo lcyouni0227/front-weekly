@@ -1,7 +1,7 @@
 <!-- 图标选择器 -->
 <template>
     <div class="el-input-group">
-        <label class="x-input-label" >{{label}}</label>
+        <label class="x-input-label" v-if="label">{{label}}</label>
         <el-popover ref="popover" placement="bottom-start">
             <el-table :data="data" border :show-header=false :fit=true style="width:100%;overflow: auto" :max-height="dialogHeight" @cell-click="cell">
                 <template v-for="(v,index) in cols">
