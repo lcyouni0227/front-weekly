@@ -34,15 +34,12 @@
 
 <style scoped lang="less">
     .international {
-
         i {
+            color: #ffffff;
             font-size: 20px;
             line-height: 60px;
             transition: all 0.5s;
-
-            &:hover {
-                cursor: pointer;
-            }
+            &:hover {cursor: pointer;}
 
         }
     }
