@@ -1,9 +1,9 @@
 <template>
     <div class="dashboard">
-        <x-card icon="icon-online" class="card" title="楼栋数量" :value="2019" :time="1000" width="280" height="110" suffix=" 栋" iconColor="#ED594E"></x-card>
-        <x-card icon="icon-online" class="card" title="房间数量" :value="2019" :time="1000" width="280" height="110" suffix=" 间" iconColor="#ED594E"></x-card>
-        <x-card icon="icon-online" class="card" title="灯盏数量" :value="2019" :time="1000" width="280" height="110" suffix=" 间" iconColor="#ED594E"></x-card>
-        <x-card icon="icon-online" class="card" title="运行数量" :value="2019" :time="1000" width="280" height="110" suffix=" 间" iconColor="#ED594E"></x-card>
+        <x-card icon="icon-building" class="card" title="楼栋数量" :value="2019" :time="1000" width="280" height="110" suffix=" 栋" iconColor="#41b883"></x-card>
+        <x-card icon="icon-room" class="card" title="房间数量" :value="2019" :time="1000" width="280" height="110" suffix=" 间" iconColor="#9cb945"></x-card>
+        <x-card icon="icon-deng" class="card" title="灯盏数量" :value="2019" :time="1000" width="280" height="110" suffix=" 盏" iconColor="#ED594E"></x-card>
+        <x-card icon="icon-run" class="card" title="运行数量" :value="2019" :time="1000" width="280" height="110" suffix=" 个" iconColor="#ffcc66"></x-card>
     </div>
 </template>
 
