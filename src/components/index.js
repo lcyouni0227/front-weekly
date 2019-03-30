@@ -16,7 +16,7 @@ import XSelectTable from './component/xselect-table'
 
 import XTree from './component/xtree';
 import XInput from './component/xinput';
-import XCodeEditSql from './component/xcode-edit-sql';
+import XCodeEditSql from './component/xcode/src/xcode-edit-sql';
 import XPanel from './component/xpanel';
 
 import XDialog from './component/xdialog';

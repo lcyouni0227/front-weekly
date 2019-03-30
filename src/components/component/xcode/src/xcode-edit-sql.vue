@@ -14,8 +14,8 @@
 </template>
 
 <script>
-    import runStatus from './support/run-status';
-    import xcodeEdit from './support/xcode-edit';
+    import runStatus from '../../support/run-status';
+    import xcodeEdit from './xcode-edit';
     require("codemirror/addon/hint/sql-hint");
     require("codemirror/mode/sql/sql");
     export default {
