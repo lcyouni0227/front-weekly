@@ -14,13 +14,9 @@ import XCodeEditSql from './component/xcode-edit-sql';
 import XPanel from './component/xpanel';
 import XQuery from './component/xquery';
 import XQueryItem from './component/xquery-item';
-import XUEditor from './component/xueditor'
-import XTreeMenu from './component/xtree-menu'
 import XDialog from './component/xdialog';
 import XDialogEdit from './component/xdialog-edit'
 import XFormItem from './component/xform-item'
-import XToolBar from './component/xtool-bar'
-import XButton from './component/xbutton'
 
 export default {
     install: (Vue) => {
@@ -39,12 +35,8 @@ export default {
         Vue.component(XPanel.name, XPanel);
         Vue.component(XQuery.name, XQuery);
         Vue.component(XQueryItem.name, XQueryItem);
-        Vue.component(XUEditor.name, XUEditor);
-        Vue.component(XTreeMenu.name, XTreeMenu);
         Vue.component(XDialog.name, XDialog);
         Vue.component(XDialogEdit.name, XDialogEdit);
         Vue.component(XFormItem.name, XFormItem);
-        Vue.component(XToolBar.name, XToolBar);
-        Vue.component(XButton.name, XButton);
     }
 }

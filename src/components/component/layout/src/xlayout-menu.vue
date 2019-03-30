@@ -23,8 +23,10 @@
     </el-scrollbar>
 </template>
 <script>
+    import XTreeMenu from './xtree-menu'
     export default {
-        name: "XIndexMenu",
+        name: "XLayoutMenu",
+        components: {XTreeMenu},
         created() {
             this.menu = this.$store.state.controlStyle.menu;
             // 每次进入界面时，先清除之前的所有定时器，然后启动新的定时器

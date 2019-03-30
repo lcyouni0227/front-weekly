@@ -3,8 +3,8 @@
 </template>
 
 <script>
-    import LoadEvent from './support/Event.js';
-    import Debounce from './support/Debounce.js';
+    import LoadEvent from './Event.js';
+    import Debounce from './Debounce.js';
 
     export default {
         name: 'XUeditor',

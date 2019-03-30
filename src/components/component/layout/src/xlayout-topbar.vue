@@ -30,7 +30,7 @@
     import LangSelect from '@/components/LangSelect'
 
     export default {
-        name: 'XIndexTopBar',
+        name: 'XLayoutTopBar',
         components: {
             LangSelect
         },

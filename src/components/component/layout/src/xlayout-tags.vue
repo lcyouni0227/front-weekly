@@ -21,7 +21,7 @@
 
 <script>
     export default {
-        name: "XIndexTags",
+        name: "XLayoutTags",
         data() {
             return {
                 viewName: '',
