@@ -1,31 +1,33 @@
 <template>
     <el-container>
         <el-header>
-            <x-index-top-bar/>
+            <x-layout-topbar/>
         </el-header>
         <el-container>
             <el-aside :width="isCollapse?'64px':'250px'">
-                <x-index-menu/>
+                <x-layout-menu/>
             </el-aside>
             <el-main>
-                <x-index-tags/>
-                <x-index-main/>
+                <x-layout-tags/>
+                <x-layout-main/>
             </el-main>
         </el-container>
     </el-container>
 </template>
 <script>
-    import XIndexTopBar from '@/components/component/xindex-topbar'
-    import XIndexMenu from '@/components/component/xindex-menu'
-    import XIndexTags from '@/components/component/xindex-tags'
-    import XIndexMain from '@/components/component/xindex-main'
+    // import {XLayoutMenu,XLayoutTopbar,XLayoutTags,XLayoutMain} from '@/components/component/layout'
+    import XLayoutMenu from '@/components/component/layout/src/xlayout-menu';
+    import XLayoutTopbar from '@/components/component/layout/src/xlayout-topbar'
+    import XLayoutTags from '@/components/component/layout/src/xlayout-tags'
+    import XLayoutMain from '@/components/component/layout/src/xlayout-main';
+
     export default {
         name: "layout",
         components: {
-            XIndexTopBar,
-            XIndexMenu,
-            XIndexTags,
-            XIndexMain
+            XLayoutMenu,
+            XLayoutTopbar,
+            XLayoutTags,
+            XLayoutMain
         },
         computed: {
             isCollapse() {
