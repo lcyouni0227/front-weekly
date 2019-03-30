@@ -55,7 +55,7 @@
             setTimer() {
                 if(this.timer == null) {
                     this.timer = setInterval(() => {
-                        this.$axios.get("/user/online");
+                        this.$axios.get("/user/online",null,false,false);
                     }, 600000)
                 }
             }
@@ -66,7 +66,9 @@
             this.timer = null
         },
         mounted(){
-            this.$router.push("/dashboard");
+            if(this.$router.currentRoute.fullPath === '/'){
+                this.$router.push("/index/dashboard");
+            }
         }
     };
 </script>

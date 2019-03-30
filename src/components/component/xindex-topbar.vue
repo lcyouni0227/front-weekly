@@ -11,13 +11,13 @@
                     <el-col :span="6">
                         <div class="user">欢迎您:{{userName}}</div>
                     </el-col>
-                    <el-col :span="1">
+                    <el-col :span="2">
                         <lang-select/>
                     </el-col>
-                    <el-col :span="1">
+                    <el-col :span="2">
                         <i :class="[isFullscreen? 'icon-zuixiaohua': 'icon-quanping','iconfont','']" title="切换全屏" @click="toggleFullscreen"></i>
                     </el-col>
-                    <el-col :span="1">
+                    <el-col :span="2">
                         <i class="icon-tuichu iconfont logout" title="退出" @click.prevent="logout"></i>
                     </el-col>
                 </el-row>
@@ -92,9 +92,9 @@
     /*@import "../../assets/font/iconfont.css";*/
     #topbar-wrap {
         height: 60px;
-        background: #fff;
+        /*background: #fff;*/
+        background-color: #2a94de;
         color: #353d47;
-        padding: 0 15px;
         z-index: 4;
         box-sizing: border-box;
         .user {
@@ -102,6 +102,7 @@
             user-select: none;
             cursor: pointer;
             font-size: 12px;
+            color: #ffffff;
             img {
                 height: 40px;
                 vertical-align: top;
@@ -124,13 +125,15 @@
                 height: 60px;
                 display: inline-block;
                 line-height: 60px;
-                color: #3d5266;
+                /*color: #3d5266;*/
+                color:#ffffff;
                 font-weight: bold;
                 font-size: 20px;
             }
         }
         a {line-height: 60px;}
         i {
+            color: #ffffff;
             font-size: 20px;
             line-height: 60px;
             transition: all 0.5s;

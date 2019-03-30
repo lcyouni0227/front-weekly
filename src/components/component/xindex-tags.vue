@@ -3,7 +3,7 @@
         <div ref="tagsView" class="tags-outer" @mousewheel="handleScroll" @DOMMouseScroll="handleScroll">
             <div class="tags-handle">
                 <el-dropdown trigger="click" @command="handleCommand">
-                    <el-button type="primary" class="el-dropdown-link">标签操作<i class="el-icon-arrow-down el-icon--right"></i></el-button>
+                    <el-button class="el-dropdown-link" style="margin-top: -1px;">标签操作<i class="el-icon-arrow-down el-icon--right"/></el-button>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item command="closeOther">关闭其他</el-dropdown-item>
                         <el-dropdown-item command="closeAll">关闭全部</el-dropdown-item>
@@ -30,7 +30,6 @@
         },
         mounted() {
             this.addViewTag()
-
         },
         computed: {
             visitedViews() {
@@ -48,7 +47,10 @@
                 switch (command) {
                     case "closeAll":
                         this.$store.dispatch('removeAllTag');
-                        this.$router.push('/');
+                        this.$router.push("/");
+                        this.$router.push('/index/dashboard');
+                        this.viewName = 'index';
+                        break;
                         break;
                     case 'closeOther':
                         if (this.visitedViews.length === 1) break;
@@ -58,7 +60,10 @@
             },
             closeTag(tag) {
                 if (this.visitedViews.length <= 1) {
-                    this.$router.push('/');
+                    if (tag.path === '/index/dashboard') {
+                        return;
+                    }
+                    this.$router.push('/index/dashboard');
                 } else {
                     for (let i = 0; i < this.visitedViews.length; i++) {
                         if (this.visitedViews[i].path === tag.path) {
@@ -121,7 +126,8 @@
         top: 0;
         left: 0;
         z-index: 3;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+        /*box-shadow: 0 1px 0px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);*/
+        border-bottom: 1px solid #e6e6e6;
         border-top: 1px solid #e6e6e6;
         overflow: hidden;
         box-sizing: border-box;
@@ -141,7 +147,6 @@
                 box-sizing: border-box;
                 text-align: center;
                 background-color: white;
-                box-shadow: -3px 0 15px 3px rgba(0, 0, 0, .1);
                 z-index: 20;
                 .el-button {
                     border-radius: 0;
