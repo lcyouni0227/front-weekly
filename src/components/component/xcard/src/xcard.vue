@@ -1,6 +1,6 @@
 <template>
     <div class="card-panel" :style="`height: ${height}px;width: ${width}px`" @click="click">
-        <div class="card-panel-icon-wrapper icon-people" :style="`color:${iconColor}`">
+        <div class="card-panel-icon-wrapper" :style="`color:${iconColor}`">
             <i class="icon iconfont card-panel-icon" :class="icon"></i>
         </div>
         <div class="card-panel-description">
@@ -42,7 +42,6 @@
         font-size: 12px;
         position: relative;
         overflow: hidden;
-        color: #666;
         background: #fff;
         box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
         border-color: rgba(0, 0, 0, .05);
@@ -50,9 +49,6 @@
             .card-panel-icon-wrapper {
                 color: #fff;
             }
-        }
-        .icon-people {
-            color: #40c9c6;
         }
         .card-panel-icon-wrapper {
             width: 50%;
