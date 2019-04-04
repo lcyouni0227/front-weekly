@@ -57,7 +57,7 @@
             setTimer() {
                 if(this.timer == null) {
                     this.timer = setInterval(() => {
-                        this.$axios.get("/user/online",null,false,false);
+                        this.$axios.get("/user/online");
                     }, 600000)
                 }
             }

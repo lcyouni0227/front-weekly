@@ -126,7 +126,7 @@ export default {
                             }
                             this.rows = this.cleanChildren(treeUtil.buildTree(res.data.rows, this.dataField.parentField, this.dataField.valueField));
                         }
-                    },false);
+                    },false,false);
                 }
             }
         },

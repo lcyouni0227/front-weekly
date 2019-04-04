@@ -1,5 +1,5 @@
 <template>
-    <div v-once class="echarts"></div>
+    <div class="echarts"></div>
 </template>
 
 <script>
@@ -7,6 +7,44 @@
     // require('echarts/lib/component/tooltip')
     // require('echarts/lib/component/title')
     // require('echarts/lib/component/legend')
+    const ECHART_EVENTS = [
+        'legendselectchanged',
+        'legendselected',
+        'legendunselected',
+        'legendscroll',
+        'datazoom',
+        'datarangeselected',
+        'timelinechanged',
+        'timelineplaychanged',
+        'restore',
+        'dataviewchanged',
+        'magictypechanged',
+        'geoselectchanged',
+        'geoselected',
+        'geounselected',
+        'pieselectchanged',
+        'pieselected',
+        'pieunselected',
+        'mapselectchanged',
+        'mapselected',
+        'mapunselected',
+        'axisareaselected',
+        'focusnodeadjacency',
+        'unfocusnodeadjacency',
+        'brush',
+        'brushselected',
+        'rendered',
+        'finished',
+        'click',
+        'dblclick',
+        'mouseover',
+        'mouseout',
+        'mousemove',
+        'mousedown',
+        'mouseup',
+        'globalout',
+        'contextmenu'
+    ];
     export default {
         name:'XEchart',
         props: {
@@ -15,7 +53,9 @@
             theme: [String, Object],
             renderer: {type: String, default: 'canvas'},
             // 是否不跟之前设置的option进行合并
-            notMerge: {type: Boolean, default: true}
+            notMerge: {type: Boolean, default: true},
+            group: String, /* 实例的分组，会自动绑定到 ECharts 组件的同名属性上 */
+            autoresize: Boolean, /* 默认false，这个 prop 用来指定 ECharts 实例在组件根元素尺寸变化时是否需要自动进行重绘 */
         },
         data () {
             return {
@@ -55,16 +95,27 @@
                 setTimeout(() => {
                     const renderer = this.renderer;
                     this.chart = echarts.init(this.$el, this.theme, {width, height, renderer});
+                    if (this.group) {
+                        this.chart.group = this.group
+                    }
                     // 绘制图表
                     this.chart.setOption(this.value);
+                    ECHART_EVENTS.forEach(event => {
+                        this.chart.on(event, params => {
+                            this.$emit(event, params)
+                        })
+                    });
                     // 将chart对象暴露给父组件
-                    this.$emit('init', this.chart)
+                    this.$emit('init', this.chart);
                 }, 0)
             }
         },
         watch: {
+            group (group) {
+                this.chart.group = group
+            },
             size: {
-                handler: function (val, oldVal) {
+                handler: function (val) {
                     // 避免不正常调用导致报错
                     if (!this.chart) return;
                     if (val === undefined || val === null) return;
@@ -78,7 +129,7 @@
             },
             // 对于某些情况下的数据改变即使使用了deep: true也无法监测到
             value: {
-                handler: function (val, oldVal) {
+                handler: function (val) {
                     // console.log('数据发生改变!')
                     // 组件刚刚没创建时value会发生修改，但是这时Echarts实例还没有生成
                     if (!this.chart) return;
@@ -101,3 +152,15 @@
         }
     }
 </script>
+<style scoped>
+    .echarts {
+        display: inline-block;
+        position: relative;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 8px;
+        box-shadow: 4px 4px 40px rgba(0, 0, 0, .1);
+        padding: 1.5em 2em;
+        min-width: calc(35vw + 4em);
+        box-sizing: border-box;
+    }
+</style>

@@ -148,11 +148,15 @@ export default {
             afterCallback && afterCallback();
         },
 
+        /**
+         * 获得按钮权限数据
+         * @private
+         */
         _getPrivilegeButtons(){
             if(this.checkPvButtons || (this.$attrs.hasOwnProperty('checkPvButtons') && this.$attrs.checkPvButtons.toLocaleString() === 'true')) {
                 let v = (this.dataSource && this.dataSource.module) || this.module || this.source || this.$parent.$data.module;
                 if (v) {
-                    this.$axios.postJson('/privilege/getButtons', v).then(res => {
+                    this.$axios.postJson('/privilege/getButtons', v,false,false).then(res => {
                         if (res.code == 1) {
                             // console.log(res)
                             if(this.button){
@@ -163,6 +167,40 @@ export default {
                         }
                     }).catch(() => {
 
+                    });
+                }
+            }
+        },
+
+        /**
+         * 获得字典数据
+         * @param dic
+         */
+        getDicData(dic){
+            if(!dic){
+                if(this.dic){
+                    dic = this.dic;
+                }else{
+                    console.error('无字典信息。');
+                    return;
+                }
+            }
+            for (let v of dic) {
+                if(!this.$dic.dicData[v.name]){
+                    let query = this.getQuerySource(v.dataSource);
+                    this.$axios.syncPostJson(v.dataSource.queryUrl || '/data/query', query, (res) => {
+                        if (res.code == 1) {
+                            this.$dic.dicData[v.name] = {
+                                valueField: v.dataSource.valueField,
+                                labelField: v.dataSource.labelField,
+                                data: res.data.rows
+                            };
+                            if (v.dataSource.parentField) {
+                                this.$dic.dicData[v.name].parentField = v.dataSource.parentField;
+                            }
+                        } else {
+                            this.$dic.dicData[v.name] = [];
+                        }
                     });
                 }
             }
@@ -461,7 +499,7 @@ export default {
                 query = this.addRuleJson(query,rule);
             }
             beforeCallback && beforeCallback(query);
-            this.$axios.postJson(url || (DataSource && DataSource.queryUrl) || '/data/query',query,true,true).then((res) => {
+            this.$axios.postJson(url || (DataSource && DataSource.queryUrl) || '/data/query',query,false,false).then((res) => {
                 afterCallback && afterCallback(res);
             }).catch(() => {
 
@@ -483,7 +521,7 @@ export default {
             }
             beforeCallback && beforeCallback(query);
             // console.log(query);
-            this.$axios.postJson(url || (DataSource && DataSource.queryUrl) || '/data/query',query,true,true).then((res) => {
+            this.$axios.postJson(url || (DataSource && DataSource.queryUrl) || '/data/query',query,false,false).then((res) => {
                 afterCallback && afterCallback(res);
             }).catch(() => {
 

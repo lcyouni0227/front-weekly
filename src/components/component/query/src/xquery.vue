@@ -48,14 +48,18 @@
                 this.query.querySymbol['query.' + key] = val;
             },
             handelQuery(){
-                if(this.queryFunction){
-                    this.queryFunction(this.query,this.getRuleFormat());
+                if(this.$options._parentListeners && this.$options._parentListeners.click){
+                    this.$emit("click",this.getRuleFormat());
                 }else {
-                    let parent = this.$parent;
-                    while (!parent.handelQuery) {
-                        parent = parent.$parent;
+                    if (this.queryFunction) {
+                        this.queryFunction(this.query, this.getRuleFormat());
+                    } else {
+                        let parent = this.$parent;
+                        while (!parent.handelQuery) {
+                            parent = parent.$parent;
+                        }
+                        parent.handelQuery && parent.handelQuery(this.getRuleFormat());
                     }
-                    parent.handelQuery && parent.handelQuery(this.getRuleFormat());
                 }
             }
         }

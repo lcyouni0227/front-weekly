@@ -51,7 +51,6 @@
                         this.$router.push('/index/dashboard');
                         this.viewName = 'index';
                         break;
-                        break;
                     case 'closeOther':
                         if (this.visitedViews.length === 1) break;
                         this.$store.dispatch('removeOtherTag', router);

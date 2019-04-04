@@ -37,18 +37,17 @@
             </x-table-column>
         </el-table>
         <el-pagination style="text-align:center" v-if="showPagination" @size-change="handleSizeChange" @current-change="handleCurrentChange" :layout="pagerLayout" :current-page="currentPage" :page-sizes="pageSizes" :page-size="pageSize" :total="total" :pageCount="pageCount" :small="small" :popperClass="popperClass" :prevText="prevText" :nextText="nextText" :background="background" :disabled="disabled"/>
-        <slot name="edit" :row="currRowData" :action="isSee"/>
+        <slot name="dialog" :row="currRowData" :action="isSee"/>
     </section>
 </template>
 
 <script>
     import jsonUtil from '../../../../utils/jsonUtil';
-    import dic from '../../support/dic';
     import runStatus from '../../support/run-status';
     import dataSource from '../../support/data-source';
     export default {
         name: 'XTableEdit',
-        mixins:[dic,runStatus,dataSource],
+        mixins:[runStatus,dataSource],
         props: {
             checkPvButtons:{type: Boolean, default: true},    /* 需要对按钮权限进行检测 */
             button:{type: Object, default(){return {}}},    /* 外部传入按钮 */
@@ -59,8 +58,8 @@
             showRowButton:{type: Boolean, default: false}, /* 是否在表格内每行最后1列显示操作按钮 */
             showTopButton:{type: Boolean, default: true}, /* 是否在表格顶部显示操作按钮 */
             initNewRowData:{type: Object, default(){return {}}},   /* 新行默认初始值 */
-            load:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
-
+            loadData:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
+            dic: {type: Array, default() {return null}},  /* 字典配置 */
             data:{type: Array, default(){return []}},   /* 外部传入的已有数据,省略查询 */
 
             size: String,
@@ -204,7 +203,7 @@
                 let query = this.getQuery(this.dataSource,rule);
                 beforeCallback && beforeCallback(query);
                 // console.log(query);
-                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
+                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query,false,false).then(res => {
                     if(res.code==1) {
                         this.setData(res.data);
                         afterCallback && afterCallback(res);
@@ -268,7 +267,7 @@
                     if(this.request){
                         //重新请求拿编辑数据
                         let query = this.getQuerySource(this.dataSource,[{name: this.keyField,opt:'=',val:rowData[this.keyField]}]);
-                        this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query).then(res => {
+                        this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query,true,false).then(res => {
                             if(res.code==1 && res.data && res.data.rows && res.data.rows.length>0) {
                                 this.currRowData = res.data.rows[0];
                                 this.editRow.rowData = JSON.stringify(this.currRowData);
@@ -368,7 +367,7 @@
                             type:'warning'
                         });
                         this.endRun();
-                        return;
+                        return false;
                     }
                     if(isConfirm){
                         this.$confirm('数据未保存,是否保存?', '保存确认', {
@@ -379,7 +378,7 @@
 
                         }).catch(() => {
                             this.endRun();
-                            return;
+                            return false;
                         });
                     }
                     let saveData={
@@ -408,6 +407,7 @@
                                 }
                             }
                             this._clearSelect();
+                            return true;
                         }
                         // this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
                         this.endRun();
@@ -415,7 +415,6 @@
                         // this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
                         this.endRun();
                     });
-
                 }else{
                     this.$message({
                         type: 'warning',
@@ -423,6 +422,7 @@
                     });
                     this.endRun();
                 }
+                return false;
             },
 
             handelTableRowDelete(index) {
@@ -582,7 +582,8 @@
             }
         },
         mounted() {
-            if(this.load){
+            this.getDicData();
+            if(this.loadData){
                 this.handelQuery();
             }
             for(let v of this.$children){

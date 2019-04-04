@@ -4,6 +4,7 @@
         <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody"
                     @change="change" @visible-change="visibleChange" @remove-tag="removeTag" @clear="clear" @blur="blur" @focus="focus">
             <el-option v-for="(item) in rows" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
+            <slot/>
         </el-select>
     </div>
 </template>
@@ -18,6 +19,7 @@
             casWatch:String,    /* 设置当这个值改变时需重新加载数据 */
             label:{type:String,default:''}, /* 选择框前的文本 */
             value: [String,Number],  /* 接受外部v-model传入的值 */
+            loadData:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
 
             name: String,
             id: String,
@@ -39,7 +41,7 @@
             filterMethod: Function,
             multiple: Boolean,
             multipleLimit: {type: Number, default: 0},
-            placeholder: {type: String,default:'请输入搜索关键词'},
+            placeholder: {type: String,default:'请选择'},
             defaultFirstOption: Boolean,
             reserveKeyword: Boolean,
             valueKey: {type: String, default: 'value'},
@@ -56,7 +58,9 @@
         },
         created(){
             //初始化下拉框的值
-            this._getData();
+            if(this.loadData){
+                this._getData();
+            }
         },
         methods:{
             _getData(){
@@ -79,7 +83,7 @@
                     }
                     let query = this.getQuery(this.dataSource);
                     // console.log(query);
-                    this.$axios.postJson(this.dataSource.queryUrl || '/data/query', query).then(res => {
+                    this.$axios.postJson(this.dataSource.queryUrl || '/data/query', query,false,false).then(res => {
                         if (res.code == 1) {
                             this.rows = res.data.rows;
                         }
@@ -121,7 +125,7 @@
             },
             casWatch(newVal, oldVal){
                 if(newVal != oldVal) {
-                    this._getData();
+                    this.loadData && this._getData();
                 }
             }
         },
