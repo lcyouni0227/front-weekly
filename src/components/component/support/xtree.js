@@ -47,7 +47,17 @@ export default {
             valueModel: this.initValue || '0',    /*实际请求传值*/
         };
     },
+    computed: {
+        getDic() {
+            return this.$store.state.dic.change;
+        }
+    },
     watch:{
+        getDic(newVal){
+            if(this.dataSource.dic && newVal === this.dataSource.dic){
+                this._getVal();
+            }
+        },
         //判断下拉框的值是否有改变
         data(newVal,oldVal) {
             if(!this.$lodash.isEqual(newVal,oldVal)) {
@@ -86,22 +96,8 @@ export default {
                     this.dataField.children = 'children';
                 }
                 if (this.dataSource.dic) {
-                    let v = this.$global.dic[this.dataSource.dic];
-                    if (v.parentField) {
-                        this.dataField.parentField = v.parentField;
-                    }
-                    if (v.valueField) {
-                        this.dataField.valueField = v.valueField;
-                    }
-                    if (v.labelField) {
-                        this.dataField.label = v.labelField;
-                    }
-                    let data = JSON.parse(JSON.stringify(v.data));
-                    if(this.dataSource.addData){
-                        data = data.concat(this.dataSource.addData);
-                    }
-                    this.rows = this.cleanChildren(treeUtil.buildTree(data, this.dataField.parentField, this.dataField.valueField));
-                } else {
+                    this._getVal();
+                }else{
                     if (this.dataSource.parentField) {
                         this.dataField.parentField = this.dataSource.parentField;
                     }
@@ -128,6 +124,25 @@ export default {
                         }
                     },false,false);
                 }
+            }
+        },
+        _getVal(){
+            let v = this.$store.state.dic.dicData[this.dataSource.dic];
+            if (v) {
+                if (v.parentField) {
+                    this.dataField.parentField = v.parentField;
+                }
+                if (v.valueField) {
+                    this.dataField.valueField = v.valueField;
+                }
+                if (v.labelField) {
+                    this.dataField.label = v.labelField;
+                }
+                let data = JSON.parse(JSON.stringify(v.data));
+                if(this.dataSource.addData){
+                    data = data.concat(this.dataSource.addData);
+                }
+                this.rows = this.cleanChildren(treeUtil.buildTree(data, this.dataField.parentField, this.dataField.valueField));
             }
         },
         search(){

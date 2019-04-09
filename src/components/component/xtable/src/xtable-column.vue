@@ -1,5 +1,5 @@
 <template>
-    <el-table-column :prop="prop" v-bind="$attrs">
+    <el-table-column v-if="!hidden" :prop="prop" v-bind="$attrs">
         <template slot-scope="scope">
             <slot v-if="!isAddOrEdit(scope)" name="show" :row="scope.row">
                 {{ scope.row[prop] }}
@@ -17,6 +17,8 @@
     export default {
         name: 'XTableColumn',
         props: {
+            hidden:{Type:Boolean,default:false},  /* 是否隐藏列 */
+            save:{Type:Boolean,default:true},   /* 是否在提交保存时提交该字段及值 */
             edit:{Type:Boolean,default:true},   /* 是否编辑 */
             prop: {Type: String}        /* 字段名称 */
         },

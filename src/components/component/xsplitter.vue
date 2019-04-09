@@ -76,12 +76,14 @@
     .split-panel {
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        /*overflow: hidden;*/
     }
 
     .split-panel-part {
         display: inline-block;
-        float: left;
+        /*float: left;*/
         overflow: auto;
     }
     .split-panel.hori > .split-panel-part {
@@ -95,11 +97,11 @@
         display: inline-block;
         background: rgba(255,255,255,0.2);
         z-index: 1;
-        float: left;
+        /*float: left;*/
         background-clip: padding-box;
     }
     .split-panel.hori > .split-panel-gutter {
-        height: 100%;
+        /*height: 100%;*/
         cursor: col-resize;
         border-left: 1px solid rgba(0,0,0,0.2);
         border-right: 1px solid rgba(0,0,0,0.2);

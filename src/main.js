@@ -13,7 +13,6 @@ import {baseUrl, baseImgUrl} from './config/config'
 // import VeeValidate from 'vee-validate';
 import components from './components';
 import style from './components/support/style';
-import dic from './components/support/global';
 import VTooltip from 'v-tooltip'
 import './components/style/common.css'
 
@@ -47,7 +46,6 @@ Vue.prototype.$baseUrl = baseUrl;
 Vue.prototype.$baseImgUrl = baseImgUrl;
 
 Vue.prototype.$axios = $http;
-Vue.prototype.$dic = dic;
 
 /**
  * 字典翻译
@@ -55,7 +53,13 @@ Vue.prototype.$dic = dic;
  * name:字典名称
  */
 Vue.filter('dic', function(value, name) {
-    return dic.getDic(value,name);
+    let v = store.state.dic.dicData[name];
+    if(v){
+        let item = v.data.find((item) => item[v.valueField] == value);
+        if(item){
+            return item[v.labelField];
+        }
+    }
 });
 
 /**

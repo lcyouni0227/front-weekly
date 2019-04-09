@@ -49,7 +49,7 @@
         <!--</x-table-column>-->
         <x-table-column prop="memo" label="备注"/>
 
-        <x-dialog-edit slot="edit" slot-scope="scope" request title="账号设置" width="800px" height="500px">
+        <x-dialog-edit slot="dialog" slot-scope="scope" request title="账号设置" width="800px" height="500px">
             <el-form label-position="right" label-width="140px" inline cols="2">
                 <x-form-item label="账号内码" prop="aid">
                     <x-input v-model="scope.row.aid" :disabled="true"/>

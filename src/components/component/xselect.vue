@@ -1,7 +1,7 @@
 <template>
     <div class="el-input-group">
         <label class="x-input-label" v-if="label">{{label}}</label>
-        <el-select v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody"
+        <el-select ref="select" v-model="svalue" v-bind="$attrs" :name="name" :id="id" :autoComplete="autoComplete" :automaticDropdown="automaticDropdown" :size="size" :disabled="disabled" :clearable="clearable" :filterable="filterable" :allowCreate="allowCreate" :loading="loading" :popperClass="popperClass" :remote="remote" :loadingText="loadingText" :noMatchText="noMatchText" :noDataText="noDataText" :remoteMethod="remoteMethod" :filterMethod="filterMethod" :multiple="multiple" :multipleLimit="multipleLimit" :placeholder="placeholder" :defaultFirstOption="defaultFirstOption" :reserveKeyword="reserveKeyword" :valueKey="valueKey" :collapseTags="collapseTags" :popperAppendToBody="popperAppendToBody"
                     @change="change" @visible-change="visibleChange" @remove-tag="removeTag" @clear="clear" @blur="blur" @focus="focus">
             <el-option v-for="(item) in rows" :label="item[dataField.labelField]" :value="item[dataField.valueField]"></el-option>
             <slot/>
@@ -15,6 +15,7 @@
         name: 'XSelect',
         mixins:[dataSource],
         props: {
+            data: {type: Array,default(){return []}},   /* 外部传入选项数据 */
             dataSource:{type: Object, default(){return {}}},   /* 数据源配置 */
             casWatch:String,    /* 设置当这个值改变时需重新加载数据 */
             label:{type:String,default:''}, /* 选择框前的文本 */
@@ -51,8 +52,8 @@
         data(){
             return {
                 casVal:null,  /* 级联选择前条件的初始值 */
-                dataField:{labelField:'id',valueField:'name'},
-                rows: [],
+                dataField:{valueField:'id',labelField:'name'},
+                rows: this.data,
                 svalue:''
             };
         },
@@ -62,11 +63,38 @@
                 this._getData();
             }
         },
+        computed: {
+            getDic() {
+                return this.$store.state.dic.change;
+            }
+        },
         methods:{
             _getData(){
                 this.svalue = this.value;
-                if(this.dataSource.dic){
-                    let v = this.$global.dic[this.dataSource.dic];
+                if(this.data.length <= 0) {
+                    if(this.dataSource.dic) {
+                        this._getVal();
+                    }else{
+                        if(this.dataSource.valueField){
+                            this.dataField.valueField = this.dataSource.valueField;
+                        }
+                        if(this.dataSource.labelField){
+                            this.dataField.labelField = this.dataSource.labelField;
+                        }
+                        let query = this.getQuery(this.dataSource);
+                        // console.log(query);
+                        this.$axios.postJson(this.dataSource.queryUrl || '/data/query', query,false,false).then(res => {
+                            if (res.code == 1) {
+                                this.rows = res.data.rows;
+                            }
+                        }).catch(() => {
+                        });
+                    }
+                }
+            },
+            _getVal(){
+                let v = this.$store.state.dic.dicData[this.dataSource.dic];
+                if (v) {
                     this.dataField.valueField = v.valueField;
                     this.dataField.labelField = v.labelField;
                     if(this.dataSource.rule) {
@@ -74,21 +102,6 @@
                     }else{
                         this.rows = v.data;
                     }
-                }else{
-                    if(this.dataSource.valueField){
-                        this.dataField.valueField = this.dataSource.valueField;
-                    }
-                    if(this.dataSource.labelField){
-                        this.dataField.labelField = this.dataSource.labelField;
-                    }
-                    let query = this.getQuery(this.dataSource);
-                    // console.log(query);
-                    this.$axios.postJson(this.dataSource.queryUrl || '/data/query', query,false,false).then(res => {
-                        if (res.code == 1) {
-                            this.rows = res.data.rows;
-                        }
-                    }).catch(() => {
-                    });
                 }
             },
             change(val){
@@ -115,17 +128,26 @@
             svalue(newVal, oldVal) {
                 if(newVal != oldVal){
                     this.$emit('input', this.svalue);
-                    this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,newVal)
+                    this.$parent.$parent && this.$parent.$parent.setQueryFieldValue && this.$parent.$parent.setQueryFieldValue(this.$attrs.prop,newVal);
+                    this.$nextTick(()=>{this.$emit('label',this.$refs.select.$refs.reference.value)});
                 }
             },
             value(newVal, oldVal){
-                if(newVal != oldVal) {
+                if(newVal != oldVal && !this.$listeners.label) {
                     this.svalue = this.value;
                 }
             },
             casWatch(newVal, oldVal){
+                if(this.loadData === false && !oldValue){
+                    return;
+                }
                 if(newVal != oldVal) {
-                    this.loadData && this._getData();
+                    this._getData();
+                }
+            },
+            getDic(newVal){
+                if(this.dataSource.dic && newVal === this.dataSource.dic){
+                    this._getVal();
                 }
             }
         },

@@ -1,5 +1,6 @@
 <template>
     <section>
+        <div class="title" v-if="title">{{title}}</div>
         <slot name="query"/>
         <el-form :inline="true" v-if="$slots.topButtonArea || showTopButton">
             <el-form-item v-if="showTopButton">
@@ -61,6 +62,7 @@
             loadData:{type: Boolean, default: true},  /* 是否加载后就立即查询 */
             dic: {type: Array, default() {return null}},  /* 字典配置 */
             data:{type: Array, default(){return []}},   /* 外部传入的已有数据,省略查询 */
+            title:String,   /* 表格顶部标题 */
 
             size: String,
             width: [{type: String, default: '100%'}, Number],
@@ -107,6 +109,7 @@
         },
         data(){
             return {
+                initloadData:this.loadData,
                 checkPrivilege :true,   /* 需要权限检测 */
                 isTree: null,   /* 缓存是否是树型结构，通过是否引入XTableTreeColumn树型列判断 */
                 xTableTreeColumn: null, /* 缓存树型列对象 */
@@ -123,7 +126,9 @@
 
                 request:false,  /* 是否重新从数据库中拿一条记录,用于编辑功能 */
                 dialogEdit:null,    /* 弹出的编辑对话框实例 */
-                currRowData:{}  /* 正在新增或编辑的行数据 */
+                currRowData:{},  /* 正在新增或编辑的行数据 */
+                currRow:{},  /* 当前选中行 */
+                noSaveField:[], /* 不保存的字段 */
             }
         },
         computed: {
@@ -134,9 +139,24 @@
         watch:{
             data(val){
                 this.setData(val)
+            },
+            dataSource:{
+                handler(newValue,oldValue) {
+                    if(this.initloadData === false && !oldValue){
+                        return;
+                    }
+                    if(newValue && JSON.stringify(newValue) != JSON.stringify(oldValue)){
+                        this.handelQuery();
+                    }
+                },
+                immediate: true,
+                deep: true
             }
         },
         methods: {
+            getCurrRow(){
+                return this.currRow;
+            },
             getSelectRow(){
                 return this.multipleSelection;
             },
@@ -185,6 +205,7 @@
                 this.$emit('selection-change',val);
             },
             handleClickRow(row, column, event){
+                this.currRow = row;
                 if(!this.isAddOrEdit) {
                     if(this.multiSelect){
                         this.$refs.table.toggleRowSelection(row);
@@ -203,16 +224,20 @@
                 let query = this.getQuery(this.dataSource,rule);
                 beforeCallback && beforeCallback(query);
                 // console.log(query);
-                this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query,false,false).then(res => {
-                    if(res.code==1) {
-                        this.setData(res.data);
-                        afterCallback && afterCallback(res);
-                        this.$emit('afterQuery',res);
-                    }
+                if(query) {
+                    this.$axios.postJson((this.dataSource && this.dataSource.queryUrl) || '/data/query', query, false, false).then(res => {
+                        if (res.code == 1) {
+                            this.setData(res.data);
+                            afterCallback && afterCallback(res);
+                            this.$emit('afterQuery', res);
+                        }
+                        this.endRun();
+                    }).catch(() => {
+                        this.endRun();
+                    });
+                }else{
                     this.endRun();
-                }).catch(() => {
-                    this.endRun();
-                });
+                }
             },
             handelTableRowAdd(index){
                 if (this.isRun()) {
@@ -267,24 +292,26 @@
                     if(this.request){
                         //重新请求拿编辑数据
                         let query = this.getQuerySource(this.dataSource,[{name: this.keyField,opt:'=',val:rowData[this.keyField]}]);
-                        this.$axios.postJson(this.dataSource.queryUrl || '/data/query',query,true,false).then(res => {
-                            if(res.code==1 && res.data && res.data.rows && res.data.rows.length>0) {
-                                this.currRowData = res.data.rows[0];
-                                this.editRow.rowData = JSON.stringify(this.currRowData);
-                            }else{
+                        if(query) {
+                            this.$axios.postJson((this.dataSource && this.dataSource.queryUrl) || '/data/query', query, true, false).then(res => {
+                                if (res.code == 1 && res.data && res.data.rows && res.data.rows.length > 0) {
+                                    this.currRowData = res.data.rows[0];
+                                    this.editRow.rowData = JSON.stringify(this.currRowData);
+                                } else {
+                                    this.dialogEdit.close();
+                                    this.$message({
+                                        type: 'error',
+                                        message: '网络错误,请稍后再试。'
+                                    });
+                                }
+                            }).catch(() => {
                                 this.dialogEdit.close();
                                 this.$message({
                                     type: 'error',
                                     message: '网络错误,请稍后再试。'
                                 });
-                            }
-                        }).catch(() => {
-                            this.dialogEdit.close();
-                            this.$message({
-                                type: 'error',
-                                message: '网络错误,请稍后再试。'
                             });
-                        });
+                        }
                     }else{
                         this.currRowData = rowData;
                     }
@@ -360,6 +387,9 @@
                     }
                     id = oldRow[this.keyField];
                 }
+                for(let i of this.noSaveField){
+                    delete diff[i];
+                }
                 if(!jsonUtil.isEmpty(diff)) {
                     if(this.isTree && diff[this.xTableTreeColumn.child.parentField] && diff[this.xTableTreeColumn.child.parentField] == diff[this.xTableTreeColumn.child.valueField]){
                         this.$alert('不能保存,上级树不能选择自己,请修改后再保存。', '保存', {
@@ -395,7 +425,7 @@
                     };
                     // console.log(saveData);
                     this.$parent.beforeTableRowSave && this.$parent.beforeTableRowSave(saveData,this,index);
-                    this.$axios.postJson(this.dataSource.saveUrl || '/data/save',saveData,true,true).then((res) => {
+                    this.$axios.postJson((this.dataSource && this.dataSource.saveUrl) || '/data/save',saveData,true,true).then((res) => {
                         if(res.code==1) {
                             this.$emit('afterSave',this.actionType,saveData,this.rows,index,diff);
                             if(action === 'add' || (action === 'edit' && this.request) || (this.isTree && this.actionType == 'edit' && diff[this.xTableTreeColumn.child.parentField])){
@@ -407,6 +437,7 @@
                                 }
                             }
                             this._clearSelect();
+                            this.endRun();
                             return true;
                         }
                         // this.$parent.afterTableRowSave && this.$parent.afterTableRowSave(this,index,res);
@@ -482,7 +513,7 @@
                     }
                     // console.log(deleteData);
                     this.$parent.beforeTableRowDelete && this.$parent.beforeTableRowDelete(deleteData,this.rows);
-                    this.$axios.postJson(this.dataSource.delUrl || '/data/save',deleteData,true,true).then((res) => {
+                    this.$axios.postJson((this.dataSource && this.dataSource.delUrl) || '/data/save',deleteData,true,true).then((res) => {
                         if(res.code==1) {
                             if(index != null) {
                                 this.rows.splice(index, 1);
@@ -586,6 +617,7 @@
             if(this.loadData){
                 this.handelQuery();
             }
+            this.initloadData = true;
             for(let v of this.$children){
                 if( v.$options._componentTag === 'x-dialog-edit'){
                     this.dialogEdit = v;
@@ -597,6 +629,18 @@
                     break;
                 }
             }
+            for(let v of this.$refs.table.$children){
+                if(v.save===false){
+                    this.noSaveField.push(v.prop)
+                }
+            }
         }
     };
 </script>
+<style scoped>
+    .title{
+        color: #565758;
+        font-size: 20px;
+        padding-bottom: 10px;
+    }
+</style>

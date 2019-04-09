@@ -10,6 +10,7 @@
     export default {
         name:'XQuery',
         props: {
+            targetRef:String,  /* 依附的查询对象 */
             queryFunction:Function
         },
         data(){
@@ -54,11 +55,20 @@
                     if (this.queryFunction) {
                         this.queryFunction(this.query, this.getRuleFormat());
                     } else {
-                        let parent = this.$parent;
-                        while (!parent.handelQuery) {
-                            parent = parent.$parent;
+                        if(this.targetRef){
+                            let p = this.targetRef.split(".");
+                            let com = this.$parent;
+                            for(let v of p){
+                                com = com[v];
+                            }
+                            com && com.handelQuery && com.handelQuery(this.getRuleFormat());
+                        }else {
+                            let parent = this.$parent;
+                            while (!parent.handelQuery) {
+                                parent = parent.$parent;
+                            }
+                            parent.handelQuery && parent.handelQuery(this.getRuleFormat());
                         }
-                        parent.handelQuery && parent.handelQuery(this.getRuleFormat());
                     }
                 }
             }

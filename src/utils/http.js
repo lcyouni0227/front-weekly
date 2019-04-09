@@ -136,7 +136,7 @@ function checkCode(res, isMessage) {
             }
             break;
     }
-    if (type=='error' || isMessage) {
+    if (type === 'error' || isMessage === true) {
         Message({
             showClose: true,
             message: message,
@@ -145,8 +145,8 @@ function checkCode(res, isMessage) {
     }
     return res;
 }
-function ajax(method='post',url,params,isLoading = true, isMessage = false) {
-    if (isLoading) {
+function ajax(method='post',url,params,isLoading, isMessage) {
+    if (isLoading === true) {
         startLoading();
     }
     return http({
@@ -157,8 +157,7 @@ function ajax(method='post',url,params,isLoading = true, isMessage = false) {
     ).then(res => {
         endLoading();
         return checkStatus(res, isMessage);
-    }).catch((e) => {
-        console.log(e);
+    }).catch(() => {
         endLoading();
         Message({
             showClose: true,
@@ -176,11 +175,11 @@ export default {
      * @param isLoading 是否需要动画,false不需要
      * @returns {Promise<AxiosResponse<any>>}
      */
-    postJson(url, params = {}, isLoading = true, isMessage = false) {
+    postJson(url, params = {}, isLoading, isMessage) {
        return ajax('post',url,JSON.stringify(params),isLoading,isMessage);
     },
-    syncPostJson(url, params = {}, callback, isLoading = true, isMessage = false){
-        if (isLoading) {
+    syncPostJson(url, params = {}, callback, isLoading, isMessage){
+        if (isLoading === true) {
             startLoading();
         }
         $.ajax({
@@ -228,7 +227,7 @@ export default {
     //     }
     // },
 
-    post(url, params = {}, isLoading = true, isMessage = false) {
+    post(url, params = {}, isLoading, isMessage) {
        return ajax('post',url,qs.stringify(params),isLoading,isMessage);
     },
 
@@ -240,10 +239,10 @@ export default {
      * @param isMessage 是否是提交接口
      * @returns {Promise<AxiosResponse<any>>}
      */
-    getJson(url, params = {}, isLoading = true, isMessage = true) {
+    getJson(url, params = {}, isLoading, isMessage) {
         return ajax('get',url,JSON.stringify(params),isLoading,isMessage);
     },
-    get(url, params = {}, isLoading = true, isMessage = true) {
+    get(url, params = {}, isLoading, isMessage) {
         return ajax('get',url,qs.stringify(params),isLoading,isMessage);
     },
     /**
@@ -253,8 +252,8 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileUpload(url, params = {}, isLoading = true, isMessage = true) {
-        if (isLoading) {
+    fileUpload(url, params = {}, isLoading, isMessage) {
+        if (isLoading === true) {
             startLoading();
         }
         return http({
@@ -286,8 +285,8 @@ export default {
      * @param isLoading
      * @returns {Promise<AxiosResponse<any>>}
      */
-    fileDown(url, params = {}, isLoading = true) {
-        if (isLoading) {
+    fileDown(url, params = {}, isLoading) {
+        if (isLoading === true) {
             startLoading();
         }
         return http({

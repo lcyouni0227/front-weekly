@@ -154,7 +154,7 @@ export default {
          */
         _getPrivilegeButtons(){
             if(this.checkPvButtons || (this.$attrs.hasOwnProperty('checkPvButtons') && this.$attrs.checkPvButtons.toLocaleString() === 'true')) {
-                let v = (this.dataSource && this.dataSource.module) || this.module || this.source || this.$parent.$data.module;
+                let v = (this.dataSource && this.dataSource.module) || (this.dataSource && this.dataSource.source) || this.module || this.source || this.$parent.$data.module;
                 if (v) {
                     this.$axios.postJson('/privilege/getButtons', v,false,false).then(res => {
                         if (res.code == 1) {
@@ -181,25 +181,28 @@ export default {
                 if(this.dic){
                     dic = this.dic;
                 }else{
-                    console.error('无字典信息。');
+                    // console.error('无字典信息。');
                     return;
                 }
             }
             for (let v of dic) {
-                if(!this.$dic.dicData[v.name]){
+                if(!this.$store.state.dic.dicData[v.name]){
                     let query = this.getQuerySource(v.dataSource);
-                    this.$axios.syncPostJson(v.dataSource.queryUrl || '/data/query', query, (res) => {
+                    // console.log(query);
+                    this.$axios.postJson(v.dataSource.queryUrl || '/data/query', query, false,false).then((res)=>{
                         if (res.code == 1) {
-                            this.$dic.dicData[v.name] = {
+                            let data = {
                                 valueField: v.dataSource.valueField,
                                 labelField: v.dataSource.labelField,
                                 data: res.data.rows
                             };
                             if (v.dataSource.parentField) {
-                                this.$dic.dicData[v.name].parentField = v.dataSource.parentField;
+                                data.parentField = v.dataSource.parentField;
                             }
+                            data = {name:v.name,data:data};
+                            this.$store.commit('setDicData',data);
                         } else {
-                            this.$dic.dicData[v.name] = [];
+                            this.$store.commit('clearDicData',v.name);
                         }
                     });
                 }
@@ -236,11 +239,15 @@ export default {
         },
 
         getSource(DataSource){
-            let query = {
-                source:DataSource.source || this.dataSource.source || '',
-                module:DataSource.module || this.dataSource.module || ''
-            };
-            return query;
+            if(DataSource) {
+                let query = {
+                    source: DataSource.source || this.dataSource.source || '',
+                    module: DataSource.module || this.dataSource.module || ''
+                };
+                return query;
+            }else{
+                return null;
+            }
         },
         /**
          * 获得查询对象,排除分页和查询界面区域的条件,用于查询字典和编辑一条数据
@@ -253,18 +260,20 @@ export default {
                 DataSource = this.dataSource;
             }
             let query = this.getSource(DataSource);
-            query.fields = this.getFields(DataSource);
-            if(DataSource.title){
-                query.title = true;
-            }
-            if(DataSource.orderBy){
-                query.orderBy = DataSource.orderBy;
-            }
-            if(DataSource.rule){
-                query = this.addRuleJson(query,DataSource.rule);
-            }
-            if(addRule){
-                query = this.addRuleJson(query,addRule)
+            if(query) {
+                query.fields = this.getFields(DataSource);
+                if (DataSource.title) {
+                    query.title = true;
+                }
+                if (DataSource.orderBy) {
+                    query.orderBy = DataSource.orderBy;
+                }
+                if (DataSource.rule) {
+                    query = this.addRuleJson(query, DataSource.rule);
+                }
+                if (addRule) {
+                    query = this.addRuleJson(query, addRule)
+                }
             }
             return query;
         },
@@ -279,15 +288,17 @@ export default {
                 DataSource = this.dataSource;
             }
             let query = this.getQuerySource(DataSource,addRule);
-            let v = this.getRule();
-            if(v){
-                query = this.addRuleJson(query,v);
-            }
-            if(this.hasOwnProperty('currentPageX')){
-                query.page = this.currentPageX;
-            }
-            if(this.hasOwnProperty('pageSizeX')){
-                query.size = this.pageSizeX;
+            if(query) {
+                let v = this.getRule();
+                if (v) {
+                    query = this.addRuleJson(query, v);
+                }
+                if (this.hasOwnProperty('currentPageX')) {
+                    query.page = this.currentPageX;
+                }
+                if (this.hasOwnProperty('pageSizeX')) {
+                    query.size = this.pageSizeX;
+                }
             }
             return query;
         },
