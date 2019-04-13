@@ -8,7 +8,7 @@
       'el-input-group--append': $slots.append || dialog,
       'el-input-group--prepend': $slots.prepend,
       'el-input--prefix': $slots.prefix || prefixIcon,
-      'el-input--suffix': $slots.suffix || suffixIcon || clearable
+      'el-input--suffix': $slots.suffix || suffixIcon || clearable || showPassword
     }
     ]"
          @mouseenter="hovering = true"
@@ -16,7 +16,7 @@
     >
         <template v-if="type !== 'textarea'">
             <!-- 前置元素 -->
-            <label class="x-input-label" v-if="label" >{{label}}</label>
+            <label class="x-input-label" v-if="label" >{{label}}</label> <!-- 自定义 -->
             <div class="el-input-group__prepend" v-if="$slots.prepend">
                 <slot name="prepend"></slot>
             </div>
@@ -25,15 +25,13 @@
                 v-if="type !== 'textarea'"
                 class="el-input__inner"
                 v-bind="$attrs"
-                :type="type"
+                :type="showPassword ? (passwordVisible ? 'text': 'password') : type"
                 :disabled="inputDisabled"
                 :readonly="readonly"
                 :autocomplete="autoComplete || autocomplete"
-                :value="nativeInputValue"
                 ref="input"
-                @compositionstart="handleComposition"
-                @compositionupdate="handleComposition"
-                @compositionend="handleComposition"
+                @compositionstart="handleCompositionStart"
+                @compositionend="handleCompositionEnd"
                 @input="handleInput"
                 @focus="handleFocus"
                 @blur="handleBlur"
@@ -43,23 +41,42 @@
             <!-- 前置内容 -->
             <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
         <slot name="prefix"></slot>
-        <i class="el-input__icon" v-if="prefixIcon" :class="prefixIcon"></i>
+        <i class="el-input__icon"
+           v-if="prefixIcon"
+           :class="prefixIcon">
+        </i>
       </span>
             <!-- 后置内容 -->
-        <span class="el-input__suffix" v-if="$slots.suffix || suffixIcon || showClear || validateState && needStatusIcon">
+            <span
+                class="el-input__suffix"
+                v-if="$slots.suffix || suffixIcon || showClear || showPassword || validateState && needStatusIcon">
         <span class="el-input__suffix-inner">
-          <template v-if="!showClear">
+          <template v-if="!showClear || !showPwdVisible">
             <slot name="suffix"></slot>
-            <i class="el-input__icon" v-if="suffixIcon" :class="suffixIcon"></i>
+            <i class="el-input__icon"
+               v-if="suffixIcon"
+               :class="suffixIcon">
+            </i>
           </template>
-          <i v-else class="el-input__icon el-icon-circle-close el-input__clear" @click="clear"></i>
+          <i v-if="showClear"
+             class="el-input__icon el-icon-circle-close el-input__clear"
+             @click="clear"
+          ></i>
+          <i v-if="showPwdVisible"
+             class="el-input__icon el-icon-view el-input__clear"
+             @click="handlePasswordVisible"
+          ></i>
         </span>
-        <i class="el-input__icon" v-if="validateState" :class="['el-input__validateIcon', validateIcon]"></i>
+        <i class="el-input__icon"
+           v-if="validateState"
+           :class="['el-input__validateIcon', validateIcon]">
+        </i>
       </span>
             <!-- 后置元素 -->
             <div class="el-input-group__append" v-if="$slots.append">
                 <slot name="append"></slot>
             </div>
+            <!-- 自定义begin-->
             <div class="el-input-group__append" v-if="dialog">
                 <el-button icon="el-icon-edit-outline" @click="_openDialog"></el-button>
             </div>
@@ -72,19 +89,18 @@
                 <component :is="dialog && dialog.content" v-else></component>
                 <slot name="dialogFooter"></slot>
                 <!--<span slot="footer" >-->
-                    <!--<el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>-->
-                    <!--<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>-->
+                <!--<el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>-->
+                <!--<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>-->
                 <!--</span>-->
             </x-dialog>
+            <!-- 自定义end-->
         </template>
         <textarea
             v-else
             :tabindex="tabindex"
             class="el-textarea__inner"
-            :value="nativeInputValue"
-            @compositionstart="handleComposition"
-            @compositionupdate="handleComposition"
-            @compositionend="handleComposition"
+            @compositionstart="handleCompositionStart"
+            @compositionend="handleCompositionEnd"
             @input="handleInput"
             ref="textarea"
             v-bind="$attrs"
@@ -97,7 +113,7 @@
             @change="handleChange"
             :aria-label="label"
         >
-        </textarea>
+    </textarea>
     </div>
 </template>
 <script>
