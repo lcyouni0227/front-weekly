@@ -4,8 +4,8 @@
     inputSize ? 'el-input--' + inputSize : '',
     {
       'is-disabled': inputDisabled,
-      'el-input-group': $slots.prepend || $slots.append || label || dialog,
-      'el-input-group--append': $slots.append || dialog,
+      'el-input-group': $slots.prepend || $slots.append || label ,
+      'el-input-group--append': $slots.append,
       'el-input-group--prepend': $slots.prepend,
       'el-input--prefix': $slots.prefix || prefixIcon,
       'el-input--suffix': $slots.suffix || suffixIcon || clearable || showPassword
@@ -77,22 +77,22 @@
                 <slot name="append"></slot>
             </div>
             <!-- 自定义begin-->
-            <div class="el-input-group__append" v-if="dialog">
+            <div class="el-input-group__append">
                 <el-button icon="el-icon-edit-outline" @click="_openDialog"></el-button>
             </div>
-            <x-dialog
-                custom-class="inputDialog"
-                :title="dialog && dialog.title || ''"
-                :visible.sync="dialogVisible"
-                :width="dialog && dialog.width || '50%'">
-                <slot name="dialogContent" v-if="$slots.dialogContent"></slot>
-                <component :is="dialog && dialog.content" v-else></component>
-                <slot name="dialogFooter"></slot>
-                <!--<span slot="footer" >-->
-                <!--<el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>-->
-                <!--<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>-->
-                <!--</span>-->
-            </x-dialog>
+            <!--<x-dialog-->
+                <!--custom-class="inputDialog"-->
+                <!--:title="dialog && dialog.title || ''"-->
+                <!--:visible.sync="dialogVisible"-->
+                <!--:width="dialog && dialog.width || '50%'">-->
+                <!--<slot name="dialogContent" v-if="$slots.dialogContent"></slot>-->
+                <!--<component :is="dialog && dialog.content" v-else></component>-->
+                <!--<slot name="dialogFooter"></slot>-->
+                <!--&lt;!&ndash;<span slot="footer" >&ndash;&gt;-->
+                <!--&lt;!&ndash;<el-button @click="dialogVisible = false">{{dialog && dialog.cancelLabel || '取 消'}}</el-button>&ndash;&gt;-->
+                <!--&lt;!&ndash;<el-button type="primary" @click="dialogVisible = false">{{dialog && dialog.okLabel || '确 定'}}</el-button>&ndash;&gt;-->
+                <!--&lt;!&ndash;</span>&ndash;&gt;-->
+            <!--</x-dialog>-->
             <!-- 自定义end-->
         </template>
         <textarea
@@ -124,14 +124,14 @@
         mixins:[Input],
         data(){
             return {
-                dialogVisible:false
+                // dialogVisible:false
             }
         },
         props: {
             label:{type: String, default:''},
             size:{type: String, default:store.state.controlStyle.size},
             clearable: {type: Boolean, default: true},
-            dialog:{Type:Object,default(){return null}}
+            // dialog:{Type:Object,default(){return null}}
         },
         methods:{
             _openDialog(){

@@ -2,30 +2,25 @@ import Vue from 'vue'
 import App from './App.vue'
 import Promise from 'es6-promise';
 import ElementUI from 'element-ui';
-import router from './router/index'
+import router from './router'
 import store from './store';
 import 'element-ui/lib/theme-chalk/index.css';
 import './assets/font/iconfont.css'
-import i18n from './lang';
+import VCharts from 'v-charts'
+import echarts from 'echarts'
+import i18n from './common/lang';
 import $http from './utils/http';
 import {baseUrl, baseImgUrl} from './config/config'
-// import Validator from 'vue-validator';
-// import VeeValidate from 'vee-validate';
 import components from './components';
 import style from './components/support/style';
 import VTooltip from 'v-tooltip'
 import './components/style/common.css'
 
 Vue.use(VTooltip);
+Vue.use(VCharts)
 
-// var Validator = require('vue-validator');
-// Vue.use(Validator);
-// const config = {
-//     errorBagName: 'errorBags', // change if property conflicts.
-//     fieldsBagName: 'fieldBags',
-// };
-// Vue.use(VeeValidate,config);
 Vue.use(components);
+Vue.prototype.$echarts = echarts
 
 // 使用axios兼容ie9+
 Promise.polyfill();
@@ -52,11 +47,11 @@ Vue.prototype.$axios = $http;
  * value:值
  * name:字典名称
  */
-Vue.filter('dic', function(value, name) {
+Vue.filter('dic', function (value, name) {
     let v = store.state.dic.dicData[name];
-    if(v){
+    if (v) {
         let item = v.data.find((item) => item[v.valueField] == value);
-        if(item){
+        if (item) {
             return item[v.labelField];
         }
     }
@@ -66,12 +61,12 @@ Vue.filter('dic', function(value, name) {
  * 遍历后台传来的路由字符串,转换为组件对象
  * @param asyncRouterMap
  * @returns {*}
-//  */
+ //  */
 function filterAsyncRouter(asyncRouterMap) {
     return asyncRouterMap.filter(route => {
         if (route.component) {
-            let v=route.component;
-             route.component = resolve => require(['@/project/'+ v +'.vue'], resolve)
+            let v = route.component;
+            route.component = resolve => require(['/' + v + '.vue'], resolve)
         }
         if (route.children && route.children.length) {
             route.children = filterAsyncRouter(route.children)
@@ -84,18 +79,33 @@ function filterAsyncRouter(asyncRouterMap) {
  * 路由检查
  */
 router.beforeEach((to, from, next) => {
-    if(!store.state.controlStyle.menu && to.fullPath !=='/login') {
-        $http.postJson('/getMenu', {}).then(res => {
-            if(res.code==1) {
-                let menu = filterAsyncRouter(res.data);
-                store.commit('setMenu', menu);
-                router.addRoutes(menu);
-                next({...to, replace: true})
-            }
-        }).catch(() => {
-        });
-    }else{
-        next({replace: true })
+    // console.log("router:", to, from, next)
+    if (!store.state.controlStyle.menu && to.fullPath !== '/login') {
+        // console.log("privilege:", sessionStorage.getItem("privilege") || '')
+        var privilege = sessionStorage.getItem("privilege")
+        if( privilege == 110){
+            $http.postJson('/getMenu1', {}).then(res => {
+                if (res.code == 1) {
+                    let menu = filterAsyncRouter(res.data);
+                    store.commit('setMenu', menu);
+                    router.addRoutes(menu);
+                    next({...to, replace: true})
+                }
+            }).catch(() => {
+            });
+        }else{
+            $http.postJson('/getMenu', {}).then(res => {
+                if (res.code == 1) {
+                    let menu = filterAsyncRouter(res.data);
+                    store.commit('setMenu', menu);
+                    router.addRoutes(menu);
+                    next({...to, replace: true})
+                }
+            }).catch(() => {
+            });
+        }
+    } else {
+        next({replace: true})
     }
 });
 

@@ -12,12 +12,12 @@
  * the server-side, but the defaults work in most cases.
  */
 var hexcase = 0;  /* hex output format. 0 - lowercase; 1 - uppercase        */
-var b64pad  = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+var b64pad  = ""; /* style-64 pad character. "=" for strict RFC compliance   */
 var chrsz   = 8;  /* bits per input character. 8 - ASCII; 16 - Unicode      */
 
 /*
  * These are the functions you'll usually want to call
- * They take string arguments and return either hex or base-64 encoded strings
+ * They take string arguments and return either hex or style-64 encoded strings
  */
 function hex_md5(s){ return binl2hex(core_md5(str2binl(s), s.length * chrsz));}
 function b64_md5(s){ return binl2b64(core_md5(str2binl(s), s.length * chrsz));}
@@ -235,7 +235,7 @@ function binl2hex(binarray)
 }
 
 /*
- * Convert an array of little-endian words to a base-64 string
+ * Convert an array of little-endian words to a style-64 string
  */
 function binl2b64(binarray)
 {

@@ -1,143 +1,76 @@
 //引入mockjs
 import Mock from 'mockjs';
 //使用mockjs模拟数据
-
-// Mock.mock('/api/public/login', 'post', ()=>{
+//
+// Mock.mock('/api/public/login.do', 'post', () => {
 //     return {
-//         code:1,
+//         code: 1,
 //         data:{
-//             name:'张三'
+//             name:'1111',
+//             age:23
 //         }
 //     }
 // });
-Mock.mock('/api/privilege/getButtons', 'post', ()=>{
+Mock.mock('/api/getMenu', 'post', () => {
     return {
-        code:1,
-        data: {
-            buttons: {
-                add:{
-                    action:'',
-                    template:''
-                },
-                edit:{},
-                del:{}
+        code: 1,
+        data: [
+            {
+                name: '周报系统',
+                icon: 'el-icon-date',
+                path: '/views',
+                component: 'views/index',
+                children: [{
+                    name: '首页',
+                    icon: 'el-icon-menu',
+                    path: '/index/dashboard',
+                    component: 'views/dashboard',
+                },{
+                    name: '写周报',
+                    icon: 'el-icon-edit',
+                    path: '/views/addWeekly',
+                    component: 'views/addWeekly',
+                }, {
+                    name: '周报列表',
+                    icon: 'el-icon-document',
+                    path: '/views/weeklyList',
+                    component: 'views/weeklyList',
+                }, {
+                    name: '用户管理',
+                    icon: 'el-icon-setting',
+                    path: '/views/userList',
+                    component: 'views/userList',
+                }]
             }
-        }
+        ]
     }
 });
-Mock.mock('/api/getMenu', 'get', () => {
+Mock.mock('/api/getMenu1', 'post', () => {
     return {
-        code:1,
-        data:[
+        code: 1,
+        data: [
             {
-                name: '基础设置',
-                icon: 'el-icon-time',
-                path: '/index',
-                component: 'lamp/index',
+                name: '周报系统',
+                icon: 'el-icon-date',
+                path: '/views',
+                component: 'views/index',
                 children: [{
-                    name: 'test1',
-                    icon: 'el-icon-time',
-                    path: '/index/test1',
-                    component:'lamp/test1'
+                    name: '首页',
+                    icon: 'el-icon-menu',
+                    path: '/index/dashboard',
+                    component: 'views/dashboard',
                 },{
-                    name: '个人资料柜',
-                    icon: 'el-icon-time',
-                    path: '/index/owndisk',
-                    component:'owndisk/owndisk'
-                },{
-                    name: '个人资料柜',
-                    icon: 'el-icon-time',
-                    path: '/index/file',
-                    component:'owndisk/file'
-                },{
-                    name: '子系统管理',
-                    icon: 'el-icon-time',
-                    path: '/index/system',
-                    component:'common/system'
-                },{
-                    name: '菜单模板',
-                    icon: 'el-icon-time',
-                    path: '/index/menu_base',
-                    component:'common/menu_base'
-                },{
-                    name: '模块管理',
-                    icon: 'el-icon-time',
-                    path: '/index/module',
-                    component:'common/module'
-                },{
-                    name: '数据源定义',
-                    icon: 'el-icon-time',
-                    path: '/index/sql',
-                    component:'common/datasql'
-                },{
-                    name: '角色管理',
-                    icon: 'el-icon-time',
-                    path: '/index/role',
-                    component:'common/role'
-                },{
-                    name: '机构管理',
-                    icon: 'el-icon-time',
-                    path: '/index/org',
-                    component:'common/org'
-                }
-                ]
-            },
-            {
-                name: '项目设置',
-                icon: 'el-icon-time',
-                path: '/project',
-                children: [{
-                    name: 'test1',
-                    icon: 'el-icon-time',
-                    path: '/index/system11',
-                    // component:'base/system'
-                },{
-                    name: 'test2',
-                    icon: 'el-icon-time',
-                    path: '/index/org11',
-                    // component:'base/org'
-                }
-                ]
+                    name: '写周报',
+                    icon: 'el-icon-edit',
+                    path: '/views/addWeekly',
+                    component: 'views/addWeekly',
+                }, {
+                    name: '周报列表',
+                    icon: 'el-icon-document',
+                    path: '/views/weeklyList',
+                    component: 'views/weeklyList',
+                }]
             }
-
         ]
-        // data: [{
-        //     "name": "基础设置",
-        //     "name_en": "baseSetting",
-        //     "path": "/index",
-        //     "icon": "el-icon-time",
-        //     "children": [{
-        //         "name": "子系统",
-        //         "name_en": "system",
-        //         "path": "/index/system",
-        //         "component":"@/views/base/system",
-        //         "icon": "el-icon-document"
-        //     },{
-        //         "name": "机构管理",
-        //         "name_en": "org",
-        //         "path": "@/views/base/org",
-        //         "component":"org",
-        //         "icon": "el-icon-document"
-        //     }]
-        // }, {
-        //     "name": "部门管理",
-        //     "name_en": "BM",
-        //     "path": "/index/BM",
-        //     "icon": "el-icon-picture-outline",
-        //     "children": []
-        // },{
-        //     "name": "权限",
-        //     "name_en": "Authority",
-        //     "path": "/index/Authority",
-        //     "icon": "el-icon-setting",
-        //     "children": []
-        // },{
-        //     "name": "视图设计",
-        //     "name_en": "ViewDesign",
-        //     "path": "/index/ViewDesign",
-        //     "icon": "el-icon-setting",
-        //     "children": []
-        // }]
-
     }
 });
